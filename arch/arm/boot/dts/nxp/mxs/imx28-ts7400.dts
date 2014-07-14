@@ -1,0 +1,411 @@
+/*
+ * Copyright 2014 VRT Systems
+ * Copyright 2012 Freescale Semiconductor, Inc.
+ *
+ * The code contained herein is licensed under the GNU General Public
+ * License. You may obtain a copy of the GNU General Public License
+ * Version 2 or later at the following locations:
+ *
+ * http://www.opensource.org/licenses/gpl-license.html
+ * http://www.gnu.org/copyleft/gpl.html
+ */
+
+/dts-v1/;
+#include "imx28.dtsi"
+
+/ {
+	model = "Technologic Systems TS-7400/TS-7670";
+	compatible = "fsl,imx28-technolgic-ts7400", "fsl,imx28";
+
+	memory {
+		reg = <0x40000000 0x08000000>;
+	};
+
+	apb@80000000 {
+		apbh@80000000 {
+			gpmi-nand@8000c000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&gpmi_pins_ts7400
+					&gpmi_status_cfg>;
+				status = "okay";
+			};
+
+			ssp0: ssp@80010000 {
+				compatible = "fsl,imx28-mmc";
+				pinctrl-names = "default";
+				pinctrl-0 = <&mmc0_4bit_pins_a
+					&mmc0_sck_cfg
+					&mmc0_cd_cfg>;
+				bus-width = <4>;
+				vmmc-supply = <&reg_vddio_sd0>;
+				status = "okay";
+				broken-cd;
+			};
+
+			ssp2: ssp@80014000 {
+				compatible = "fsl,imx28-mmc";
+				pinctrl-names = "default";
+				pinctrl-0 = <&mmc2_pins_a &mmc2_sck_cfg>;
+				bus-width = <4>;
+				vmmc-supply = <&reg_vddio_sd0>;
+				status = "okay";
+				broken-cd;
+			};
+
+			pinctrl@80018000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&hog_pins_a>;
+
+				mmc0_pins_a: mmc0-4bit@0 {
+					reg = <0>;
+					fsl,pinmux-ids = <
+						MX28_PAD_SSP0_DATA0__SSP0_D0
+						MX28_PAD_SSP0_DATA1__SSP0_D1
+						MX28_PAD_SSP0_DATA2__SSP0_D2
+						MX28_PAD_SSP0_DATA3__SSP0_D3
+						MX28_PAD_SSP0_CMD__SSP0_CMD
+						MX28_PAD_SSP0_SCK__SSP0_SCK
+					>;
+					fsl,drive-strength = <MXS_DRIVE_8mA>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,pull-up = <MXS_PULL_ENABLE>;
+				};
+
+				mmc2_pins_a: mmc2-4bit@0 {
+					reg = <0>;
+					fsl,pinmux-ids = <
+						MX28_PAD_SSP0_DATA4__SSP2_D0
+						MX28_PAD_SSP1_SCK__SSP2_D1
+						MX28_PAD_SSP1_CMD__SSP2_D2
+						MX28_PAD_SSP0_DATA5__SSP2_D3
+						MX28_PAD_SSP0_DATA6__SSP2_CMD
+						MX28_PAD_SSP0_DATA7__SSP2_SCK
+					>;
+					fsl,drive-strength = <MXS_DRIVE_8mA>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,pull-up = <MXS_PULL_ENABLE>;
+				};
+
+				hog_pins_a: hog@0 {
+					reg = <0>;
+					fsl,pinmux-ids = <
+						MX28_PAD_PWM3__GPIO_3_28
+						MX28_PAD_LCD_RESET__GPIO_3_30
+						MX28_PAD_LCD_D15__GPIO_1_15
+						MX28_PAD_LCD_D13__GPIO_1_13
+						MX28_PAD_LCD_CS__GPIO_1_27
+						MX28_PAD_LCD_WR_RWN__GPIO_1_25
+						MX28_PAD_GPMI_RDY1__GPIO_0_21
+					>;
+					fsl,drive-strength = <MXS_DRIVE_4mA>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,pull-up = <MXS_PULL_DISABLE>;
+				};
+
+				red_led_pin_gpio0_17: red_led_gpio0_17@0 {
+					reg = <0>;
+					fsl,pinmux-ids = <
+						MX28_PAD_GPMI_CE1N__GPIO_0_17
+					>;
+					fsl,drive-strength = <MXS_DRIVE_4mA>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,pull-up = <MXS_PULL_DISABLE>;
+				};
+
+				blue_led_pin_gpio1_24: blue_led_gpio1_24@0 {
+					reg = <0>;
+					fsl,pinmux-ids = <
+						MX28_PAD_LCD_RD_E__GPIO_1_24
+					>;
+					fsl,drive-strength = <MXS_DRIVE_4mA>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,pull-up = <MXS_PULL_DISABLE>;
+				};
+
+				green_led_pin_gpio0_28: green_led_gpio0_28@0 {
+					reg = <0>;
+					fsl,pinmux-ids = <
+						MX28_PAD_GPMI_RESETN__GPIO_0_28
+					>;
+					fsl,drive-strength = <MXS_DRIVE_4mA>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,pull-up = <MXS_PULL_DISABLE>;
+				};
+
+				yellow_led_pin_gpio1_26: yellow_led_gpio1_26@0 {
+					reg = <0>;
+					fsl,pinmux-ids = <
+						MX28_PAD_LCD_RS__GPIO_1_26
+					>;
+					fsl,drive-strength = <MXS_DRIVE_4mA>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,pull-up = <MXS_PULL_DISABLE>;
+				};
+
+				gpmi_pins_ts7400: gpmi-nand@0 {
+					reg = <0>;
+					fsl,pinmux-ids = <
+						MX28_PAD_GPMI_D00__GPMI_D0
+						MX28_PAD_GPMI_D01__GPMI_D1
+						MX28_PAD_GPMI_D02__GPMI_D2
+						MX28_PAD_GPMI_D03__GPMI_D3
+						MX28_PAD_GPMI_D04__GPMI_D4
+						MX28_PAD_GPMI_D05__GPMI_D5
+						MX28_PAD_GPMI_D06__GPMI_D6
+						MX28_PAD_GPMI_D07__GPMI_D7
+						MX28_PAD_GPMI_CE0N__GPMI_CE0N
+						MX28_PAD_GPMI_RDY0__GPMI_READY0
+						MX28_PAD_GPMI_RDN__GPMI_RDN
+						MX28_PAD_GPMI_WRN__GPMI_WRN
+						MX28_PAD_GPMI_ALE__GPMI_ALE
+						MX28_PAD_GPMI_CLE__GPMI_CLE
+					>;
+					fsl,drive-strength = <MXS_DRIVE_4mA>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,pull-up = <MXS_PULL_DISABLE>;
+				};
+				auart4_pins: auart4@0 {
+					reg = <0>;
+					fsl,pinmux-ids = <
+						MX28_PAD_SAIF0_SDATA0__AUART4_TX
+						MX28_PAD_SAIF0_BITCLK__AUART4_RX
+					>;
+					fsl,drive-strength = <MXS_DRIVE_4mA>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,pull-up = <MXS_PULL_DISABLE>;
+				};
+			};
+
+			can0: can@80032000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&can0_pins_a>;
+				xceiver-supply = <&reg_can_3v3>;
+				status = "okay";
+			};
+
+			can1: can@80034000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&can1_pins_a>;
+				xceiver-supply = <&reg_can_3v3>;
+				status = "okay";
+			};
+		};
+
+		apbx@80040000 {
+			i2c0: i2c@80058000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&i2c0_pins_a>;
+				clock-frequency = <400000>;
+				status = "okay";
+
+				m41t00@0x68 {
+					compatible = "m41t00";
+					reg = <0x68>;
+				};
+			};
+
+			pwm: pwm@80064000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&pwm2_pins_a>;
+				status = "okay";
+			};
+
+			duart: serial@80074000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&duart_pins_a>;
+				status = "okay";
+			};
+
+			auart0: serial@8006a000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&auart0_pins_a>;
+				fsl,uart-has-rtscts;
+				status = "okay";
+			};
+
+			auart1: serial@8006c000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&auart1_2pins_a>;
+				status = "okay";
+			};
+
+			auart2: serial@8006e000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&auart2_2pins_a>;
+				status = "okay";
+			};
+
+			auart3: serial@80070000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&auart3_2pins_a>;
+				status = "okay";
+			};
+
+			auart4: serial@80072000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&auart4_pins>;
+				status = "okay";
+			};
+
+			usbphy0: usbphy@8007c000 {
+				status = "okay";
+			};
+
+			usbphy1: usbphy@8007e000 {
+				status = "okay";
+			};
+		};
+	};
+
+	ahb@80080000 {
+		usb0: usb@80080000 {
+			pinctrl-names = "default";
+			pinctrl-0 = <&usb0_pins_a>;
+			vbus-supply = <&reg_usb_vbus>;
+			status = "okay";
+		};
+
+		usb1: usb@80090000 {
+			pinctrl-names = "default";
+			pinctrl-0 = <&usb1_pins_a>;
+			vbus-supply = <&reg_usb_vbus>;
+			status = "okay";
+		};
+
+		mac0: ethernet@800f0000 {
+			phy-mode = "rmii";
+			pinctrl-names = "default";
+			pinctrl-0 = <&mac0_pins_a>;
+			phy-supply = <&reg_fec_3v3>;
+			phy-reset-gpios = <&gpio4 13 0>;
+			phy-reset-duration = <100>;
+			status = "okay";
+		};
+	};
+
+	regulators {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		reg_3p3v: regulator@0 {
+			compatible = "regulator-fixed";
+			reg = <0>;
+			regulator-name = "3P3V";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
+			regulator-always-on;
+		};
+
+		reg_vddio_sd0: regulator@1 {
+			compatible = "regulator-fixed";
+			reg = <1>;
+			regulator-name = "vddio-sd0";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
+			gpio = <&gpio3 28 0>;
+			regulator-always-on;
+			enable-active-high;
+		};
+
+		reg_fec_3v3: regulator@2 {
+			compatible = "regulator-fixed";
+			reg = <2>;
+			regulator-name = "fec-3v3";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
+			gpio = <&gpio0 21 0>;
+		};
+
+		reg_usb_vbus: regulator@3 {
+			compatible = "regulator-fixed";
+			reg = <3>;
+			regulator-name = "usb_vbus";
+			regulator-min-microvolt = <5000000>;
+			regulator-max-microvolt = <5000000>;
+			gpio = <&gpio1 27 0>;
+			enable-active-high;
+			regulator-always-on;
+		};
+
+		reg_rs232_vbus: regulator@4 {
+			compatible = "regulator-fixed";
+			reg = <4>;
+			regulator-name = "rs232_vbus";
+			regulator-min-microvolt = <5000000>;
+			regulator-max-microvolt = <5000000>;
+			gpio = <&gpio1 25 0>;
+			enable-active-high;
+			regulator-always-on;
+		};
+
+		reg_modbus_vbus: regulator@5 {
+			compatible = "regulator-fixed";
+			reg = <5>;
+			regulator-name = "modbus_vbus";
+			regulator-min-microvolt = <3000000>;
+			regulator-max-microvolt = <3000000>;
+			gpio = <&gpio1 15 0>;
+			enable-active-high;
+			regulator-always-on;
+		};
+
+		reg_modbus_24v: regulator@6 {
+			compatible = "regulator-fixed";
+			reg = <6>;
+			regulator-name = "modbus_24v";
+			regulator-min-microvolt = <24000000>;
+			regulator-max-microvolt = <24000000>;
+			gpio = <&gpio1 13 0>;
+			enable-active-high;
+		};
+
+		reg_can_3v3: regulator@7 {
+			compatible = "regulator-fixed";
+			reg = <7>;
+			regulator-name = "can-3v3";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
+			gpio = <&gpio3 30 0>;
+			enable-active-high;
+		};
+
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		pinctrl-names = "default";
+		pinctrl-0 = <&red_led_pin_gpio0_17
+				&blue_led_pin_gpio1_24
+				&green_led_pin_gpio0_28
+				&yellow_led_pin_gpio1_26>;
+
+		status2 {
+			label = "red:status2";
+			/* GPMI_CE1N */
+			gpios = <&gpio0 17 0>;
+			linux,default-trigger = "heartbeat";
+		};
+
+		status1 {
+			label = "blue:status1";
+			/* LCD_RD_E */
+			gpios = <&gpio1 24 0>;
+			linux,default-trigger = "heartbeat";
+		};
+
+		power {
+			label = "green:power";
+			/* GPMI_RESETN */
+			gpios = <&gpio0 28 0>;
+			linux,default-trigger = "heartbeat";
+		};
+
+		activity {
+			label = "yellow:activity";
+			/* LCD_RS */
+			gpios = <&gpio1 26 0>;
+			linux,default-trigger = "heartbeat";
+		};
+	};
+};
