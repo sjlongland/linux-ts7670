@@ -34,22 +34,24 @@
 				compatible = "fsl,imx28-mmc";
 				pinctrl-names = "default";
 				pinctrl-0 = <&mmc0_4bit_pins_a
-					&mmc0_sck_cfg
-					&mmc0_cd_cfg>;
+					&mmc0_sck_cfg>;
 				bus-width = <4>;
 				vmmc-supply = <&reg_vddio_sd0>;
 				status = "okay";
 				broken-cd;
+				non-removable;
 			};
 
 			ssp2: ssp@80014000 {
 				compatible = "fsl,imx28-mmc";
 				pinctrl-names = "default";
-				pinctrl-0 = <&mmc2_pins_a &mmc2_sck_cfg>;
+				pinctrl-0 = <&mmc2_4bit_pins_a
+					&mmc2_sck_cfg>;
 				bus-width = <4>;
 				vmmc-supply = <&reg_vddio_sd0>;
 				status = "okay";
 				broken-cd;
+				non-removable;
 			};
 
 			pinctrl@80018000 {
@@ -260,14 +262,14 @@
 	ahb@80080000 {
 		usb0: usb@80080000 {
 			pinctrl-names = "default";
-			pinctrl-0 = <&usb0_pins_a>;
+			pinctrl-0 = <&usbphy0_pins_a>;
 			vbus-supply = <&reg_usb_vbus>;
 			status = "okay";
 		};
 
 		usb1: usb@80090000 {
 			pinctrl-names = "default";
-			pinctrl-0 = <&usb1_pins_a>;
+			pinctrl-0 = <&usbphy1_pins_a>;
 			vbus-supply = <&reg_usb_vbus>;
 			status = "okay";
 		};
@@ -305,7 +307,6 @@
 			regulator-max-microvolt = <3300000>;
 			gpio = <&gpio3 28 0>;
 			regulator-always-on;
-			enable-active-high;
 		};
 
 		reg_fec_3v3: regulator@2 {
@@ -315,6 +316,7 @@
 			regulator-min-microvolt = <3300000>;
 			regulator-max-microvolt = <3300000>;
 			gpio = <&gpio0 21 0>;
+			regulator-always-on;
 		};
 
 		reg_usb_vbus: regulator@3 {
@@ -358,6 +360,7 @@
 			regulator-max-microvolt = <24000000>;
 			gpio = <&gpio1 13 0>;
 			enable-active-high;
+			regulator-always-on;
 		};
 
 		reg_can_3v3: regulator@7 {
@@ -368,6 +371,7 @@
 			regulator-max-microvolt = <3300000>;
 			gpio = <&gpio3 30 0>;
 			enable-active-high;
+			regulator-always-on;
 		};
 
 	};
