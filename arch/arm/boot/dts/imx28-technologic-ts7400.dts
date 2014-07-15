@@ -387,29 +387,29 @@
 		status2 {
 			label = "red:status2";
 			/* GPMI_CE1N */
-			gpios = <&gpio0 17 0>;
-			linux,default-trigger = "heartbeat";
+			gpios = <&gpio0 17 1>;
+			linux,default-trigger = "mmc1";
 		};
 
 		status1 {
 			label = "blue:status1";
 			/* LCD_RD_E */
-			gpios = <&gpio1 24 0>;
-			linux,default-trigger = "heartbeat";
+			gpios = <&gpio1 24 1>;
+			linux,default-trigger = "none";
 		};
 
 		power {
 			label = "green:power";
 			/* GPMI_RESETN */
-			gpios = <&gpio0 28 0>;
+			gpios = <&gpio0 28 1>;
 			linux,default-trigger = "heartbeat";
 		};
 
 		activity {
 			label = "yellow:activity";
 			/* LCD_RS */
-			gpios = <&gpio1 26 0>;
-			linux,default-trigger = "heartbeat";
+			gpios = <&gpio1 26 1>;
+			linux,default-trigger = "mmc0";
 		};
 	};
 };
