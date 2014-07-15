@@ -262,14 +262,14 @@
 	ahb@80080000 {
 		usb0: usb@80080000 {
 			pinctrl-names = "default";
-			pinctrl-0 = <&usbphy0_pins_a>;
+			pinctrl-0 = <&usb0_pins_a>;
 			vbus-supply = <&reg_usb_vbus>;
 			status = "okay";
 		};
 
 		usb1: usb@80090000 {
 			pinctrl-names = "default";
-			pinctrl-0 = <&usbphy1_pins_a>;
+			pinctrl-0 = <&usb1_pins_a>;
 			vbus-supply = <&reg_usb_vbus>;
 			status = "okay";
 		};
