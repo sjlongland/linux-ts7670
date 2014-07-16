@@ -176,6 +176,25 @@
 					fsl,voltage = <MXS_VOLTAGE_HIGH>;
 					fsl,pull-up = <MXS_PULL_DISABLE>;
 				};
+
+				spi_pins_ts7400: spi0-ts7400@0 {
+					reg = <0>;
+					/*
+					 * SAIF0_MCLK = MOSI
+					 * SAIF0_LRCLK = MISO
+					 * SAIF1_SDATA0 = CLK
+					 * PWM4 = CS
+					 */
+					fsl,pinmux-ids = <
+						MX28_PAD_SAIF0_MCLK__GPIO_3_20
+						MX28_PAD_SAIF0_LRCLK__GPIO_3_21
+						MX28_PAD_SAIF1_SDATA0__GPIO_3_26
+						MX28_PAD_PWM4__GPIO_3_29
+					>;
+					fsl,drive-strength = <MXS_DRIVE_8mA>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,pull-up = <MXS_PULL_ENABLE>;
+				};
 			};
 
 			can0: can@80032000 {
@@ -412,4 +431,22 @@
 			linux,default-trigger = "mmc0";
 		};
 	};
+
+
+	spi0 {
+		compatible = "spi-gpio";
+		pinctrl-names = "default";
+		pinctrl-0 = <&spi_pins_ts7400>;
+		status = "okay";
+		gpio-sck = <&gpio3 26 0>; /* SAIF1_SDATA0 */
+		gpio-mosi = <&gpio3 20 0>; /* SAIF0_MCLK */
+		gpio-miso = <&gpio3 21 0>; /* SAIF0_LRCLK */
+		cs-gpios = <&gpio3 29 0>; /* PWM4 */
+		num-chipselects = <1>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		/* TODO: TS-7400/TS-7670 companion MCU goes here */
+	};
+
 };
