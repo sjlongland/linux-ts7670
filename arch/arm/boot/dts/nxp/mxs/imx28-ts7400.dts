@@ -446,7 +446,15 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 
-		/* TODO: TS-7400/TS-7670 companion MCU goes here */
+		/*
+		 * TODO: TS-7400/TS-7670 companion MCU goes here.
+		 * For now, just expose it to userspace for tshwctl and friends.
+		 */
+		spidev@0x00 {
+			compatible = "spidev";
+			spi-max-frequency = <30000000>;
+			reg = <0>;
+		};
 	};
 
 };
