@@ -93,10 +93,7 @@
 					fsl,pinmux-ids = <
 						MX28_PAD_PWM3__GPIO_3_28
 						MX28_PAD_LCD_RESET__GPIO_3_30
-						MX28_PAD_LCD_D15__GPIO_1_15
-						MX28_PAD_LCD_D13__GPIO_1_13
 						MX28_PAD_LCD_CS__GPIO_1_27
-						MX28_PAD_LCD_WR_RWN__GPIO_1_25
 						MX28_PAD_GPMI_RDY1__GPIO_0_21
 					>;
 					fsl,drive-strength = <MXS_DRIVE_4mA>;
@@ -191,9 +188,9 @@
 						MX28_PAD_SAIF1_SDATA0__GPIO_3_26
 						MX28_PAD_PWM4__GPIO_3_29
 					>;
-					fsl,drive-strength = <MXS_DRIVE_8mA>;
+					fsl,drive-strength = <MXS_DRIVE_4mA>;
 					fsl,voltage = <MXS_VOLTAGE_HIGH>;
-					fsl,pull-up = <MXS_PULL_ENABLE>;
+					fsl,pull-up = <MXS_PULL_DISABLE>;
 				};
 			};
 
@@ -349,39 +346,6 @@
 			regulator-always-on;
 		};
 
-		reg_rs232_vbus: regulator@4 {
-			compatible = "regulator-fixed";
-			reg = <4>;
-			regulator-name = "rs232_vbus";
-			regulator-min-microvolt = <5000000>;
-			regulator-max-microvolt = <5000000>;
-			gpio = <&gpio1 25 0>;
-			enable-active-high;
-			regulator-always-on;
-		};
-
-		reg_modbus_vbus: regulator@5 {
-			compatible = "regulator-fixed";
-			reg = <5>;
-			regulator-name = "modbus_vbus";
-			regulator-min-microvolt = <3000000>;
-			regulator-max-microvolt = <3000000>;
-			gpio = <&gpio1 15 0>;
-			enable-active-high;
-			regulator-always-on;
-		};
-
-		reg_modbus_24v: regulator@6 {
-			compatible = "regulator-fixed";
-			reg = <6>;
-			regulator-name = "modbus_24v";
-			regulator-min-microvolt = <24000000>;
-			regulator-max-microvolt = <24000000>;
-			gpio = <&gpio1 13 0>;
-			enable-active-high;
-			regulator-always-on;
-		};
-
 		reg_can_3v3: regulator@7 {
 			compatible = "regulator-fixed";
 			reg = <7>;
@@ -389,10 +353,7 @@
 			regulator-min-microvolt = <3300000>;
 			regulator-max-microvolt = <3300000>;
 			gpio = <&gpio3 30 0>;
-			enable-active-high;
-			regulator-always-on;
 		};
-
 	};
 
 	leds {
@@ -438,6 +399,7 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&spi_pins_ts7400>;
 		status = "okay";
+		bus-num = <0>;
 		gpio-sck = <&gpio3 26 0>; /* SAIF1_SDATA0 */
 		gpio-mosi = <&gpio3 20 0>; /* SAIF0_MCLK */
 		gpio-miso = <&gpio3 21 0>; /* SAIF0_LRCLK */
@@ -456,5 +418,4 @@
 			reg = <0>;
 		};
 	};
-
 };
