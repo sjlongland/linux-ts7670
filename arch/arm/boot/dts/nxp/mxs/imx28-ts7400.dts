@@ -219,9 +219,9 @@
 				clock-frequency = <400000>;
 				status = "okay";
 
-				m41t00@0x68 {
-					compatible = "m41t00";
-					reg = <0x68>;
+				isl12022@0x6f {
+					compatible = "isl,isl12022";
+					reg = <0x6f>;
 				};
 			};
 
