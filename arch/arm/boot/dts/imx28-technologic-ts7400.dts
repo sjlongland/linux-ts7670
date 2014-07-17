@@ -45,7 +45,7 @@
 			ssp2: ssp@80014000 {
 				compatible = "fsl,imx28-mmc";
 				pinctrl-names = "default";
-				pinctrl-0 = <&mmc2_4bit_pins_a
+				pinctrl-0 = <&mmc2_pins_ts7400
 					&mmc2_sck_cfg>;
 				bus-width = <4>;
 				vmmc-supply = <&reg_vddio_sd0>;
@@ -58,31 +58,19 @@
 				pinctrl-names = "default";
 				pinctrl-0 = <&hog_pins_a>;
 
-				mmc0_pins_a: mmc0-4bit@0 {
-					reg = <0>;
-					fsl,pinmux-ids = <
-						MX28_PAD_SSP0_DATA0__SSP0_D0
-						MX28_PAD_SSP0_DATA1__SSP0_D1
-						MX28_PAD_SSP0_DATA2__SSP0_D2
-						MX28_PAD_SSP0_DATA3__SSP0_D3
-						MX28_PAD_SSP0_CMD__SSP0_CMD
-						MX28_PAD_SSP0_SCK__SSP0_SCK
-					>;
-					fsl,drive-strength = <MXS_DRIVE_8mA>;
-					fsl,voltage = <MXS_VOLTAGE_HIGH>;
-					fsl,pull-up = <MXS_PULL_ENABLE>;
-				};
-
-				mmc2_pins_a: mmc2-4bit@0 {
+				mmc2_pins_ts7400: mmc2-4bit@0 {
 					reg = <0>;
 					fsl,pinmux-ids = <
 						MX28_PAD_SSP0_DATA4__SSP2_D0
-						MX28_PAD_SSP1_SCK__SSP2_D1
-						MX28_PAD_SSP1_CMD__SSP2_D2
+						MX28_PAD_SSP2_SS1__SSP2_D1
+						MX28_PAD_SSP2_SS2__SSP2_D2
 						MX28_PAD_SSP0_DATA5__SSP2_D3
 						MX28_PAD_SSP0_DATA6__SSP2_CMD
-						MX28_PAD_SSP0_DATA7__SSP2_SCK
 					>;
+					/* 
+					 * MX28_PAD_SSP0_DATA7__SSP2_SCK is
+					 * handled by mmc2_sck_cfg
+					 */
 					fsl,drive-strength = <MXS_DRIVE_8mA>;
 					fsl,voltage = <MXS_VOLTAGE_HIGH>;
 					fsl,pull-up = <MXS_PULL_ENABLE>;
