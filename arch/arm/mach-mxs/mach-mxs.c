@@ -159,6 +159,7 @@ enum mac_oui {
 	OUI_CRYSTALFONTZ,
 	OUI_I2SE,
 	OUI_ARMADEUS,
+	OUI_TS,
 };
 
 static void __init update_fec_mac_prop(enum mac_oui oui)
@@ -223,6 +224,11 @@ static void __init update_fec_mac_prop(enum mac_oui oui)
 			macaddr[1] = 0x1e;
 			macaddr[2] = 0xac;
 			break;
+		case OUI_TS:
+			macaddr[0] = 0x00;
+			macaddr[1] = 0xd0;
+			macaddr[2] = 0x69;
+			break;
 		}
 		val = ocotp[i];
 		macaddr[3] = (val >> 16) & 0xff;
@@ -245,6 +251,12 @@ static void __init imx28_evk_init(void)
 {
 	update_fec_mac_prop(OUI_FSL);
 
+	mxs_saif_clkmux_select(MXS_DIGCTL_SAIF_CLKMUX_EXTMSTR0);
+}
+
+static void __init ts7400_init(void)
+{
+	update_fec_mac_prop(OUI_TS);
 	mxs_saif_clkmux_select(MXS_DIGCTL_SAIF_CLKMUX_EXTMSTR0);
 }
 
@@ -424,6 +436,8 @@ static void __init mxs_machine_init(void)
 		duckbill_init();
 	else if (of_machine_is_compatible("msr,m28cu3"))
 		m28cu3_init();
+	else if (of_machine_is_compatible("technologic,ts-7400"))
+		ts7400_init();
 
 	of_platform_default_populate(NULL, NULL, parent);
 
