@@ -15,7 +15,7 @@
 
 / {
 	model = "Technologic Systems TS-7400/TS-7670";
-	compatible = "fsl,imx28-technolgic-ts7400", "fsl,imx28";
+	compatible = "technologic,ts-7400", "fsl,imx28";
 
 	memory {
 		reg = <0x40000000 0x08000000>;
