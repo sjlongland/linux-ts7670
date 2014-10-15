@@ -68,7 +68,7 @@
 						MX28_PAD_SSP0_DATA6__SSP2_CMD
 						MX28_PAD_SSP0_DATA7__SSP2_SCK
 					>;
-					/* 
+					/*
 					 * MX28_PAD_SSP0_DATA7__SSP2_SCK is
 					 * handled by mmc2_sck_cfg
 					 */
@@ -84,6 +84,7 @@
 						MX28_PAD_LCD_RESET__GPIO_3_30
 						MX28_PAD_LCD_CS__GPIO_1_27
 						MX28_PAD_GPMI_RDY1__GPIO_0_21
+						MX28_PAD_LCD_WR_RWN__GPIO_1_25
 					>;
 					fsl,drive-strength = <MXS_DRIVE_4mA>;
 					fsl,voltage = <MXS_VOLTAGE_HIGH>;
@@ -163,6 +164,7 @@
 					fsl,pull-up = <MXS_PULL_DISABLE>;
 				};
 
+#if 0
 				spi_pins_ts7400: spi0-ts7400@0 {
 					reg = <0>;
 					/*
@@ -181,6 +183,7 @@
 					fsl,voltage = <MXS_VOLTAGE_HIGH>;
 					fsl,pull-up = <MXS_PULL_DISABLE>;
 				};
+#endif
 			};
 
 			can0: can@80032000 {
@@ -377,17 +380,16 @@
 			linux,default-trigger = "mmc0";
 		};
 	};
-
-
+#if 0
 	spi0 {
 		compatible = "spi-gpio";
 		pinctrl-names = "default";
 		pinctrl-0 = <&spi_pins_ts7400>;
 		status = "okay";
 		bus-num = <0>;
-		gpio-sck = <&gpio3 26 0>; /* SAIF1_SDATA0 */
-		gpio-mosi = <&gpio3 20 0>; /* SAIF0_MCLK */
-		gpio-miso = <&gpio3 21 0>; /* SAIF0_LRCLK */
+		gpio-sck = <&gpio3 26 1>; /* SAIF1_SDATA0 */
+		gpio-mosi = <&gpio3 21 0>; /* SAIF0_LRCLK */
+		gpio-miso = <&gpio3 20 0>; /* SAIF0_MCLK */
 		cs-gpios = <&gpio3 29 0>; /* PWM4 */
 		num-chipselects = <1>;
 		#address-cells = <1>;
@@ -403,4 +405,5 @@
 			reg = <0>;
 		};
 	};
+#endif
 };
