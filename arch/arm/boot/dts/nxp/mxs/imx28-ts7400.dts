@@ -212,6 +212,11 @@
 					compatible = "isl,isl12022";
 					reg = <0x6f>;
 				};
+
+				silabs: silabs@78 {
+					compatible = "ts-wdt";
+					reg = <0x78>;
+				};
 			};
 
 			pwm: pwm@80064000 {
