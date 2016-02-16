@@ -117,7 +117,7 @@ static void do_ts_reboot(enum reboot_mode reboot_mode, const char *cmd)
 	while (1);
 }
 
-static void do_ts_halt(enum reboot_mode reboot_mode, const char *cmd)
+static void do_ts_halt(void)
 {
 	unsigned long flags;
 	static DEFINE_SPINLOCK(wdt_lock);
