@@ -841,7 +841,7 @@ dtb-$(CONFIG_ARCH_MXS) += \
 	imx28-ts4600.dtb \
 	imx28-xea.dtb \
 	imx28-tx28.dtb \
-	imx28-technologic-ts7400.dtb
+	imx28-ts7400.dtb
 dtb-$(CONFIG_ARCH_NOMADIK) += \
 	ste-nomadik-s8815.dtb \
 	ste-nomadik-nhk15.dtb
