@@ -991,7 +991,7 @@ static void mxs_auart_set_pwm(struct mxs_auart_port *s, unsigned int baud)
 	if (!s->pwm)
 		return;
 
-	dev_debug(s->dev, "Setting PWM for baud rate %u\n", baud);
+	dev_dbg(s->dev, "Setting PWM for baud rate %u\n", baud);
 	res = pwm_config(s->pwm, baud/2, baud);
 	if (res) {
 		dev_err(s->dev, "Failed to set baud rate on PWM (%d)\n",
@@ -999,7 +999,7 @@ static void mxs_auart_set_pwm(struct mxs_auart_port *s, unsigned int baud)
 		return;
 	}
 
-	dev_debug(s->dev, "Enabling PWM for baud rate %u\n", baud);
+	dev_dbg(s->dev, "Enabling PWM for baud rate %u\n", baud);
 	res = pwm_enable(s->pwm);
 	if (res) {
 		dev_err(s->dev, "Failed to enable PWM (%d)\n",
