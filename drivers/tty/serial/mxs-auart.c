@@ -43,6 +43,9 @@
 #include <linux/gpio/consumer.h>
 #include <linux/err.h>
 #include <linux/irq.h>
+#ifdef CONFIG_SERIAL_MXS_AUART_BAUD_PWM
+#include <linux/pwm.h>
+#endif
 #include "serial_mctrl_gpio.h"
 
 #define MXS_AUART_PORTS 5
@@ -445,6 +448,17 @@ struct mxs_auart_port {
 	struct mctrl_gpios	*gpios;
 	int			gpio_irq[UART_GPIO_MAX];
 	bool			ms_irq_enabled;
+
+#ifdef CONFIG_SERIAL_MXS_AUART_BAUD_PWM
+	/*
+	 * For TS-7670v2 "Modbus" port.  The PWM channel acts as a clock
+	 * running at the baud rate.  (i.e. 9600 Hz)  A separate controller then
+	 * synchronises on this to manage the RX/TX pin.  Yes, using AUART2_RTS
+	 * and the built-in half-duplex code would have been a **MUCH** better
+	 * idea.
+	 */
+	struct pwm_device	*pwm;
+#endif
 };
 
 static const struct platform_device_id mxs_auart_devtype[] = {
@@ -969,6 +983,33 @@ err_out:
 
 }
 
+
+#ifdef CONFIG_SERIAL_MXS_AUART_BAUD_PWM
+static void mxs_auart_set_pwm(struct mxs_auart_port *s, unsigned int baud)
+{
+	int res;
+	if (!s->pwm)
+		return;
+
+	dev_debug(s->dev, "Setting PWM for baud rate %u\n", baud);
+	res = pwm_config(s->pwm, baud/2, baud);
+	if (res) {
+		dev_err(s->dev, "Failed to set baud rate on PWM (%d)\n",
+				res);
+		return;
+	}
+
+	dev_debug(s->dev, "Enabling PWM for baud rate %u\n", baud);
+	res = pwm_enable(s->pwm);
+	if (res) {
+		dev_err(s->dev, "Failed to enable PWM (%d)\n",
+				res);
+		return;
+	}
+}
+#endif
+
+
 #define RTS_AT_AUART()	IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(s->gpios,	\
 							UART_GPIO_RTS))
 #define CTS_AT_AUART()	IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(s->gpios,	\
@@ -1094,6 +1135,9 @@ static void mxs_auart_settermios(struct uart_port *u,
 	mxs_write(ctrl2, s, REG_CTRL2);
 
 	uart_update_timeout(u, termios->c_cflag, baud);
+#ifdef CONFIG_SERIAL_MXS_AUART_BAUD_PWM
+	mxs_auart_set_pwm(s, baud);
+#endif
 
 	/* prepare for the DMA RX. */
 	if (auart_dma_enabled(s) &&
@@ -1715,6 +1759,16 @@ static int mxs_auart_probe(struct platform_device *pdev)
 		dev_err(&pdev->dev, "Failed to initialize GPIOs.\n");
 		goto out_disable_clks;
 	}
+
+#ifdef CONFIG_SERIAL_MXS_AUART_BAUD_PWM
+	s->pwm = devm_pwm_get(&pdev->dev, NULL);
+	if (IS_ERR(s->pwm) && PTR_ERR(s->pwm)) {
+		dev_info(&pdev->dev, "PWM unavailable.\n");
+		s->pwm = NULL;
+	} else {
+		dev_info(&pdev->dev, "Using PWM for baud synchronisation.\n");
+	}
+#endif
 
 	/*
 	 * Get the GPIO lines IRQ

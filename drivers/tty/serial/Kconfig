@@ -1277,6 +1277,17 @@ config SERIAL_MXS_AUART_CONSOLE
 	help
 	  Enable a MXS AUART port to be the system console.
 
+config SERIAL_MXS_AUART_BAUD_PWM
+	bool "MXS AUART PWM baud rate synchronisation"
+	depends on SERIAL_MXS_AUART=y
+	select PWM
+	help
+	  Allow AUART serial ports to set a PWM channel to match the baud rate
+	  of the serial port for hardware synchronisation purposes.
+	  This is used on the Technologic Systems TS-7670 single-board
+	  computer, which relies on a separate Cortex M0 MCU to control the
+	  transmit/receive flow direction on the RS-485 ("Modbus") port.
+
 config SERIAL_XILINX_PS_UART
 	tristate "Cadence (Xilinx Zynq) UART support"
 	depends on OF
