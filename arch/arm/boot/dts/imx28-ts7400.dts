@@ -255,6 +255,7 @@
 			auart2: serial@8006e000 {
 				pinctrl-names = "default";
 				pinctrl-0 = <&auart2_2pins_a>;
+				pwms = <&pwm 2 9600 0>;
 				status = "okay";
 			};
 
