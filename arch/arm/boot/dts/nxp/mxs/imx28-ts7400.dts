@@ -80,11 +80,9 @@
 				hog_pins_a: hog@0 {
 					reg = <0>;
 					fsl,pinmux-ids = <
-						MX28_PAD_PWM3__GPIO_3_28
 						MX28_PAD_LCD_RESET__GPIO_3_30
 						MX28_PAD_LCD_CS__GPIO_1_27
 						MX28_PAD_GPMI_RDY1__GPIO_0_21
-						MX28_PAD_LCD_WR_RWN__GPIO_1_25
 					>;
 					fsl,drive-strength = <MXS_DRIVE_4mA>;
 					fsl,voltage = <MXS_VOLTAGE_HIGH>;
@@ -128,6 +126,16 @@
 					>;
 					fsl,drive-strength = <MXS_DRIVE_4mA>;
 					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,pull-up = <MXS_PULL_DISABLE>;
+				};
+
+				rs232_en_led_pin_gpio1_26: rs232_en_led_gpio1_25@0 {
+					reg = <0>;
+					fsl,pinmux-ids = <
+						MX28_PAD_LCD_WR_RWN__GPIO_1_25
+					>;
+					fsl,drive-strength = <MXS_DRIVE_4mA>;
+					fsl,voltage = <MXS_VOLTAGE_LOW>;
 					fsl,pull-up = <MXS_PULL_DISABLE>;
 				};
 
@@ -355,7 +363,8 @@
 		pinctrl-0 = <&red_led_pin_gpio0_17
 				&blue_led_pin_gpio1_24
 				&green_led_pin_gpio0_28
-				&yellow_led_pin_gpio1_26>;
+				&yellow_led_pin_gpio1_26
+				&rs232_en_led_pin_gpio1_26>;
 
 		status2 {
 			label = "red:status2";
@@ -383,6 +392,14 @@
 			/* LCD_RS */
 			gpios = <&gpio1 26 1>;
 			linux,default-trigger = "mmc0";
+		};
+
+		/* Kludge, to permit turning RS-232 transceivers on/off */
+		rs232_en {
+			label = "rs232_en";
+			/* LCD_RWM */
+			gpios = <&gpio1 25 1>;
+			linux,default-trigger = "default-on";
 		};
 	};
 #if 0
