@@ -399,7 +399,7 @@
 		rs232_en {
 			label = "rs232_en";
 			/* LCD_RWM */
-			gpios = <&gpio1 25 1>;
+			gpios = <&gpio1 25 0>;
 			linux,default-trigger = "default-on";
 		};
 	};
