@@ -46,7 +46,7 @@
 				compatible = "fsl,imx28-mmc";
 				pinctrl-names = "default";
 				pinctrl-0 = <&mmc2_pins_ts7400
-					&mmc2_sck_cfg>;
+					&mmc2_sck_cfg_a>;
 				bus-width = <4>;
 				vmmc-supply = <&reg_vddio_sd0>;
 				status = "okay";
@@ -70,7 +70,7 @@
 					>;
 					/*
 					 * MX28_PAD_SSP0_DATA7__SSP2_SCK is
-					 * handled by mmc2_sck_cfg
+					 * handled by mmc2_sck_cfg_a
 					 */
 					fsl,drive-strength = <MXS_DRIVE_8mA>;
 					fsl,voltage = <MXS_VOLTAGE_HIGH>;
