@@ -734,6 +734,7 @@ config TS4800_WATCHDOG
 config TS_WDT_MICRO
 	tristate "Technologic Microcontroller Watchdog"
 	depends on ARM
+	select MFD_TS_MCU
 	select WATCHDOG_CORE
 	help
 	  Hardware driver for the Technologic Systems silabs based 
