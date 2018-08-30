@@ -1954,6 +1954,19 @@ config MFD_TPS6594_SPI
 	  This driver can also be built as a module.  If so, the module
 	  will be called tps6594-spi.
 
+config MFD_TS_MCU
+	bool "Technologic Systems TS-7670/TS-7400v2 companion MCU"
+	depends on I2C=y
+	select MFD_CORE
+	help
+	  If you say yes yere you get support for the Technologic Systems
+	  companion MCU which implements a hardware watchdog and some basic
+	  power supply monitoring.  Saying 'y' here on such systems is
+	  *strongly* recommended as on modern revisions of the board, the
+	  firmware on this chip is set to reset the computer after a
+	  10-second timeout.  You will also want CONFIG_TS_WDT_MICRO=y for
+	  the same reason.
+
 config TWL4030_CORE
 	bool "TI TWL4030/TWL5030/TWL6030/TPS659x0 Support"
 	depends on I2C=y
