@@ -660,4 +660,11 @@ config FUEL_GAUGE_SC27XX
 	 Say Y here to enable support for fuel gauge with SC27XX
 	 PMIC chips.
 
+config TS_MCU_PSU
+	tristate "Technologic Systems Companion MCU Power Supply"
+	select MFD_TS_MCU
+	help
+	  Say Y to enable support for the power monitoring functions in the
+	  Technologic Systems TS-7670/TS-7400v2's companion MCU.
+
 endif # POWER_SUPPLY
