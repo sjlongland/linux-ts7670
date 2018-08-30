@@ -204,7 +204,7 @@
 				};
 
 				silabs: silabs@78 {
-					compatible = "ts-wdt";
+					compatible = "ts-mcu";
 					reg = <0x78>;
 				};
 			};
