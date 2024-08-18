@@ -381,16 +381,13 @@ static ssize_t edt_ft5x06_setting_show(struct device *dev,
 			container_of(dattr, struct edt_ft5x06_attribute, dattr);
 	u8 *field = (u8 *)tsdata + attr->field_offset;
 	unsigned int val;
-	size_t count = 0;
-	int error = 0;
+	int error;
 	u8 addr;
 
-	mutex_lock(&tsdata->mutex);
+	guard(mutex)(&tsdata->mutex);
 
-	if (tsdata->factory_mode) {
-		error = -EIO;
-		goto out;
-	}
+	if (tsdata->factory_mode)
+		return -EIO;
 
 	switch (tsdata->version) {
 	case EDT_M06:
@@ -408,8 +405,7 @@ static ssize_t edt_ft5x06_setting_show(struct device *dev,
 		break;
 
 	default:
-		error = -ENODEV;
-		goto out;
+		return -ENODEV;
 	}
 
 	if (addr != NO_REGISTER) {
@@ -418,7 +414,7 @@ static ssize_t edt_ft5x06_setting_show(struct device *dev,
 			dev_err(&tsdata->client->dev,
 				"Failed to fetch attribute %s, error %d\n",
 				dattr->attr.name, error);
-			goto out;
+			return error;
 		}
 	} else {
 		val = *field;
@@ -431,10 +427,7 @@ static ssize_t edt_ft5x06_setting_show(struct device *dev,
 		*field = val;
 	}
 
-	count = sysfs_emit(buf, "%d\n", val);
-out:
-	mutex_unlock(&tsdata->mutex);
-	return error ?: count;
+	return sysfs_emit(buf, "%d\n", val);
 }
 
 static ssize_t edt_ft5x06_setting_store(struct device *dev,
@@ -450,21 +443,17 @@ static ssize_t edt_ft5x06_setting_store(struct device *dev,
 	int error;
 	u8 addr;
 
-	mutex_lock(&tsdata->mutex);
+	guard(mutex)(&tsdata->mutex);
 
-	if (tsdata->factory_mode) {
-		error = -EIO;
-		goto out;
-	}
+	if (tsdata->factory_mode)
+		return -EIO;
 
 	error = kstrtouint(buf, 0, &val);
 	if (error)
-		goto out;
+		return error;
 
-	if (val < attr->limit_low || val > attr->limit_high) {
-		error = -ERANGE;
-		goto out;
-	}
+	if (val < attr->limit_low || val > attr->limit_high)
+		return -ERANGE;
 
 	switch (tsdata->version) {
 	case EDT_M06:
@@ -482,8 +471,7 @@ static ssize_t edt_ft5x06_setting_store(struct device *dev,
 		break;
 
 	default:
-		error = -ENODEV;
-		goto out;
+		return -ENODEV;
 	}
 
 	if (addr != NO_REGISTER) {
@@ -492,14 +480,12 @@ static ssize_t edt_ft5x06_setting_store(struct device *dev,
 			dev_err(&tsdata->client->dev,
 				"Failed to update attribute %s, error: %d\n",
 				dattr->attr.name, error);
-			goto out;
+			return error;
 		}
 	}
 	*field = val;
 
-out:
-	mutex_unlock(&tsdata->mutex);
-	return error ?: count;
+	return count;
 }
 
 /* m06, m09: range 0-31, m12: range 0-5 */
@@ -715,21 +701,17 @@ static int edt_ft5x06_debugfs_mode_get(void *data, u64 *mode)
 static int edt_ft5x06_debugfs_mode_set(void *data, u64 mode)
 {
 	struct edt_ft5x06_ts_data *tsdata = data;
-	int retval = 0;
 
 	if (mode > 1)
 		return -ERANGE;
 
-	mutex_lock(&tsdata->mutex);
+	guard(mutex)(&tsdata->mutex);
 
-	if (mode != tsdata->factory_mode) {
-		retval = mode ? edt_ft5x06_factory_mode(tsdata) :
-				edt_ft5x06_work_mode(tsdata);
-	}
+	if (mode == tsdata->factory_mode)
+		return 0;
 
-	mutex_unlock(&tsdata->mutex);
-
-	return retval;
+	return mode ? edt_ft5x06_factory_mode(tsdata) :
+		      edt_ft5x06_work_mode(tsdata);
 };
 
 DEFINE_SIMPLE_ATTRIBUTE(debugfs_mode_fops, edt_ft5x06_debugfs_mode_get,
@@ -751,18 +733,16 @@ static ssize_t edt_ft5x06_debugfs_raw_data_read(struct file *file,
 	if (*off < 0 || *off >= tsdata->raw_bufsize)
 		return 0;
 
-	mutex_lock(&tsdata->mutex);
+	guard(mutex)(&tsdata->mutex);
 
-	if (!tsdata->factory_mode || !tsdata->raw_buffer) {
-		error = -EIO;
-		goto out;
-	}
+	if (!tsdata->factory_mode || !tsdata->raw_buffer)
+		return -EIO;
 
 	error = regmap_write(tsdata->regmap, 0x08, 0x01);
 	if (error) {
 		dev_err(&client->dev,
 			"failed to write 0x08 register, error %d\n", error);
-		goto out;
+		return error;
 	}
 
 	do {
@@ -772,7 +752,7 @@ static ssize_t edt_ft5x06_debugfs_raw_data_read(struct file *file,
 			dev_err(&client->dev,
 				"failed to read 0x08 register, error %d\n",
 				error);
-			goto out;
+			return error;
 		}
 
 		if (val == 1)
@@ -782,8 +762,7 @@ static ssize_t edt_ft5x06_debugfs_raw_data_read(struct file *file,
 	if (retries == 0) {
 		dev_err(&client->dev,
 			"timed out waiting for register to settle\n");
-		error = -ETIMEDOUT;
-		goto out;
+		return -ETIMEDOUT;
 	}
 
 	rdbuf = tsdata->raw_buffer;
@@ -793,21 +772,17 @@ static ssize_t edt_ft5x06_debugfs_raw_data_read(struct file *file,
 		rdbuf[0] = i;  /* column index */
 		error = regmap_bulk_read(tsdata->regmap, 0xf5, rdbuf, colbytes);
 		if (error)
-			goto out;
+			return error;
 
 		rdbuf += colbytes;
 	}
 
 	read = min_t(size_t, count, tsdata->raw_bufsize - *off);
-	if (copy_to_user(buf, tsdata->raw_buffer + *off, read)) {
-		error = -EFAULT;
-		goto out;
-	}
+	if (copy_to_user(buf, tsdata->raw_buffer + *off, read))
+		return -EFAULT;
 
 	*off += read;
-out:
-	mutex_unlock(&tsdata->mutex);
-	return error ?: read;
+	return read;
 };
 
 static const struct file_operations debugfs_raw_data_fops = {
