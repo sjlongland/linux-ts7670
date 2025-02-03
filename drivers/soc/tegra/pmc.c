@@ -2158,6 +2158,7 @@ static int tegra_pmc_pinctrl_init(struct tegra_pmc *pmc)
 static ssize_t reset_reason_show(struct device *dev,
 				 struct device_attribute *attr, char *buf)
 {
+	struct tegra_pmc *pmc = dev_get_drvdata(dev);
 	u32 value;
 
 	value = tegra_pmc_readl(pmc, pmc->soc->regs->rst_status);
@@ -2175,6 +2176,7 @@ static DEVICE_ATTR_RO(reset_reason);
 static ssize_t reset_level_show(struct device *dev,
 				struct device_attribute *attr, char *buf)
 {
+	struct tegra_pmc *pmc = dev_get_drvdata(dev);
 	u32 value;
 
 	value = tegra_pmc_readl(pmc, pmc->soc->regs->rst_status);
