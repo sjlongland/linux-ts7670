@@ -199,7 +199,7 @@ static void __init e820_print_type(enum e820_type type)
 	}
 }
 
-void __init e820__print_table(char *who)
+static void __init e820__print_table(const char *who)
 {
 	int i;
 
