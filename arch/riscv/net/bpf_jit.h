@@ -13,19 +13,13 @@
 #include <linux/filter.h>
 #include <asm/cacheflush.h>
 
+/* verify runtime detection extension status */
+#define rv_ext_enabled(ext) \
+	(IS_ENABLED(CONFIG_RISCV_ISA_##ext) && riscv_has_extension_likely(RISCV_ISA_EXT_##ext))
+
 static inline bool rvc_enabled(void)
 {
 	return IS_ENABLED(CONFIG_RISCV_ISA_C);
-}
-
-static inline bool rvzba_enabled(void)
-{
-	return IS_ENABLED(CONFIG_RISCV_ISA_ZBA) && riscv_has_extension_likely(RISCV_ISA_EXT_ZBA);
-}
-
-static inline bool rvzbb_enabled(void)
-{
-	return IS_ENABLED(CONFIG_RISCV_ISA_ZBB) && riscv_has_extension_likely(RISCV_ISA_EXT_ZBB);
 }
 
 enum {
@@ -1108,7 +1102,7 @@ static inline void emit_sw(u8 rs1, s32 off, u8 rs2, struct rv_jit_context *ctx)
 
 static inline void emit_sh2add(u8 rd, u8 rs1, u8 rs2, struct rv_jit_context *ctx)
 {
-	if (rvzba_enabled()) {
+	if (rv_ext_enabled(ZBA)) {
 		emit(rvzba_sh2add(rd, rs1, rs2), ctx);
 		return;
 	}
@@ -1119,7 +1113,7 @@ static inline void emit_sh2add(u8 rd, u8 rs1, u8 rs2, struct rv_jit_context *ctx
 
 static inline void emit_sh3add(u8 rd, u8 rs1, u8 rs2, struct rv_jit_context *ctx)
 {
-	if (rvzba_enabled()) {
+	if (rv_ext_enabled(ZBA)) {
 		emit(rvzba_sh3add(rd, rs1, rs2), ctx);
 		return;
 	}
@@ -1169,7 +1163,7 @@ static inline void emit_subw(u8 rd, u8 rs1, u8 rs2, struct rv_jit_context *ctx)
 
 static inline void emit_sextb(u8 rd, u8 rs, struct rv_jit_context *ctx)
 {
-	if (rvzbb_enabled()) {
+	if (rv_ext_enabled(ZBB)) {
 		emit(rvzbb_sextb(rd, rs), ctx);
 		return;
 	}
@@ -1180,7 +1174,7 @@ static inline void emit_sextb(u8 rd, u8 rs, struct rv_jit_context *ctx)
 
 static inline void emit_sexth(u8 rd, u8 rs, struct rv_jit_context *ctx)
 {
-	if (rvzbb_enabled()) {
+	if (rv_ext_enabled(ZBB)) {
 		emit(rvzbb_sexth(rd, rs), ctx);
 		return;
 	}
@@ -1196,7 +1190,7 @@ static inline void emit_sextw(u8 rd, u8 rs, struct rv_jit_context *ctx)
 
 static inline void emit_zexth(u8 rd, u8 rs, struct rv_jit_context *ctx)
 {
-	if (rvzbb_enabled()) {
+	if (rv_ext_enabled(ZBB)) {
 		emit(rvzbb_zexth(rd, rs), ctx);
 		return;
 	}
@@ -1207,7 +1201,7 @@ static inline void emit_zexth(u8 rd, u8 rs, struct rv_jit_context *ctx)
 
 static inline void emit_zextw(u8 rd, u8 rs, struct rv_jit_context *ctx)
 {
-	if (rvzba_enabled()) {
+	if (rv_ext_enabled(ZBA)) {
 		emit(rvzba_zextw(rd, rs), ctx);
 		return;
 	}
@@ -1218,7 +1212,7 @@ static inline void emit_zextw(u8 rd, u8 rs, struct rv_jit_context *ctx)
 
 static inline void emit_bswap(u8 rd, s32 imm, struct rv_jit_context *ctx)
 {
-	if (rvzbb_enabled()) {
+	if (rv_ext_enabled(ZBB)) {
 		int bits = 64 - imm;
 
 		emit(rvzbb_rev8(rd, rd), ctx);
