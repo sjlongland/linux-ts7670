@@ -28,6 +28,7 @@ $(obj)/generated/%_wa_oob.c $(obj)/generated/%_wa_oob.h: $(obj)/xe_gen_wa_oob \
 xe-y += xe_bb.o \
 	xe_bo.o \
 	xe_bo_evict.o \
+	xe_dep_scheduler.o \
 	xe_devcoredump.o \
 	xe_device.o \
 	xe_device_sysfs.o \
