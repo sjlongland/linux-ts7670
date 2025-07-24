@@ -4427,6 +4427,9 @@
 
 					port@1 {
 						reg = <1>;
+
+						mdss0_dp3_out: endpoint {
+						};
 					};
 				};
 
@@ -4499,6 +4502,9 @@
 
 					port@1 {
 						reg = <1>;
+
+						mdss0_dp2_out: endpoint {
+						};
 					};
 				};
 
@@ -5588,6 +5594,9 @@
 
 					port@1 {
 						reg = <1>;
+
+						mdss1_dp3_out: endpoint {
+						};
 					};
 				};
 
@@ -5660,6 +5669,9 @@
 
 					port@1 {
 						reg = <1>;
+
+						mdss1_dp2_out: endpoint {
+						};
 					};
 				};
 
@@ -5732,6 +5744,9 @@
 
 					port@1 {
 						reg = <1>;
+
+						mdss1_dp0_out: endpoint {
+						};
 					};
 				};
 
@@ -5804,6 +5819,9 @@
 
 					port@1 {
 						reg = <1>;
+
+						mdss1_dp1_out: endpoint {
+						};
 					};
 				};
 
