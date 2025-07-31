@@ -129,7 +129,7 @@ struct skx_dev {
 				u8 colbits;
 			} dimms[NUM_DIMMS];
 		} chan[NUM_CHANNELS];
-	} imc[NUM_IMC];
+	} imc[];
 };
 
 struct skx_pvt {
