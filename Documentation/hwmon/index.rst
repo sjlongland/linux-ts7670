@@ -168,6 +168,7 @@ Hardware Monitoring Kernel Drivers
    menf21bmc
    mlxreg-fan
    mp2856
+   mp2869
    mp2888
    mp2891
    mp2975
