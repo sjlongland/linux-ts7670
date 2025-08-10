@@ -305,7 +305,7 @@ static int vidioc_enum_fmt(struct file *file, void *prv, struct v4l2_fmtdesc *f)
 
 static int vidioc_g_fmt(struct file *file, void *prv, struct v4l2_format *f)
 {
-	struct g2d_ctx *ctx = prv;
+	struct g2d_ctx *ctx = file2ctx(file);
 	struct vb2_queue *vq;
 	struct g2d_frame *frm;
 
@@ -357,7 +357,7 @@ static int vidioc_try_fmt(struct file *file, void *prv, struct v4l2_format *f)
 
 static int vidioc_s_fmt(struct file *file, void *prv, struct v4l2_format *f)
 {
-	struct g2d_ctx *ctx = prv;
+	struct g2d_ctx *ctx = file2ctx(file);
 	struct g2d_dev *dev = ctx->dev;
 	struct vb2_queue *vq;
 	struct g2d_frame *frm;
@@ -398,7 +398,7 @@ static int vidioc_s_fmt(struct file *file, void *prv, struct v4l2_format *f)
 static int vidioc_g_selection(struct file *file, void *prv,
 			      struct v4l2_selection *s)
 {
-	struct g2d_ctx *ctx = prv;
+	struct g2d_ctx *ctx = file2ctx(file);
 	struct g2d_frame *f;
 
 	f = get_frame(ctx, s->type);
@@ -448,7 +448,7 @@ static int vidioc_g_selection(struct file *file, void *prv,
 static int vidioc_try_selection(struct file *file, void *prv,
 				const struct v4l2_selection *s)
 {
-	struct g2d_ctx *ctx = prv;
+	struct g2d_ctx *ctx = file2ctx(file);
 	struct g2d_dev *dev = ctx->dev;
 	struct g2d_frame *f;
 
@@ -476,7 +476,7 @@ static int vidioc_try_selection(struct file *file, void *prv,
 static int vidioc_s_selection(struct file *file, void *prv,
 			      struct v4l2_selection *s)
 {
-	struct g2d_ctx *ctx = prv;
+	struct g2d_ctx *ctx = file2ctx(file);
 	struct g2d_frame *f;
 	int ret;
 
