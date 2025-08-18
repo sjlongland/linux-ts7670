@@ -250,7 +250,7 @@ static struct cpuidle_state nehalem_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 3,
 		.target_residency = 6,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -258,7 +258,7 @@ static struct cpuidle_state nehalem_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 10,
 		.target_residency = 20,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C3",
@@ -266,7 +266,7 @@ static struct cpuidle_state nehalem_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x10) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 20,
 		.target_residency = 80,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -274,7 +274,7 @@ static struct cpuidle_state nehalem_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x20) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 200,
 		.target_residency = 800,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -287,7 +287,7 @@ static struct cpuidle_state snb_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 2,
 		.target_residency = 2,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -295,7 +295,7 @@ static struct cpuidle_state snb_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 10,
 		.target_residency = 20,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C3",
@@ -303,7 +303,7 @@ static struct cpuidle_state snb_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x10) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 80,
 		.target_residency = 211,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -311,7 +311,7 @@ static struct cpuidle_state snb_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x20) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 104,
 		.target_residency = 345,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C7",
@@ -319,7 +319,7 @@ static struct cpuidle_state snb_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x30) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 109,
 		.target_residency = 345,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -332,7 +332,7 @@ static struct cpuidle_state byt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 1,
 		.target_residency = 1,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6N",
@@ -340,7 +340,7 @@ static struct cpuidle_state byt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x58) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 300,
 		.target_residency = 275,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6S",
@@ -348,7 +348,7 @@ static struct cpuidle_state byt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x52) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 500,
 		.target_residency = 560,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C7",
@@ -356,7 +356,7 @@ static struct cpuidle_state byt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x60) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 1200,
 		.target_residency = 4000,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C7S",
@@ -364,7 +364,7 @@ static struct cpuidle_state byt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x64) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 10000,
 		.target_residency = 20000,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -377,7 +377,7 @@ static struct cpuidle_state cht_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 1,
 		.target_residency = 1,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6N",
@@ -385,7 +385,7 @@ static struct cpuidle_state cht_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x58) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 80,
 		.target_residency = 275,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6S",
@@ -393,7 +393,7 @@ static struct cpuidle_state cht_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x52) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 200,
 		.target_residency = 560,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C7",
@@ -401,7 +401,7 @@ static struct cpuidle_state cht_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x60) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 1200,
 		.target_residency = 4000,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C7S",
@@ -409,7 +409,7 @@ static struct cpuidle_state cht_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x64) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 10000,
 		.target_residency = 20000,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -422,7 +422,7 @@ static struct cpuidle_state ivb_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 1,
 		.target_residency = 1,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -430,7 +430,7 @@ static struct cpuidle_state ivb_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 10,
 		.target_residency = 20,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C3",
@@ -438,7 +438,7 @@ static struct cpuidle_state ivb_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x10) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 59,
 		.target_residency = 156,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -446,7 +446,7 @@ static struct cpuidle_state ivb_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x20) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 80,
 		.target_residency = 300,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C7",
@@ -454,7 +454,7 @@ static struct cpuidle_state ivb_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x30) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 87,
 		.target_residency = 300,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -467,7 +467,7 @@ static struct cpuidle_state ivt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 1,
 		.target_residency = 1,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -475,7 +475,7 @@ static struct cpuidle_state ivt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 10,
 		.target_residency = 80,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C3",
@@ -483,7 +483,7 @@ static struct cpuidle_state ivt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x10) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 59,
 		.target_residency = 156,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -491,7 +491,7 @@ static struct cpuidle_state ivt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x20) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 82,
 		.target_residency = 300,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -504,7 +504,7 @@ static struct cpuidle_state ivt_cstates_4s[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 1,
 		.target_residency = 1,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -512,7 +512,7 @@ static struct cpuidle_state ivt_cstates_4s[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 10,
 		.target_residency = 250,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C3",
@@ -520,7 +520,7 @@ static struct cpuidle_state ivt_cstates_4s[] __initdata = {
 		.flags = MWAIT2flg(0x10) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 59,
 		.target_residency = 300,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -528,7 +528,7 @@ static struct cpuidle_state ivt_cstates_4s[] __initdata = {
 		.flags = MWAIT2flg(0x20) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 84,
 		.target_residency = 400,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -541,7 +541,7 @@ static struct cpuidle_state ivt_cstates_8s[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 1,
 		.target_residency = 1,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -549,7 +549,7 @@ static struct cpuidle_state ivt_cstates_8s[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 10,
 		.target_residency = 500,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C3",
@@ -557,7 +557,7 @@ static struct cpuidle_state ivt_cstates_8s[] __initdata = {
 		.flags = MWAIT2flg(0x10) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 59,
 		.target_residency = 600,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -565,7 +565,7 @@ static struct cpuidle_state ivt_cstates_8s[] __initdata = {
 		.flags = MWAIT2flg(0x20) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 88,
 		.target_residency = 700,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -578,7 +578,7 @@ static struct cpuidle_state hsw_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 2,
 		.target_residency = 2,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -586,7 +586,7 @@ static struct cpuidle_state hsw_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 10,
 		.target_residency = 20,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C3",
@@ -594,7 +594,7 @@ static struct cpuidle_state hsw_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x10) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 33,
 		.target_residency = 100,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -602,7 +602,7 @@ static struct cpuidle_state hsw_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x20) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 133,
 		.target_residency = 400,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C7s",
@@ -610,7 +610,7 @@ static struct cpuidle_state hsw_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x32) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 166,
 		.target_residency = 500,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C8",
@@ -618,7 +618,7 @@ static struct cpuidle_state hsw_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x40) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 300,
 		.target_residency = 900,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C9",
@@ -626,7 +626,7 @@ static struct cpuidle_state hsw_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x50) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 600,
 		.target_residency = 1800,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C10",
@@ -634,7 +634,7 @@ static struct cpuidle_state hsw_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x60) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 2600,
 		.target_residency = 7700,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -646,7 +646,7 @@ static struct cpuidle_state bdw_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 2,
 		.target_residency = 2,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -654,7 +654,7 @@ static struct cpuidle_state bdw_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 10,
 		.target_residency = 20,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C3",
@@ -662,7 +662,7 @@ static struct cpuidle_state bdw_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x10) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 40,
 		.target_residency = 100,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -670,7 +670,7 @@ static struct cpuidle_state bdw_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x20) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 133,
 		.target_residency = 400,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C7s",
@@ -678,7 +678,7 @@ static struct cpuidle_state bdw_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x32) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 166,
 		.target_residency = 500,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C8",
@@ -686,7 +686,7 @@ static struct cpuidle_state bdw_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x40) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 300,
 		.target_residency = 900,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C9",
@@ -694,7 +694,7 @@ static struct cpuidle_state bdw_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x50) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 600,
 		.target_residency = 1800,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C10",
@@ -702,7 +702,7 @@ static struct cpuidle_state bdw_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x60) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 2600,
 		.target_residency = 7700,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -715,7 +715,7 @@ static struct cpuidle_state skl_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 2,
 		.target_residency = 2,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -723,7 +723,7 @@ static struct cpuidle_state skl_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 10,
 		.target_residency = 20,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C3",
@@ -731,7 +731,7 @@ static struct cpuidle_state skl_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x10) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 70,
 		.target_residency = 100,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -739,7 +739,7 @@ static struct cpuidle_state skl_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x20) | CPUIDLE_FLAG_TLB_FLUSHED | CPUIDLE_FLAG_IBRS,
 		.exit_latency = 85,
 		.target_residency = 200,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C7s",
@@ -747,7 +747,7 @@ static struct cpuidle_state skl_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x33) | CPUIDLE_FLAG_TLB_FLUSHED | CPUIDLE_FLAG_IBRS,
 		.exit_latency = 124,
 		.target_residency = 800,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C8",
@@ -755,7 +755,7 @@ static struct cpuidle_state skl_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x40) | CPUIDLE_FLAG_TLB_FLUSHED | CPUIDLE_FLAG_IBRS,
 		.exit_latency = 200,
 		.target_residency = 800,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C9",
@@ -763,7 +763,7 @@ static struct cpuidle_state skl_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x50) | CPUIDLE_FLAG_TLB_FLUSHED | CPUIDLE_FLAG_IBRS,
 		.exit_latency = 480,
 		.target_residency = 5000,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C10",
@@ -771,7 +771,7 @@ static struct cpuidle_state skl_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x60) | CPUIDLE_FLAG_TLB_FLUSHED | CPUIDLE_FLAG_IBRS,
 		.exit_latency = 890,
 		.target_residency = 5000,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -784,7 +784,7 @@ static struct cpuidle_state skx_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00) | CPUIDLE_FLAG_IRQ_ENABLE,
 		.exit_latency = 2,
 		.target_residency = 2,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -792,7 +792,7 @@ static struct cpuidle_state skx_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 10,
 		.target_residency = 20,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -800,7 +800,7 @@ static struct cpuidle_state skx_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x20) | CPUIDLE_FLAG_TLB_FLUSHED | CPUIDLE_FLAG_IBRS,
 		.exit_latency = 133,
 		.target_residency = 600,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -813,7 +813,7 @@ static struct cpuidle_state icx_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00) | CPUIDLE_FLAG_IRQ_ENABLE,
 		.exit_latency = 1,
 		.target_residency = 1,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -821,7 +821,7 @@ static struct cpuidle_state icx_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 4,
 		.target_residency = 4,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -829,7 +829,7 @@ static struct cpuidle_state icx_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x20) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 170,
 		.target_residency = 600,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -852,7 +852,7 @@ static struct cpuidle_state adl_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00) | CPUIDLE_FLAG_UNUSABLE,
 		.exit_latency = 1,
 		.target_residency = 1,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -860,7 +860,7 @@ static struct cpuidle_state adl_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 2,
 		.target_residency = 4,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -868,7 +868,7 @@ static struct cpuidle_state adl_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x20) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 220,
 		.target_residency = 600,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C8",
@@ -876,7 +876,7 @@ static struct cpuidle_state adl_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x40) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 280,
 		.target_residency = 800,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C10",
@@ -884,7 +884,7 @@ static struct cpuidle_state adl_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x60) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 680,
 		.target_residency = 2000,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -897,7 +897,7 @@ static struct cpuidle_state adl_l_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00) | CPUIDLE_FLAG_UNUSABLE,
 		.exit_latency = 1,
 		.target_residency = 1,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -905,7 +905,7 @@ static struct cpuidle_state adl_l_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 2,
 		.target_residency = 4,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -913,7 +913,7 @@ static struct cpuidle_state adl_l_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x20) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 170,
 		.target_residency = 500,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C8",
@@ -921,7 +921,7 @@ static struct cpuidle_state adl_l_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x40) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 200,
 		.target_residency = 600,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C10",
@@ -929,7 +929,7 @@ static struct cpuidle_state adl_l_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x60) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 230,
 		.target_residency = 700,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -942,7 +942,7 @@ static struct cpuidle_state mtl_l_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 1,
 		.target_residency = 1,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -950,7 +950,7 @@ static struct cpuidle_state mtl_l_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x20) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 140,
 		.target_residency = 420,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C10",
@@ -958,7 +958,7 @@ static struct cpuidle_state mtl_l_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x60) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 310,
 		.target_residency = 930,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -971,7 +971,7 @@ static struct cpuidle_state gmt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00) | CPUIDLE_FLAG_UNUSABLE,
 		.exit_latency = 1,
 		.target_residency = 1,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -979,7 +979,7 @@ static struct cpuidle_state gmt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 2,
 		.target_residency = 4,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -987,7 +987,7 @@ static struct cpuidle_state gmt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x20) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 195,
 		.target_residency = 585,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C8",
@@ -995,7 +995,7 @@ static struct cpuidle_state gmt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x40) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 260,
 		.target_residency = 1040,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C10",
@@ -1003,7 +1003,7 @@ static struct cpuidle_state gmt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x60) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 660,
 		.target_residency = 1980,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -1016,7 +1016,7 @@ static struct cpuidle_state spr_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 1,
 		.target_residency = 1,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -1024,7 +1024,7 @@ static struct cpuidle_state spr_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 2,
 		.target_residency = 4,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -1033,7 +1033,7 @@ static struct cpuidle_state spr_cstates[] __initdata = {
 					   CPUIDLE_FLAG_INIT_XSTATE,
 		.exit_latency = 290,
 		.target_residency = 800,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -1046,7 +1046,7 @@ static struct cpuidle_state gnr_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 1,
 		.target_residency = 1,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -1054,7 +1054,7 @@ static struct cpuidle_state gnr_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 4,
 		.target_residency = 4,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -1064,7 +1064,7 @@ static struct cpuidle_state gnr_cstates[] __initdata = {
 					   CPUIDLE_FLAG_PARTIAL_HINT_MATCH,
 		.exit_latency = 170,
 		.target_residency = 650,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6P",
@@ -1074,7 +1074,7 @@ static struct cpuidle_state gnr_cstates[] __initdata = {
 					   CPUIDLE_FLAG_PARTIAL_HINT_MATCH,
 		.exit_latency = 210,
 		.target_residency = 1000,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -1087,7 +1087,7 @@ static struct cpuidle_state gnrd_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 1,
 		.target_residency = 1,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -1095,7 +1095,7 @@ static struct cpuidle_state gnrd_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 4,
 		.target_residency = 4,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -1105,7 +1105,7 @@ static struct cpuidle_state gnrd_cstates[] __initdata = {
 					   CPUIDLE_FLAG_PARTIAL_HINT_MATCH,
 		.exit_latency = 220,
 		.target_residency = 650,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6P",
@@ -1115,7 +1115,7 @@ static struct cpuidle_state gnrd_cstates[] __initdata = {
 					   CPUIDLE_FLAG_PARTIAL_HINT_MATCH,
 		.exit_latency = 240,
 		.target_residency = 750,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -1128,7 +1128,7 @@ static struct cpuidle_state atom_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 10,
 		.target_residency = 20,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C2",
@@ -1136,7 +1136,7 @@ static struct cpuidle_state atom_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x10),
 		.exit_latency = 20,
 		.target_residency = 80,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C4",
@@ -1144,7 +1144,7 @@ static struct cpuidle_state atom_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x30) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 100,
 		.target_residency = 400,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -1152,7 +1152,7 @@ static struct cpuidle_state atom_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x52) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 140,
 		.target_residency = 560,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -1164,7 +1164,7 @@ static struct cpuidle_state tangier_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 1,
 		.target_residency = 4,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C4",
@@ -1172,7 +1172,7 @@ static struct cpuidle_state tangier_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x30) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 100,
 		.target_residency = 400,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -1180,7 +1180,7 @@ static struct cpuidle_state tangier_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x52) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 140,
 		.target_residency = 560,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C7",
@@ -1188,7 +1188,7 @@ static struct cpuidle_state tangier_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x60) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 1200,
 		.target_residency = 4000,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C9",
@@ -1196,7 +1196,7 @@ static struct cpuidle_state tangier_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x64) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 10000,
 		.target_residency = 20000,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -1208,7 +1208,7 @@ static struct cpuidle_state avn_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 2,
 		.target_residency = 2,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -1216,7 +1216,7 @@ static struct cpuidle_state avn_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x51) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 15,
 		.target_residency = 45,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -1228,7 +1228,7 @@ static struct cpuidle_state knl_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 1,
 		.target_residency = 2,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle },
 	{
 		.name = "C6",
@@ -1236,7 +1236,7 @@ static struct cpuidle_state knl_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x10) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 120,
 		.target_residency = 500,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle },
 	{
 		.enter = NULL }
@@ -1249,7 +1249,7 @@ static struct cpuidle_state bxt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 2,
 		.target_residency = 2,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -1257,7 +1257,7 @@ static struct cpuidle_state bxt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 10,
 		.target_residency = 20,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -1265,7 +1265,7 @@ static struct cpuidle_state bxt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x20) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 133,
 		.target_residency = 133,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C7s",
@@ -1273,7 +1273,7 @@ static struct cpuidle_state bxt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x31) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 155,
 		.target_residency = 155,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C8",
@@ -1281,7 +1281,7 @@ static struct cpuidle_state bxt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x40) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 1000,
 		.target_residency = 1000,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C9",
@@ -1289,7 +1289,7 @@ static struct cpuidle_state bxt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x50) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 2000,
 		.target_residency = 2000,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C10",
@@ -1297,7 +1297,7 @@ static struct cpuidle_state bxt_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x60) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 10000,
 		.target_residency = 10000,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -1310,7 +1310,7 @@ static struct cpuidle_state dnv_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 2,
 		.target_residency = 2,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -1318,7 +1318,7 @@ static struct cpuidle_state dnv_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 10,
 		.target_residency = 20,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -1326,7 +1326,7 @@ static struct cpuidle_state dnv_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x20) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 50,
 		.target_residency = 500,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -1343,7 +1343,7 @@ static struct cpuidle_state snr_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00),
 		.exit_latency = 2,
 		.target_residency = 2,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -1351,7 +1351,7 @@ static struct cpuidle_state snr_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 15,
 		.target_residency = 25,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6",
@@ -1359,7 +1359,7 @@ static struct cpuidle_state snr_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x20) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 130,
 		.target_residency = 500,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -1372,7 +1372,7 @@ static struct cpuidle_state grr_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 1,
 		.target_residency = 1,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -1380,7 +1380,7 @@ static struct cpuidle_state grr_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 2,
 		.target_residency = 10,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6S",
@@ -1388,7 +1388,7 @@ static struct cpuidle_state grr_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x22) | CPUIDLE_FLAG_TLB_FLUSHED,
 		.exit_latency = 140,
 		.target_residency = 500,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
@@ -1401,7 +1401,7 @@ static struct cpuidle_state srf_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x00) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 1,
 		.target_residency = 1,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C1E",
@@ -1409,7 +1409,7 @@ static struct cpuidle_state srf_cstates[] __initdata = {
 		.flags = MWAIT2flg(0x01) | CPUIDLE_FLAG_ALWAYS_ENABLE,
 		.exit_latency = 2,
 		.target_residency = 10,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6S",
@@ -1418,7 +1418,7 @@ static struct cpuidle_state srf_cstates[] __initdata = {
 					   CPUIDLE_FLAG_PARTIAL_HINT_MATCH,
 		.exit_latency = 270,
 		.target_residency = 700,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.name = "C6SP",
@@ -1427,7 +1427,7 @@ static struct cpuidle_state srf_cstates[] __initdata = {
 					   CPUIDLE_FLAG_PARTIAL_HINT_MATCH,
 		.exit_latency = 310,
 		.target_residency = 900,
-		.enter = &intel_idle,
+		.enter = intel_idle,
 		.enter_s2idle = intel_idle_s2idle, },
 	{
 		.enter = NULL }
