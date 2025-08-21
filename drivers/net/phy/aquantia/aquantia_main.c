@@ -813,7 +813,7 @@ static int aqr107_config_mdi(struct phy_device *phydev)
 			      mdi_conf | PMAPMD_RSVD_VEND_PROV_MDI_FORCE);
 }
 
-static int aqr107_config_init(struct phy_device *phydev)
+static int aqr_gen1_config_init(struct phy_device *phydev)
 {
 	struct aqr107_priv *priv = phydev->priv;
 	u32 led_idx;
@@ -860,6 +860,11 @@ static int aqr107_config_init(struct phy_device *phydev)
 	}
 
 	return 0;
+}
+
+static int aqr_gen2_config_init(struct phy_device *phydev)
+{
+	return aqr_gen1_config_init(phydev);
 }
 
 static int aqcs109_config_init(struct phy_device *phydev)
@@ -923,7 +928,7 @@ static void aqr107_link_change_notify(struct phy_device *phydev)
 		phydev_info(phydev, "Aquantia 1000Base-T2 mode active\n");
 }
 
-static int aqr107_wait_processor_intensive_op(struct phy_device *phydev)
+static int aqr_gen1_wait_processor_intensive_op(struct phy_device *phydev)
 {
 	int val, err;
 
@@ -947,8 +952,8 @@ static int aqr107_wait_processor_intensive_op(struct phy_device *phydev)
 	return 0;
 }
 
-static int aqr107_get_rate_matching(struct phy_device *phydev,
-				    phy_interface_t iface)
+static int aqr_gen2_get_rate_matching(struct phy_device *phydev,
+				      phy_interface_t iface)
 {
 	if (iface == PHY_INTERFACE_MODE_10GBASER ||
 	    iface == PHY_INTERFACE_MODE_2500BASEX ||
@@ -957,7 +962,7 @@ static int aqr107_get_rate_matching(struct phy_device *phydev,
 	return RATE_MATCH_NONE;
 }
 
-static int aqr107_suspend(struct phy_device *phydev)
+static int aqr_gen1_suspend(struct phy_device *phydev)
 {
 	int err;
 
@@ -966,10 +971,10 @@ static int aqr107_suspend(struct phy_device *phydev)
 	if (err)
 		return err;
 
-	return aqr107_wait_processor_intensive_op(phydev);
+	return aqr_gen1_wait_processor_intensive_op(phydev);
 }
 
-static int aqr107_resume(struct phy_device *phydev)
+static int aqr_gen1_resume(struct phy_device *phydev)
 {
 	int err;
 
@@ -978,7 +983,7 @@ static int aqr107_resume(struct phy_device *phydev)
 	if (err)
 		return err;
 
-	return aqr107_wait_processor_intensive_op(phydev);
+	return aqr_gen1_wait_processor_intensive_op(phydev);
 }
 
 static const u16 aqr_global_cfg_regs[] = {
@@ -990,7 +995,7 @@ static const u16 aqr_global_cfg_regs[] = {
 	VEND1_GLOBAL_CFG_10G
 };
 
-static int aqr107_fill_interface_modes(struct phy_device *phydev)
+static int aqr_gen2_fill_interface_modes(struct phy_device *phydev)
 {
 	unsigned long *possible = phydev->possible_interfaces;
 	struct aqr107_priv *priv = phydev->priv;
@@ -1091,11 +1096,11 @@ static int aqr113c_config_init(struct phy_device *phydev)
 
 	priv->wait_on_global_cfg = true;
 
-	ret = aqr107_config_init(phydev);
+	ret = aqr_gen2_config_init(phydev);
 	if (ret < 0)
 		return ret;
 
-	ret = aqr107_fill_interface_modes(phydev);
+	ret = aqr_gen2_fill_interface_modes(phydev);
 	if (ret)
 		return ret;
 
@@ -1104,7 +1109,7 @@ static int aqr113c_config_init(struct phy_device *phydev)
 	if (ret)
 		return ret;
 
-	return aqr107_wait_processor_intensive_op(phydev);
+	return aqr_gen1_wait_processor_intensive_op(phydev);
 }
 
 static int aqr107_probe(struct phy_device *phydev)
@@ -1146,13 +1151,13 @@ static struct phy_driver aqr_driver[] = {
 	.name		= "Aquantia AQR105",
 	.get_features	= aqr105_get_features,
 	.probe		= aqr107_probe,
-	.config_init	= aqr107_config_init,
+	.config_init	= aqr_gen1_config_init,
 	.config_aneg    = aqr105_config_aneg,
 	.config_intr	= aqr_config_intr,
 	.handle_interrupt = aqr_handle_interrupt,
 	.read_status	= aqr105_read_status,
-	.suspend	= aqr107_suspend,
-	.resume		= aqr107_resume,
+	.suspend	= aqr_gen1_suspend,
+	.resume		= aqr_gen1_resume,
 },
 {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR106),
@@ -1166,16 +1171,16 @@ static struct phy_driver aqr_driver[] = {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR107),
 	.name		= "Aquantia AQR107",
 	.probe		= aqr107_probe,
-	.get_rate_matching = aqr107_get_rate_matching,
-	.config_init	= aqr107_config_init,
+	.get_rate_matching = aqr_gen2_get_rate_matching,
+	.config_init	= aqr_gen2_config_init,
 	.config_aneg    = aqr_config_aneg,
 	.config_intr	= aqr_config_intr,
 	.handle_interrupt = aqr_handle_interrupt,
 	.read_status	= aqr107_read_status,
 	.get_tunable    = aqr107_get_tunable,
 	.set_tunable    = aqr107_set_tunable,
-	.suspend	= aqr107_suspend,
-	.resume		= aqr107_resume,
+	.suspend	= aqr_gen1_suspend,
+	.resume		= aqr_gen1_resume,
 	.get_sset_count	= aqr107_get_sset_count,
 	.get_strings	= aqr107_get_strings,
 	.get_stats	= aqr107_get_stats,
@@ -1190,7 +1195,7 @@ static struct phy_driver aqr_driver[] = {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQCS109),
 	.name		= "Aquantia AQCS109",
 	.probe		= aqr107_probe,
-	.get_rate_matching = aqr107_get_rate_matching,
+	.get_rate_matching = aqr_gen2_get_rate_matching,
 	.config_init	= aqcs109_config_init,
 	.config_aneg    = aqr_config_aneg,
 	.config_intr	= aqr_config_intr,
@@ -1198,8 +1203,8 @@ static struct phy_driver aqr_driver[] = {
 	.read_status	= aqr107_read_status,
 	.get_tunable    = aqr107_get_tunable,
 	.set_tunable    = aqr107_set_tunable,
-	.suspend	= aqr107_suspend,
-	.resume		= aqr107_resume,
+	.suspend	= aqr_gen1_suspend,
+	.resume		= aqr_gen1_resume,
 	.get_sset_count	= aqr107_get_sset_count,
 	.get_strings	= aqr107_get_strings,
 	.get_stats	= aqr107_get_stats,
@@ -1215,16 +1220,16 @@ static struct phy_driver aqr_driver[] = {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR111),
 	.name		= "Aquantia AQR111",
 	.probe		= aqr107_probe,
-	.get_rate_matching = aqr107_get_rate_matching,
-	.config_init	= aqr107_config_init,
+	.get_rate_matching = aqr_gen2_get_rate_matching,
+	.config_init	= aqr_gen2_config_init,
 	.config_aneg    = aqr_config_aneg,
 	.config_intr	= aqr_config_intr,
 	.handle_interrupt = aqr_handle_interrupt,
 	.read_status	= aqr107_read_status,
 	.get_tunable    = aqr107_get_tunable,
 	.set_tunable    = aqr107_set_tunable,
-	.suspend	= aqr107_suspend,
-	.resume		= aqr107_resume,
+	.suspend	= aqr_gen1_suspend,
+	.resume		= aqr_gen1_resume,
 	.get_sset_count	= aqr107_get_sset_count,
 	.get_strings	= aqr107_get_strings,
 	.get_stats	= aqr107_get_stats,
@@ -1240,16 +1245,16 @@ static struct phy_driver aqr_driver[] = {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR111B0),
 	.name		= "Aquantia AQR111B0",
 	.probe		= aqr107_probe,
-	.get_rate_matching = aqr107_get_rate_matching,
-	.config_init	= aqr107_config_init,
+	.get_rate_matching = aqr_gen2_get_rate_matching,
+	.config_init	= aqr_gen2_config_init,
 	.config_aneg    = aqr_config_aneg,
 	.config_intr	= aqr_config_intr,
 	.handle_interrupt = aqr_handle_interrupt,
 	.read_status	= aqr107_read_status,
 	.get_tunable    = aqr107_get_tunable,
 	.set_tunable    = aqr107_set_tunable,
-	.suspend	= aqr107_suspend,
-	.resume		= aqr107_resume,
+	.suspend	= aqr_gen1_suspend,
+	.resume		= aqr_gen1_resume,
 	.get_sset_count	= aqr107_get_sset_count,
 	.get_strings	= aqr107_get_strings,
 	.get_stats	= aqr107_get_stats,
@@ -1278,10 +1283,10 @@ static struct phy_driver aqr_driver[] = {
 	.handle_interrupt = aqr_handle_interrupt,
 	.get_tunable    = aqr107_get_tunable,
 	.set_tunable    = aqr107_set_tunable,
-	.suspend	= aqr107_suspend,
-	.resume		= aqr107_resume,
+	.suspend	= aqr_gen1_suspend,
+	.resume		= aqr_gen1_resume,
 	.read_status	= aqr107_read_status,
-	.get_rate_matching = aqr107_get_rate_matching,
+	.get_rate_matching = aqr_gen2_get_rate_matching,
 	.get_sset_count = aqr107_get_sset_count,
 	.get_strings	= aqr107_get_strings,
 	.get_stats	= aqr107_get_stats,
@@ -1301,10 +1306,10 @@ static struct phy_driver aqr_driver[] = {
 	.handle_interrupt = aqr_handle_interrupt,
 	.get_tunable    = aqr107_get_tunable,
 	.set_tunable    = aqr107_set_tunable,
-	.suspend	= aqr107_suspend,
-	.resume		= aqr107_resume,
+	.suspend	= aqr_gen1_suspend,
+	.resume		= aqr_gen1_resume,
 	.read_status	= aqr107_read_status,
-	.get_rate_matching = aqr107_get_rate_matching,
+	.get_rate_matching = aqr_gen2_get_rate_matching,
 	.get_sset_count = aqr107_get_sset_count,
 	.get_strings	= aqr107_get_strings,
 	.get_stats	= aqr107_get_stats,
@@ -1319,10 +1324,10 @@ static struct phy_driver aqr_driver[] = {
 	.handle_interrupt = aqr_handle_interrupt,
 	.get_tunable    = aqr107_get_tunable,
 	.set_tunable    = aqr107_set_tunable,
-	.suspend	= aqr107_suspend,
-	.resume		= aqr107_resume,
+	.suspend	= aqr_gen1_suspend,
+	.resume		= aqr_gen1_resume,
 	.read_status	= aqr107_read_status,
-	.get_rate_matching = aqr107_get_rate_matching,
+	.get_rate_matching = aqr_gen2_get_rate_matching,
 	.get_sset_count = aqr107_get_sset_count,
 	.get_strings	= aqr107_get_strings,
 	.get_stats	= aqr107_get_stats,
@@ -1332,7 +1337,7 @@ static struct phy_driver aqr_driver[] = {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR113),
 	.name		= "Aquantia AQR113",
 	.probe          = aqr107_probe,
-	.get_rate_matching = aqr107_get_rate_matching,
+	.get_rate_matching = aqr_gen2_get_rate_matching,
 	.config_init    = aqr113c_config_init,
 	.config_aneg    = aqr_config_aneg,
 	.config_intr    = aqr_config_intr,
@@ -1340,8 +1345,8 @@ static struct phy_driver aqr_driver[] = {
 	.read_status    = aqr107_read_status,
 	.get_tunable    = aqr107_get_tunable,
 	.set_tunable    = aqr107_set_tunable,
-	.suspend        = aqr107_suspend,
-	.resume         = aqr107_resume,
+	.suspend        = aqr_gen1_suspend,
+	.resume         = aqr_gen1_resume,
 	.get_sset_count = aqr107_get_sset_count,
 	.get_strings    = aqr107_get_strings,
 	.get_stats      = aqr107_get_stats,
@@ -1356,7 +1361,7 @@ static struct phy_driver aqr_driver[] = {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR113C),
 	.name           = "Aquantia AQR113C",
 	.probe          = aqr107_probe,
-	.get_rate_matching = aqr107_get_rate_matching,
+	.get_rate_matching = aqr_gen2_get_rate_matching,
 	.config_init    = aqr113c_config_init,
 	.config_aneg    = aqr_config_aneg,
 	.config_intr    = aqr_config_intr,
@@ -1364,8 +1369,8 @@ static struct phy_driver aqr_driver[] = {
 	.read_status    = aqr107_read_status,
 	.get_tunable    = aqr107_get_tunable,
 	.set_tunable    = aqr107_set_tunable,
-	.suspend        = aqr107_suspend,
-	.resume         = aqr107_resume,
+	.suspend        = aqr_gen1_suspend,
+	.resume         = aqr_gen1_resume,
 	.get_sset_count = aqr107_get_sset_count,
 	.get_strings    = aqr107_get_strings,
 	.get_stats      = aqr107_get_stats,
@@ -1380,16 +1385,16 @@ static struct phy_driver aqr_driver[] = {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR114C),
 	.name           = "Aquantia AQR114C",
 	.probe          = aqr107_probe,
-	.get_rate_matching = aqr107_get_rate_matching,
-	.config_init    = aqr107_config_init,
+	.get_rate_matching = aqr_gen2_get_rate_matching,
+	.config_init    = aqr_gen2_config_init,
 	.config_aneg    = aqr_config_aneg,
 	.config_intr    = aqr_config_intr,
 	.handle_interrupt = aqr_handle_interrupt,
 	.read_status    = aqr107_read_status,
 	.get_tunable    = aqr107_get_tunable,
 	.set_tunable    = aqr107_set_tunable,
-	.suspend        = aqr107_suspend,
-	.resume         = aqr107_resume,
+	.suspend        = aqr_gen1_suspend,
+	.resume         = aqr_gen1_resume,
 	.get_sset_count = aqr107_get_sset_count,
 	.get_strings    = aqr107_get_strings,
 	.get_stats      = aqr107_get_stats,
@@ -1405,7 +1410,7 @@ static struct phy_driver aqr_driver[] = {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR115C),
 	.name           = "Aquantia AQR115C",
 	.probe          = aqr107_probe,
-	.get_rate_matching = aqr107_get_rate_matching,
+	.get_rate_matching = aqr_gen2_get_rate_matching,
 	.config_init    = aqr113c_config_init,
 	.config_aneg    = aqr_config_aneg,
 	.config_intr    = aqr_config_intr,
@@ -1413,8 +1418,8 @@ static struct phy_driver aqr_driver[] = {
 	.read_status    = aqr107_read_status,
 	.get_tunable    = aqr107_get_tunable,
 	.set_tunable    = aqr107_set_tunable,
-	.suspend        = aqr107_suspend,
-	.resume         = aqr107_resume,
+	.suspend        = aqr_gen1_suspend,
+	.resume         = aqr_gen1_resume,
 	.get_sset_count = aqr107_get_sset_count,
 	.get_strings    = aqr107_get_strings,
 	.get_stats      = aqr107_get_stats,
@@ -1430,16 +1435,16 @@ static struct phy_driver aqr_driver[] = {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR813),
 	.name		= "Aquantia AQR813",
 	.probe		= aqr107_probe,
-	.get_rate_matching = aqr107_get_rate_matching,
-	.config_init	= aqr107_config_init,
+	.get_rate_matching = aqr_gen2_get_rate_matching,
+	.config_init	= aqr_gen2_config_init,
 	.config_aneg    = aqr_config_aneg,
 	.config_intr	= aqr_config_intr,
 	.handle_interrupt = aqr_handle_interrupt,
 	.read_status	= aqr107_read_status,
 	.get_tunable    = aqr107_get_tunable,
 	.set_tunable    = aqr107_set_tunable,
-	.suspend	= aqr107_suspend,
-	.resume		= aqr107_resume,
+	.suspend	= aqr_gen1_suspend,
+	.resume		= aqr_gen1_resume,
 	.get_sset_count	= aqr107_get_sset_count,
 	.get_strings	= aqr107_get_strings,
 	.get_stats	= aqr107_get_stats,
