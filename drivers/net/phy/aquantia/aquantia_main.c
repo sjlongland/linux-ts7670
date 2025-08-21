@@ -977,6 +977,11 @@ static int aqr_gen2_config_init(struct phy_device *phydev)
 	return aqr_gen2_fill_interface_modes(phydev);
 }
 
+static int aqr_gen3_config_init(struct phy_device *phydev)
+{
+	return aqr_gen2_config_init(phydev);
+}
+
 static int aqcs109_config_init(struct phy_device *phydev)
 {
 	int ret;
@@ -1252,7 +1257,7 @@ static struct phy_driver aqr_driver[] = {
 	.name		= "Aquantia AQR111",
 	.probe		= aqr107_probe,
 	.get_rate_matching = aqr_gen2_get_rate_matching,
-	.config_init	= aqr_gen2_config_init,
+	.config_init	= aqr_gen3_config_init,
 	.config_aneg    = aqr_config_aneg,
 	.config_intr	= aqr_config_intr,
 	.handle_interrupt = aqr_handle_interrupt,
@@ -1277,7 +1282,7 @@ static struct phy_driver aqr_driver[] = {
 	.name		= "Aquantia AQR111B0",
 	.probe		= aqr107_probe,
 	.get_rate_matching = aqr_gen2_get_rate_matching,
-	.config_init	= aqr_gen2_config_init,
+	.config_init	= aqr_gen3_config_init,
 	.config_aneg    = aqr_config_aneg,
 	.config_intr	= aqr_config_intr,
 	.handle_interrupt = aqr_handle_interrupt,
@@ -1309,6 +1314,7 @@ static struct phy_driver aqr_driver[] = {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR112),
 	.name		= "Aquantia AQR112",
 	.probe		= aqr107_probe,
+	.config_init	= aqr_gen3_config_init,
 	.config_aneg    = aqr_config_aneg,
 	.config_intr	= aqr_config_intr,
 	.handle_interrupt = aqr_handle_interrupt,
@@ -1332,6 +1338,7 @@ static struct phy_driver aqr_driver[] = {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR412),
 	.name		= "Aquantia AQR412",
 	.probe		= aqr107_probe,
+	.config_init	= aqr_gen3_config_init,
 	.config_aneg    = aqr_config_aneg,
 	.config_intr	= aqr_config_intr,
 	.handle_interrupt = aqr_handle_interrupt,
@@ -1350,6 +1357,7 @@ static struct phy_driver aqr_driver[] = {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR412C),
 	.name		= "Aquantia AQR412C",
 	.probe		= aqr107_probe,
+	.config_init	= aqr_gen3_config_init,
 	.config_aneg    = aqr_config_aneg,
 	.config_intr	= aqr_config_intr,
 	.handle_interrupt = aqr_handle_interrupt,
