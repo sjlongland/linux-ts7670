@@ -1119,14 +1119,14 @@ static int aqr111_get_features(struct phy_device *phydev)
 	return 0;
 }
 
-static int aqr113c_config_init(struct phy_device *phydev)
+static int aqr_gen4_config_init(struct phy_device *phydev)
 {
 	struct aqr107_priv *priv = phydev->priv;
 	int ret;
 
 	priv->wait_on_global_cfg = true;
 
-	ret = aqr_gen2_config_init(phydev);
+	ret = aqr_gen3_config_init(phydev);
 	if (ret < 0)
 		return ret;
 
@@ -1367,7 +1367,7 @@ static struct phy_driver aqr_driver[] = {
 	.name		= "Aquantia AQR113",
 	.probe          = aqr107_probe,
 	.get_rate_matching = aqr_gen2_get_rate_matching,
-	.config_init    = aqr113c_config_init,
+	.config_init    = aqr_gen4_config_init,
 	.config_aneg    = aqr_config_aneg,
 	.config_intr    = aqr_config_intr,
 	.handle_interrupt       = aqr_handle_interrupt,
@@ -1391,7 +1391,7 @@ static struct phy_driver aqr_driver[] = {
 	.name           = "Aquantia AQR113C",
 	.probe          = aqr107_probe,
 	.get_rate_matching = aqr_gen2_get_rate_matching,
-	.config_init    = aqr113c_config_init,
+	.config_init    = aqr_gen4_config_init,
 	.config_aneg    = aqr_config_aneg,
 	.config_intr    = aqr_config_intr,
 	.handle_interrupt       = aqr_handle_interrupt,
@@ -1440,7 +1440,7 @@ static struct phy_driver aqr_driver[] = {
 	.name           = "Aquantia AQR115C",
 	.probe          = aqr107_probe,
 	.get_rate_matching = aqr_gen2_get_rate_matching,
-	.config_init    = aqr113c_config_init,
+	.config_init    = aqr_gen4_config_init,
 	.config_aneg    = aqr_config_aneg,
 	.config_intr    = aqr_config_intr,
 	.handle_interrupt = aqr_handle_interrupt,
