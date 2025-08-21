@@ -361,10 +361,14 @@ int wx_set_coalesce(struct net_device *netdev,
 	else
 		wx->rx_itr_setting = ec->rx_coalesce_usecs;
 
-	if (wx->rx_itr_setting == 1)
-		rx_itr_param = WX_20K_ITR;
-	else
+	if (wx->rx_itr_setting == 1) {
+		if (wx->mac.type == wx_mac_em)
+			rx_itr_param = WX_7K_ITR;
+		else
+			rx_itr_param = WX_20K_ITR;
+	} else {
 		rx_itr_param = wx->rx_itr_setting;
+	}
 
 	if (ec->tx_coalesce_usecs > 1)
 		wx->tx_itr_setting = ec->tx_coalesce_usecs << 2;
@@ -378,7 +382,7 @@ int wx_set_coalesce(struct net_device *netdev,
 			tx_itr_param = WX_12K_ITR;
 			break;
 		default:
-			tx_itr_param = WX_20K_ITR;
+			tx_itr_param = WX_7K_ITR;
 			break;
 		}
 	} else {
