@@ -1831,7 +1831,7 @@ static void nfs_commit_release_pages(struct nfs_commit_data *data)
 				nfs_mapping_set_error(folio, status);
 				nfs_inode_remove_request(req);
 			}
-			dprintk_cont(", error = %d\n", status);
+			dprintk(", error = %d\n", status);
 			goto next;
 		}
 
@@ -1841,11 +1841,11 @@ static void nfs_commit_release_pages(struct nfs_commit_data *data)
 			/* We have a match */
 			if (folio)
 				nfs_inode_remove_request(req);
-			dprintk_cont(" OK\n");
+			dprintk(" OK\n");
 			goto next;
 		}
 		/* We have a mismatch. Write the page again */
-		dprintk_cont(" mismatch\n");
+		dprintk(" mismatch\n");
 		nfs_mark_request_dirty(req);
 		atomic_long_inc(&NFS_I(data->inode)->redirtied_pages);
 	next:
