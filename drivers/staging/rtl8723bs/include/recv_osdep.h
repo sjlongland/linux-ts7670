@@ -20,9 +20,6 @@ extern void rtw_handle_tkip_mic_err(struct adapter *padapter, u8 bgroup);
 int	rtw_init_recv_priv(struct recv_priv *precvpriv, struct adapter *padapter);
 void rtw_free_recv_priv(struct recv_priv *precvpriv);
 
-
-void rtw_os_recv_resource_free(struct recv_priv *precvpriv);
-
 void rtw_os_recvbuf_resource_free(struct adapter *padapter, struct recv_buf *precvbuf);
 
 struct sk_buff *rtw_os_alloc_msdu_pkt(union recv_frame *prframe, u16 nSubframe_Length, u8 *pdata);
