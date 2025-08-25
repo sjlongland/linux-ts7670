@@ -282,7 +282,6 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_enet1 &pinctrl_enet1_mdio &pinctrl_etnphy0_rst>;
 	phy-mode = "rmii";
-	phy-reset-gpios = <&gpio5 6 GPIO_ACTIVE_LOW>;
 	phy-supply = <&reg_3v3_etn>;
 	phy-handle = <&etnphy0>;
 	status = "okay";
@@ -298,6 +297,11 @@
 			pinctrl-0 = <&pinctrl_etnphy0_int>;
 			interrupt-parent = <&gpio5>;
 			interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
+			reset-gpios = <&gpio5 6 GPIO_ACTIVE_LOW>;
+			reset-assert-us = <100>;
+			reset-deassert-us = <25000>;
+			/* Energy detect sometimes causes link failures */
+			smsc,disable-energy-detect;
 			status = "okay";
 		};
 
@@ -308,6 +312,9 @@
 			pinctrl-0 = <&pinctrl_etnphy1_int>;
 			interrupt-parent = <&gpio4>;
 			interrupts = <27 IRQ_TYPE_EDGE_FALLING>;
+			reset-gpios = <&gpio4 28 GPIO_ACTIVE_LOW>;
+			reset-assert-us = <100>;
+			reset-deassert-us = <25000>;
 			status = "okay";
 		};
 	};
@@ -317,7 +324,6 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_enet2 &pinctrl_etnphy1_rst>;
 	phy-mode = "rmii";
-	phy-reset-gpios = <&gpio4 28 GPIO_ACTIVE_LOW>;
 	phy-supply = <&reg_3v3_etn>;
 	phy-handle = <&etnphy1>;
 	status = "disabled";
