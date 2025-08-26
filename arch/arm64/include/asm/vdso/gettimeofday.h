@@ -5,6 +5,8 @@
 #ifndef __ASM_VDSO_GETTIMEOFDAY_H
 #define __ASM_VDSO_GETTIMEOFDAY_H
 
+#ifdef __aarch64__
+
 #ifndef __ASSEMBLY__
 
 #include <asm/alternative.h>
@@ -100,5 +102,11 @@ static __always_inline u64 __arch_get_hw_counter(s32 clock_mode,
 }
 
 #endif /* !__ASSEMBLY__ */
+
+#else /* !__aarch64__ */
+
+#include "compat_gettimeofday.h"
+
+#endif /* __aarch64__ */
 
 #endif /* __ASM_VDSO_GETTIMEOFDAY_H */
