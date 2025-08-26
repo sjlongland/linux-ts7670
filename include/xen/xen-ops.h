@@ -6,6 +6,7 @@
 #include <linux/notifier.h>
 #include <linux/efi.h>
 #include <linux/virtio_anchor.h>
+#include <xen/xen.h>
 #include <xen/features.h>
 #include <asm/xen/interface.h>
 #include <xen/interface/vcpu.h>
@@ -118,7 +119,7 @@ static inline int xen_remap_domain_gfn_array(struct vm_area_struct *vma,
 					     unsigned int domid,
 					     struct page **pages)
 {
-	if (xen_feature(XENFEAT_auto_translated_physmap))
+	if (!xen_pv_domain())
 		return xen_xlate_remap_gfn_array(vma, addr, gfn, nr, err_ptr,
 						 prot, domid, pages);
 
@@ -152,7 +153,7 @@ static inline int xen_remap_domain_mfn_array(struct vm_area_struct *vma,
 					     int nr, int *err_ptr,
 					     pgprot_t prot, unsigned int domid)
 {
-	if (xen_feature(XENFEAT_auto_translated_physmap))
+	if (!xen_pv_domain())
 		return -EOPNOTSUPP;
 
 	return xen_remap_pfn(vma, addr, mfn, nr, err_ptr, prot, domid,
@@ -177,7 +178,7 @@ static inline int xen_remap_domain_gfn_range(struct vm_area_struct *vma,
 					     pgprot_t prot, unsigned int domid,
 					     struct page **pages)
 {
-	if (xen_feature(XENFEAT_auto_translated_physmap))
+	if (!xen_pv_domain())
 		return -EOPNOTSUPP;
 
 	return xen_remap_pfn(vma, addr, &gfn, nr, NULL, prot, domid, false);
