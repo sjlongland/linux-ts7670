@@ -1468,6 +1468,12 @@ struct rtw89_pci_dma_ring {
 	u32 rp; /* hw idx */
 };
 
+struct rtw89_pci_dma_pool {
+	void *head;
+	dma_addr_t dma;
+	u32 size;
+};
+
 struct rtw89_pci_tx_wd_ring {
 	void *head;
 	dma_addr_t dma;
@@ -1499,6 +1505,7 @@ struct rtw89_pci_tx_ring {
 
 struct rtw89_pci_tx_rings {
 	struct rtw89_pci_tx_ring rings[RTW89_TXCH_NUM];
+	struct rtw89_pci_dma_pool bd_pool;
 };
 
 struct rtw89_pci_rx_ring {
@@ -1512,6 +1519,7 @@ struct rtw89_pci_rx_ring {
 
 struct rtw89_pci_rx_rings {
 	struct rtw89_pci_rx_ring rings[RTW89_RXCH_NUM];
+	struct rtw89_pci_dma_pool bd_pool;
 };
 
 struct rtw89_pci_isrs {
