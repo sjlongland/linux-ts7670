@@ -566,7 +566,7 @@ static int bounce_error_event(struct snd_seq_client *client,
 static int update_timestamp_of_queue(struct snd_seq_event *event,
 				     int queue, int real_time)
 {
-	struct snd_seq_queue *q;
+	struct snd_seq_queue *q __free(snd_seq_queue) = NULL;
 
 	q = queueptr(queue);
 	if (! q)
@@ -580,7 +580,6 @@ static int update_timestamp_of_queue(struct snd_seq_event *event,
 		event->time.tick = snd_seq_timer_get_cur_tick(q->timer);
 		event->flags |= SNDRV_SEQ_TIME_STAMP_TICK;
 	}
-	queuefree(q);
 	return 1;
 }
 
@@ -1530,7 +1529,7 @@ static int snd_seq_ioctl_unsubscribe_port(struct snd_seq_client *client,
 static int snd_seq_ioctl_create_queue(struct snd_seq_client *client, void *arg)
 {
 	struct snd_seq_queue_info *info = arg;
-	struct snd_seq_queue *q;
+	struct snd_seq_queue *q __free(snd_seq_queue) = NULL;
 
 	q = snd_seq_queue_alloc(client->number, info->locked, info->flags);
 	if (IS_ERR(q))
@@ -1544,7 +1543,6 @@ static int snd_seq_ioctl_create_queue(struct snd_seq_client *client, void *arg)
 	if (!info->name[0])
 		snprintf(info->name, sizeof(info->name), "Queue-%d", q->queue);
 	strscpy(q->name, info->name, sizeof(q->name));
-	snd_use_lock_free(&q->use_lock);
 
 	return 0;
 }
@@ -1562,7 +1560,7 @@ static int snd_seq_ioctl_get_queue_info(struct snd_seq_client *client,
 					void *arg)
 {
 	struct snd_seq_queue_info *info = arg;
-	struct snd_seq_queue *q;
+	struct snd_seq_queue *q __free(snd_seq_queue) = NULL;
 
 	q = queueptr(info->queue);
 	if (q == NULL)
@@ -1573,7 +1571,6 @@ static int snd_seq_ioctl_get_queue_info(struct snd_seq_client *client,
 	info->owner = q->owner;
 	info->locked = q->locked;
 	strscpy(info->name, q->name, sizeof(info->name));
-	queuefree(q);
 
 	return 0;
 }
@@ -1583,7 +1580,7 @@ static int snd_seq_ioctl_set_queue_info(struct snd_seq_client *client,
 					void *arg)
 {
 	struct snd_seq_queue_info *info = arg;
-	struct snd_seq_queue *q;
+	struct snd_seq_queue *q __free(snd_seq_queue) = NULL;
 
 	if (info->owner != client->number)
 		return -EINVAL;
@@ -1601,12 +1598,9 @@ static int snd_seq_ioctl_set_queue_info(struct snd_seq_client *client,
 	q = queueptr(info->queue);
 	if (! q)
 		return -EINVAL;
-	if (q->owner != client->number) {
-		queuefree(q);
+	if (q->owner != client->number)
 		return -EPERM;
-	}
 	strscpy(q->name, info->name, sizeof(q->name));
-	queuefree(q);
 
 	return 0;
 }
@@ -1616,7 +1610,7 @@ static int snd_seq_ioctl_get_named_queue(struct snd_seq_client *client,
 					 void *arg)
 {
 	struct snd_seq_queue_info *info = arg;
-	struct snd_seq_queue *q;
+	struct snd_seq_queue *q __free(snd_seq_queue) = NULL;
 
 	q = snd_seq_queue_find_name(info->name);
 	if (q == NULL)
@@ -1624,7 +1618,6 @@ static int snd_seq_ioctl_get_named_queue(struct snd_seq_client *client,
 	info->queue = q->queue;
 	info->owner = q->owner;
 	info->locked = q->locked;
-	queuefree(q);
 
 	return 0;
 }
@@ -1634,7 +1627,7 @@ static int snd_seq_ioctl_get_queue_status(struct snd_seq_client *client,
 					  void *arg)
 {
 	struct snd_seq_queue_status *status = arg;
-	struct snd_seq_queue *queue;
+	struct snd_seq_queue *queue __free(snd_seq_queue) = NULL;
 	struct snd_seq_timer *tmr;
 
 	queue = queueptr(status->queue);
@@ -1652,7 +1645,6 @@ static int snd_seq_ioctl_get_queue_status(struct snd_seq_client *client,
 	status->running = tmr->running;
 
 	status->flags = queue->flags;
-	queuefree(queue);
 
 	return 0;
 }
@@ -1663,7 +1655,7 @@ static int snd_seq_ioctl_get_queue_tempo(struct snd_seq_client *client,
 					 void *arg)
 {
 	struct snd_seq_queue_tempo *tempo = arg;
-	struct snd_seq_queue *queue;
+	struct snd_seq_queue *queue __free(snd_seq_queue) = NULL;
 	struct snd_seq_timer *tmr;
 
 	queue = queueptr(tempo->queue);
@@ -1680,7 +1672,6 @@ static int snd_seq_ioctl_get_queue_tempo(struct snd_seq_client *client,
 	tempo->skew_base = tmr->skew_base;
 	if (client->user_pversion >= SNDRV_PROTOCOL_VERSION(1, 0, 4))
 		tempo->tempo_base = tmr->tempo_base;
-	queuefree(queue);
 
 	return 0;
 }
@@ -1713,14 +1704,14 @@ static int snd_seq_ioctl_get_queue_timer(struct snd_seq_client *client,
 					 void *arg)
 {
 	struct snd_seq_queue_timer *timer = arg;
-	struct snd_seq_queue *queue;
+	struct snd_seq_queue *queue __free(snd_seq_queue) = NULL;
 	struct snd_seq_timer *tmr;
 
 	queue = queueptr(timer->queue);
 	if (queue == NULL)
 		return -EINVAL;
 
-	mutex_lock(&queue->timer_mutex);
+	guard(mutex)(&queue->timer_mutex);
 	tmr = queue->timer;
 	memset(timer, 0, sizeof(*timer));
 	timer->queue = queue->queue;
@@ -1730,8 +1721,6 @@ static int snd_seq_ioctl_get_queue_timer(struct snd_seq_client *client,
 		timer->u.alsa.id = tmr->alsa_id;
 		timer->u.alsa.resolution = tmr->preferred_resolution;
 	}
-	mutex_unlock(&queue->timer_mutex);
-	queuefree(queue);
 	
 	return 0;
 }
@@ -1748,13 +1737,13 @@ static int snd_seq_ioctl_set_queue_timer(struct snd_seq_client *client,
 		return -EINVAL;
 
 	if (snd_seq_queue_check_access(timer->queue, client->number)) {
-		struct snd_seq_queue *q;
+		struct snd_seq_queue *q __free(snd_seq_queue) = NULL;
 		struct snd_seq_timer *tmr;
 
 		q = queueptr(timer->queue);
 		if (q == NULL)
 			return -ENXIO;
-		mutex_lock(&q->timer_mutex);
+		guard(mutex)(&q->timer_mutex);
 		tmr = q->timer;
 		snd_seq_queue_timer_close(timer->queue);
 		tmr->type = timer->type;
@@ -1763,8 +1752,6 @@ static int snd_seq_ioctl_set_queue_timer(struct snd_seq_client *client,
 			tmr->preferred_resolution = timer->u.alsa.resolution;
 		}
 		result = snd_seq_queue_timer_open(timer->queue);
-		mutex_unlock(&q->timer_mutex);
-		queuefree(q);
 	} else {
 		return -EPERM;
 	}	
