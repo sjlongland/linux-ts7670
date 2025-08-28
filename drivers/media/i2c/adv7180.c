@@ -893,6 +893,23 @@ static int init_device(struct adv7180_state *state)
 
 	lockdep_assert_held(&state->mutex);
 
+	ret = adv7180_program_std(state);
+	if (ret)
+		return ret;
+
+	adv7180_set_field_mode(state);
+
+	__v4l2_ctrl_handler_setup(&state->ctrl_hdl);
+
+	return ret;
+}
+
+static int adv7180_reset_device(struct adv7180_state *state)
+{
+	int ret;
+
+	lockdep_assert_held(&state->mutex);
+
 	adv7180_set_power_pin(state, true);
 	adv7180_set_reset_pin(state, false);
 
@@ -910,13 +927,9 @@ static int init_device(struct adv7180_state *state)
 	if (ret)
 		return ret;
 
-	ret = adv7180_program_std(state);
+	ret = init_device(state);
 	if (ret)
 		return ret;
-
-	adv7180_set_field_mode(state);
-
-	__v4l2_ctrl_handler_setup(&state->ctrl_hdl);
 
 	/* register for interrupts */
 	if (state->irq > 0) {
@@ -1503,7 +1516,7 @@ static int adv7180_probe(struct i2c_client *client)
 		goto err_free_ctrl;
 
 	mutex_lock(&state->mutex);
-	ret = init_device(state);
+	ret = adv7180_reset_device(state);
 	mutex_unlock(&state->mutex);
 	if (ret)
 		goto err_media_entity_cleanup;
@@ -1589,7 +1602,7 @@ static int adv7180_resume(struct device *dev)
 
 	guard(mutex)(&state->mutex);
 
-	ret = init_device(state);
+	ret = adv7180_reset_device(state);
 	if (ret < 0)
 		return ret;
 
