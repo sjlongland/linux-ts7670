@@ -54,7 +54,6 @@
 #include "mesh-interface.h"
 #include "multicast.h"
 #include "netlink.h"
-#include "network-coding.h"
 #include "originator.h"
 #include "routing.h"
 #include "send.h"
@@ -106,7 +105,6 @@ static int __init batadv_init(void)
 
 	batadv_v_init();
 	batadv_iv_init();
-	batadv_nc_init();
 	batadv_tp_meter_init();
 
 	batadv_event_workqueue = create_singlethread_workqueue("bat_events");
@@ -221,12 +219,6 @@ int batadv_mesh_init(struct net_device *mesh_iface)
 		goto err_dat;
 	}
 
-	ret = batadv_nc_mesh_init(bat_priv);
-	if (ret < 0) {
-		atomic_set(&bat_priv->mesh_state, BATADV_MESH_DEACTIVATING);
-		goto err_nc;
-	}
-
 	batadv_gw_init(bat_priv);
 	batadv_mcast_init(bat_priv);
 
@@ -235,8 +227,6 @@ int batadv_mesh_init(struct net_device *mesh_iface)
 
 	return 0;
 
-err_nc:
-	batadv_dat_free(bat_priv);
 err_dat:
 	batadv_bla_free(bat_priv);
 err_bla:
@@ -267,7 +257,6 @@ void batadv_mesh_free(struct net_device *mesh_iface)
 	batadv_gw_node_free(bat_priv);
 
 	batadv_v_mesh_free(bat_priv);
-	batadv_nc_mesh_free(bat_priv);
 	batadv_dat_free(bat_priv);
 	batadv_bla_free(bat_priv);
 
@@ -340,11 +329,6 @@ int batadv_max_header_len(void)
 			   sizeof(struct batadv_unicast_4addr_packet));
 	header_len = max_t(int, header_len,
 			   sizeof(struct batadv_bcast_packet));
-
-#ifdef CONFIG_BATMAN_ADV_NC
-	header_len = max_t(int, header_len,
-			   sizeof(struct batadv_coded_packet));
-#endif
 
 	return header_len + ETH_HLEN;
 }
