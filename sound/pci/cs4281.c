@@ -651,7 +651,7 @@ static int snd_cs4281_trigger(struct snd_pcm_substream *substream, int cmd)
 	struct cs4281_dma *dma = substream->runtime->private_data;
 	struct cs4281 *chip = snd_pcm_substream_chip(substream);
 
-	spin_lock(&chip->reg_lock);
+	guard(spinlock)(&chip->reg_lock);
 	switch (cmd) {
 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
 		dma->valDCR |= BA0_DCR_MSK;
@@ -678,13 +678,11 @@ static int snd_cs4281_trigger(struct snd_pcm_substream *substream, int cmd)
 			dma->valFCR &= ~BA0_FCR_FEN;
 		break;
 	default:
-		spin_unlock(&chip->reg_lock);
 		return -EINVAL;
 	}
 	snd_cs4281_pokeBA0(chip, dma->regDMR, dma->valDMR);
 	snd_cs4281_pokeBA0(chip, dma->regFCR, dma->valFCR);
 	snd_cs4281_pokeBA0(chip, dma->regDCR, dma->valDCR);
-	spin_unlock(&chip->reg_lock);
 	return 0;
 }
 
@@ -782,9 +780,8 @@ static int snd_cs4281_playback_prepare(struct snd_pcm_substream *substream)
 	struct cs4281_dma *dma = runtime->private_data;
 	struct cs4281 *chip = snd_pcm_substream_chip(substream);
 
-	spin_lock_irq(&chip->reg_lock);
+	guard(spinlock_irq)(&chip->reg_lock);
 	snd_cs4281_mode(chip, dma, runtime, 0, 1);
-	spin_unlock_irq(&chip->reg_lock);
 	return 0;
 }
 
@@ -794,9 +791,8 @@ static int snd_cs4281_capture_prepare(struct snd_pcm_substream *substream)
 	struct cs4281_dma *dma = runtime->private_data;
 	struct cs4281 *chip = snd_pcm_substream_chip(substream);
 
-	spin_lock_irq(&chip->reg_lock);
+	guard(spinlock_irq)(&chip->reg_lock);
 	snd_cs4281_mode(chip, dma, runtime, 1, 1);
-	spin_unlock_irq(&chip->reg_lock);
 	return 0;
 }
 
@@ -1579,7 +1575,7 @@ static int snd_cs4281_midi_input_open(struct snd_rawmidi_substream *substream)
 {
 	struct cs4281 *chip = substream->rmidi->private_data;
 
-	spin_lock_irq(&chip->reg_lock);
+	guard(spinlock_irq)(&chip->reg_lock);
  	chip->midcr |= BA0_MIDCR_RXE;
 	chip->midi_input = substream;
 	if (!(chip->uartm & CS4281_MODE_OUTPUT)) {
@@ -1587,7 +1583,6 @@ static int snd_cs4281_midi_input_open(struct snd_rawmidi_substream *substream)
 	} else {
 		snd_cs4281_pokeBA0(chip, BA0_MIDCR, chip->midcr);
 	}
-	spin_unlock_irq(&chip->reg_lock);
 	return 0;
 }
 
@@ -1595,7 +1590,7 @@ static int snd_cs4281_midi_input_close(struct snd_rawmidi_substream *substream)
 {
 	struct cs4281 *chip = substream->rmidi->private_data;
 
-	spin_lock_irq(&chip->reg_lock);
+	guard(spinlock_irq)(&chip->reg_lock);
 	chip->midcr &= ~(BA0_MIDCR_RXE | BA0_MIDCR_RIE);
 	chip->midi_input = NULL;
 	if (!(chip->uartm & CS4281_MODE_OUTPUT)) {
@@ -1604,7 +1599,6 @@ static int snd_cs4281_midi_input_close(struct snd_rawmidi_substream *substream)
 		snd_cs4281_pokeBA0(chip, BA0_MIDCR, chip->midcr);
 	}
 	chip->uartm &= ~CS4281_MODE_INPUT;
-	spin_unlock_irq(&chip->reg_lock);
 	return 0;
 }
 
@@ -1612,7 +1606,7 @@ static int snd_cs4281_midi_output_open(struct snd_rawmidi_substream *substream)
 {
 	struct cs4281 *chip = substream->rmidi->private_data;
 
-	spin_lock_irq(&chip->reg_lock);
+	guard(spinlock_irq)(&chip->reg_lock);
 	chip->uartm |= CS4281_MODE_OUTPUT;
 	chip->midcr |= BA0_MIDCR_TXE;
 	chip->midi_output = substream;
@@ -1621,7 +1615,6 @@ static int snd_cs4281_midi_output_open(struct snd_rawmidi_substream *substream)
 	} else {
 		snd_cs4281_pokeBA0(chip, BA0_MIDCR, chip->midcr);
 	}
-	spin_unlock_irq(&chip->reg_lock);
 	return 0;
 }
 
@@ -1629,7 +1622,7 @@ static int snd_cs4281_midi_output_close(struct snd_rawmidi_substream *substream)
 {
 	struct cs4281 *chip = substream->rmidi->private_data;
 
-	spin_lock_irq(&chip->reg_lock);
+	guard(spinlock_irq)(&chip->reg_lock);
 	chip->midcr &= ~(BA0_MIDCR_TXE | BA0_MIDCR_TIE);
 	chip->midi_output = NULL;
 	if (!(chip->uartm & CS4281_MODE_INPUT)) {
@@ -1638,16 +1631,14 @@ static int snd_cs4281_midi_output_close(struct snd_rawmidi_substream *substream)
 		snd_cs4281_pokeBA0(chip, BA0_MIDCR, chip->midcr);
 	}
 	chip->uartm &= ~CS4281_MODE_OUTPUT;
-	spin_unlock_irq(&chip->reg_lock);
 	return 0;
 }
 
 static void snd_cs4281_midi_input_trigger(struct snd_rawmidi_substream *substream, int up)
 {
-	unsigned long flags;
 	struct cs4281 *chip = substream->rmidi->private_data;
 
-	spin_lock_irqsave(&chip->reg_lock, flags);
+	guard(spinlock_irqsave)(&chip->reg_lock);
 	if (up) {
 		if ((chip->midcr & BA0_MIDCR_RIE) == 0) {
 			chip->midcr |= BA0_MIDCR_RIE;
@@ -1659,16 +1650,14 @@ static void snd_cs4281_midi_input_trigger(struct snd_rawmidi_substream *substrea
 			snd_cs4281_pokeBA0(chip, BA0_MIDCR, chip->midcr);
 		}
 	}
-	spin_unlock_irqrestore(&chip->reg_lock, flags);
 }
 
 static void snd_cs4281_midi_output_trigger(struct snd_rawmidi_substream *substream, int up)
 {
-	unsigned long flags;
 	struct cs4281 *chip = substream->rmidi->private_data;
 	unsigned char byte;
 
-	spin_lock_irqsave(&chip->reg_lock, flags);
+	guard(spinlock_irqsave)(&chip->reg_lock);
 	if (up) {
 		if ((chip->midcr & BA0_MIDCR_TIE) == 0) {
 			chip->midcr |= BA0_MIDCR_TIE;
@@ -1689,7 +1678,6 @@ static void snd_cs4281_midi_output_trigger(struct snd_rawmidi_substream *substre
 			snd_cs4281_pokeBA0(chip, BA0_MIDCR, chip->midcr);
 		}
 	}
-	spin_unlock_irqrestore(&chip->reg_lock, flags);
 }
 
 static const struct snd_rawmidi_ops snd_cs4281_midi_output =
@@ -1742,10 +1730,12 @@ static irqreturn_t snd_cs4281_interrupt(int irq, void *dev_id)
 	}
 
 	if (status & (BA0_HISR_DMA(0)|BA0_HISR_DMA(1)|BA0_HISR_DMA(2)|BA0_HISR_DMA(3))) {
-		for (dma = 0; dma < 4; dma++)
+		for (dma = 0; dma < 4; dma++) {
+			bool period_elapsed = false;
+			cdma = &chip->dma[dma];
+
 			if (status & BA0_HISR_DMA(dma)) {
-				cdma = &chip->dma[dma];
-				spin_lock(&chip->reg_lock);
+				guard(spinlock)(&chip->reg_lock);
 				/* ack DMA IRQ */
 				val = snd_cs4281_peekBA0(chip, cdma->regHDSR);
 				/* workaround, sometimes CS4281 acknowledges */
@@ -1754,24 +1744,23 @@ static irqreturn_t snd_cs4281_interrupt(int irq, void *dev_id)
 				if ((val & BA0_HDSR_DHTC) && !(cdma->frag & 1)) {
 					cdma->frag--;
 					chip->spurious_dhtc_irq++;
-					spin_unlock(&chip->reg_lock);
 					continue;
 				}
 				if ((val & BA0_HDSR_DTC) && (cdma->frag & 1)) {
 					cdma->frag--;
 					chip->spurious_dtc_irq++;
-					spin_unlock(&chip->reg_lock);
 					continue;
 				}
-				spin_unlock(&chip->reg_lock);
-				snd_pcm_period_elapsed(cdma->substream);
 			}
+			if (period_elapsed)
+				snd_pcm_period_elapsed(cdma->substream);
+		}
 	}
 
 	if ((status & BA0_HISR_MIDI) && chip->rmidi) {
 		unsigned char c;
 		
-		spin_lock(&chip->reg_lock);
+		guard(spinlock)(&chip->reg_lock);
 		while ((snd_cs4281_peekBA0(chip, BA0_MIDSR) & BA0_MIDSR_RBE) == 0) {
 			c = snd_cs4281_peekBA0(chip, BA0_MIDRP);
 			if ((chip->midcr & BA0_MIDCR_RIE) == 0)
@@ -1788,7 +1777,6 @@ static irqreturn_t snd_cs4281_interrupt(int irq, void *dev_id)
 			}
 			snd_cs4281_pokeBA0(chip, BA0_MIDWP, c);
 		}
-		spin_unlock(&chip->reg_lock);
 	}
 
 	/* EOI to the PCI part... reenables interrupts */
@@ -1804,7 +1792,6 @@ static irqreturn_t snd_cs4281_interrupt(int irq, void *dev_id)
 static void snd_cs4281_opl3_command(struct snd_opl3 *opl3, unsigned short cmd,
 				    unsigned char val)
 {
-	unsigned long flags;
 	struct cs4281 *chip = opl3->private_data;
 	void __iomem *port;
 
@@ -1813,15 +1800,13 @@ static void snd_cs4281_opl3_command(struct snd_opl3 *opl3, unsigned short cmd,
 	else
 		port = chip->ba0 + BA0_B0AP; /* left port */
 
-	spin_lock_irqsave(&opl3->reg_lock, flags);
+	guard(spinlock_irqsave)(&opl3->reg_lock);
 
 	writel((unsigned int)cmd, port);
 	udelay(10);
 
 	writel((unsigned int)val, port + 4);
 	udelay(30);
-
-	spin_unlock_irqrestore(&opl3->reg_lock, flags);
 }
 
 static int __snd_cs4281_probe(struct pci_dev *pci,
