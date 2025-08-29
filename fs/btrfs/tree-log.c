@@ -420,7 +420,7 @@ static int overwrite_item(struct btrfs_trans_handle *trans,
 	unsigned long dst_ptr;
 	struct extent_buffer *dst_eb;
 	int dst_slot;
-	bool inode_item = key->type == BTRFS_INODE_ITEM_KEY;
+	const bool is_inode_item = (key->type == BTRFS_INODE_ITEM_KEY);
 
 	/*
 	 * This is only used during log replay, so the root is always from a
@@ -479,7 +479,7 @@ static int overwrite_item(struct btrfs_trans_handle *trans,
 		 * We need to load the old nbytes into the inode so when we
 		 * replay the extents we've logged we get the right nbytes.
 		 */
-		if (inode_item) {
+		if (is_inode_item) {
 			struct btrfs_inode_item *item;
 			u64 nbytes;
 			u32 mode;
@@ -500,7 +500,7 @@ static int overwrite_item(struct btrfs_trans_handle *trans,
 			if (S_ISDIR(mode))
 				btrfs_set_inode_size(eb, item, 0);
 		}
-	} else if (inode_item) {
+	} else if (is_inode_item) {
 		struct btrfs_inode_item *item;
 		u32 mode;
 
@@ -553,7 +553,7 @@ insert:
 	 * state of the tree found in the subvolume, and i_size is modified
 	 * as it goes
 	 */
-	if (key->type == BTRFS_INODE_ITEM_KEY && ret == -EEXIST) {
+	if (is_inode_item && ret == -EEXIST) {
 		struct btrfs_inode_item *src_item;
 		struct btrfs_inode_item *dst_item;
 
@@ -594,7 +594,7 @@ insert:
 	}
 
 	/* make sure the generation is filled in */
-	if (key->type == BTRFS_INODE_ITEM_KEY) {
+	if (is_inode_item) {
 		struct btrfs_inode_item *dst_item;
 
 		dst_item = (struct btrfs_inode_item *)dst_ptr;
