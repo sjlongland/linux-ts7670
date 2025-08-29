@@ -977,29 +977,25 @@ static int snd_emu1010_clock_source_put(struct snd_kcontrol *kcontrol,
 	const struct snd_emu1010_clock_info *emu_ci =
 		&emu1010_clock_info[emu1010_idx(emu)];
 	unsigned int val;
-	int change = 0;
 
 	val = ucontrol->value.enumerated.item[0] ;
 	if (val >= emu_ci->num)
 		return -EINVAL;
 	guard(snd_emu1010_fpga_lock)(emu);
-	spin_lock_irq(&emu->reg_lock);
-	change = (emu->emu1010.clock_source != val);
-	if (change) {
+	scoped_guard(spinlock_irq, &emu->reg_lock) {
+		if (emu->emu1010.clock_source == val)
+			return 0;
 		emu->emu1010.clock_source = val;
 		emu->emu1010.wclock = emu_ci->vals[val];
 		snd_emu1010_update_clock(emu);
 
 		snd_emu1010_fpga_write(emu, EMU_HANA_UNMUTE, EMU_MUTE);
 		snd_emu1010_fpga_write(emu, EMU_HANA_WCLOCK, emu->emu1010.wclock);
-		spin_unlock_irq(&emu->reg_lock);
-
-		msleep(10);  // Allow DLL to settle
-		snd_emu1010_fpga_write(emu, EMU_HANA_UNMUTE, EMU_UNMUTE);
-	} else {
-		spin_unlock_irq(&emu->reg_lock);
 	}
-	return change;
+
+	msleep(10);  // Allow DLL to settle
+	snd_emu1010_fpga_write(emu, EMU_HANA_UNMUTE, EMU_UNMUTE);
+	return 1;
 }
 
 static const struct snd_kcontrol_new snd_emu1010_clock_source =
@@ -1207,13 +1203,13 @@ static int snd_audigy_i2c_capture_source_put(struct snd_kcontrol *kcontrol,
 	change = (emu->i2c_capture_source != source_id);
 	if (change) {
 		snd_emu10k1_i2c_write(emu, ADC_MUX, 0); /* Mute input */
-		spin_lock_irq(&emu->emu_lock);
-		gpio = inw(emu->port + A_IOCFG);
-		if (source_id==0)
-			outw(gpio | 0x4, emu->port + A_IOCFG);
-		else
-			outw(gpio & ~0x4, emu->port + A_IOCFG);
-		spin_unlock_irq(&emu->emu_lock);
+		scoped_guard(spinlock_irq, &emu->emu_lock) {
+			gpio = inw(emu->port + A_IOCFG);
+			if (source_id == 0)
+				outw(gpio | 0x4, emu->port + A_IOCFG);
+			else
+				outw(gpio & ~0x4, emu->port + A_IOCFG);
+		}
 
 		ngain = emu->i2c_capture_volume[source_id][0]; /* Left */
 		ogain = emu->i2c_capture_volume[emu->i2c_capture_source][0]; /* Left */
@@ -1374,14 +1370,13 @@ static int snd_audigy_spdif_output_rate_put(struct snd_kcontrol *kcontrol,
 	}
 
 	
-	spin_lock_irq(&emu->reg_lock);
+	guard(spinlock_irq)(&emu->reg_lock);
 	reg = snd_emu10k1_ptr_read(emu, A_SPDIF_SAMPLERATE, 0);
 	tmp = reg & ~A_SPDIF_RATE_MASK;
 	tmp |= val;
 	change = (tmp != reg);
 	if (change)
 		snd_emu10k1_ptr_write(emu, A_SPDIF_SAMPLERATE, 0, tmp);
-	spin_unlock_irq(&emu->reg_lock);
 	return change;
 }
 
@@ -1505,7 +1500,7 @@ static int snd_emu10k1_send_routing_put(struct snd_kcontrol *kcontrol,
 	int num_efx = emu->audigy ? 8 : 4;
 	int mask = emu->audigy ? 0x3f : 0x0f;
 
-	spin_lock_irq(&emu->reg_lock);
+	guard(spinlock_irq)(&emu->reg_lock);
 	for (voice = 0; voice < 3; voice++)
 		for (idx = 0; idx < num_efx; idx++) {
 			val = ucontrol->value.integer.value[(voice * num_efx) + idx] & mask;
@@ -1525,7 +1520,6 @@ static int snd_emu10k1_send_routing_put(struct snd_kcontrol *kcontrol,
 					    &mix->send_routing[0][0]);
 		}
 	}
-	spin_unlock_irq(&emu->reg_lock);
 	return change;
 }
 
@@ -1573,7 +1567,7 @@ static int snd_emu10k1_send_volume_put(struct snd_kcontrol *kcontrol,
 	int change = 0, idx, val;
 	int num_efx = emu->audigy ? 8 : 4;
 
-	spin_lock_irq(&emu->reg_lock);
+	guard(spinlock_irq)(&emu->reg_lock);
 	for (idx = 0; idx < 3*num_efx; idx++) {
 		val = ucontrol->value.integer.value[idx] & 255;
 		if (mix->send_volume[idx/num_efx][idx%num_efx] != val) {
@@ -1592,7 +1586,6 @@ static int snd_emu10k1_send_volume_put(struct snd_kcontrol *kcontrol,
 						   &mix->send_volume[0][0]);
 		}
 	}
-	spin_unlock_irq(&emu->reg_lock);
 	return change;
 }
 
@@ -1637,7 +1630,7 @@ static int snd_emu10k1_attn_put(struct snd_kcontrol *kcontrol,
 		&emu->pcm_mixer[snd_ctl_get_ioffidx(kcontrol, &ucontrol->id)];
 	int change = 0, idx, val;
 
-	spin_lock_irq(&emu->reg_lock);
+	guard(spinlock_irq)(&emu->reg_lock);
 	for (idx = 0; idx < 3; idx++) {
 		unsigned uval = ucontrol->value.integer.value[idx] & 0x1ffff;
 		val = uval * 0x8000U / 0xffffU;
@@ -1654,7 +1647,6 @@ static int snd_emu10k1_attn_put(struct snd_kcontrol *kcontrol,
 			snd_emu10k1_ptr_write(emu, VTFT_VOLUMETARGET, mix->epcm->voices[0]->number, mix->attn[0]);
 		}
 	}
-	spin_unlock_irq(&emu->reg_lock);
 	return change;
 }
 
@@ -1707,7 +1699,7 @@ static int snd_emu10k1_efx_send_routing_put(struct snd_kcontrol *kcontrol,
 	int num_efx = emu->audigy ? 8 : 4;
 	int mask = emu->audigy ? 0x3f : 0x0f;
 
-	spin_lock_irq(&emu->reg_lock);
+	guard(spinlock_irq)(&emu->reg_lock);
 	for (idx = 0; idx < num_efx; idx++) {
 		val = ucontrol->value.integer.value[idx] & mask;
 		if (mix->send_routing[0][idx] != val) {
@@ -1722,7 +1714,6 @@ static int snd_emu10k1_efx_send_routing_put(struct snd_kcontrol *kcontrol,
 					&mix->send_routing[0][0]);
 		}
 	}
-	spin_unlock_irq(&emu->reg_lock);
 	return change;
 }
 
@@ -1770,7 +1761,7 @@ static int snd_emu10k1_efx_send_volume_put(struct snd_kcontrol *kcontrol,
 	int change = 0, idx, val;
 	int num_efx = emu->audigy ? 8 : 4;
 
-	spin_lock_irq(&emu->reg_lock);
+	guard(spinlock_irq)(&emu->reg_lock);
 	for (idx = 0; idx < num_efx; idx++) {
 		val = ucontrol->value.integer.value[idx] & 255;
 		if (mix->send_volume[0][idx] != val) {
@@ -1784,7 +1775,6 @@ static int snd_emu10k1_efx_send_volume_put(struct snd_kcontrol *kcontrol,
 						   &mix->send_volume[0][0]);
 		}
 	}
-	spin_unlock_irq(&emu->reg_lock);
 	return change;
 }
 
@@ -1829,7 +1819,7 @@ static int snd_emu10k1_efx_attn_put(struct snd_kcontrol *kcontrol,
 	int change = 0, val;
 	unsigned uval;
 
-	spin_lock_irq(&emu->reg_lock);
+	guard(spinlock_irq)(&emu->reg_lock);
 	uval = ucontrol->value.integer.value[0] & 0x1ffff;
 	val = uval * 0x8000U / 0xffffU;
 	if (mix->attn[0] != val) {
@@ -1841,7 +1831,6 @@ static int snd_emu10k1_efx_attn_put(struct snd_kcontrol *kcontrol,
 			snd_emu10k1_ptr_write(emu, VTFT_VOLUMETARGET, mix->epcm->voices[ch]->number, mix->attn[0]);
 		}
 	}
-	spin_unlock_irq(&emu->reg_lock);
 	return change;
 }
 
@@ -1884,7 +1873,7 @@ static int snd_emu10k1_shared_spdif_put(struct snd_kcontrol *kcontrol,
 	sw = ucontrol->value.integer.value[0];
 	if (emu->card_capabilities->invert_shared_spdif)
 		sw = !sw;
-	spin_lock_irq(&emu->emu_lock);
+	guard(spinlock_irq)(&emu->emu_lock);
 	if ( emu->card_capabilities->i2c_adc) {
 		/* Do nothing for Audigy 2 ZS Notebook */
 	} else if (emu->audigy) {
@@ -1905,7 +1894,6 @@ static int snd_emu10k1_shared_spdif_put(struct snd_kcontrol *kcontrol,
 		reg |= val;
 		outl(reg | val, emu->port + HCFG);
 	}
-	spin_unlock_irq(&emu->emu_lock);
 	return change;
 }
 
