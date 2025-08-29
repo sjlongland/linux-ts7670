@@ -348,7 +348,7 @@ static int snd_aw2_pcm_prepare_playback(struct snd_pcm_substream *substream)
 	struct snd_pcm_runtime *runtime = substream->runtime;
 	unsigned long period_size, buffer_size;
 
-	mutex_lock(&chip->mtx);
+	guard(mutex)(&chip->mtx);
 
 	period_size = snd_pcm_lib_period_bytes(substream);
 	buffer_size = snd_pcm_lib_buffer_bytes(substream);
@@ -364,8 +364,6 @@ static int snd_aw2_pcm_prepare_playback(struct snd_pcm_substream *substream)
 						    snd_pcm_period_elapsed,
 						    (void *)substream);
 
-	mutex_unlock(&chip->mtx);
-
 	return 0;
 }
 
@@ -377,7 +375,7 @@ static int snd_aw2_pcm_prepare_capture(struct snd_pcm_substream *substream)
 	struct snd_pcm_runtime *runtime = substream->runtime;
 	unsigned long period_size, buffer_size;
 
-	mutex_lock(&chip->mtx);
+	guard(mutex)(&chip->mtx);
 
 	period_size = snd_pcm_lib_period_bytes(substream);
 	buffer_size = snd_pcm_lib_buffer_bytes(substream);
@@ -392,8 +390,6 @@ static int snd_aw2_pcm_prepare_capture(struct snd_pcm_substream *substream)
 						   (snd_aw2_saa7146_it_cb)
 						   snd_pcm_period_elapsed,
 						   (void *)substream);
-
-	mutex_unlock(&chip->mtx);
 
 	return 0;
 }
