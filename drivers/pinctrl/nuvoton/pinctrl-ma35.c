@@ -1036,7 +1036,8 @@ static int ma35_pinctrl_parse_functions(struct fwnode_handle *fwnode, struct ma3
 	struct group_desc *grp;
 	static u32 grp_index;
 	const char **groups;
-	u32 ret, i = 0;
+	u32 i = 0;
+	int ret;
 
 	dev_dbg(npctl->dev, "parse function(%d): %s\n", index, np->name);
 
