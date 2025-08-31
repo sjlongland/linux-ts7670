@@ -6215,6 +6215,12 @@ static struct mvpp2_port *mvpp2_pcs_gmac_to_port(struct phylink_pcs *pcs)
 	return container_of(pcs, struct mvpp2_port, pcs_gmac);
 }
 
+static unsigned int mvpp2_xjg_pcs_inband_caps(struct phylink_pcs *pcs,
+					      phy_interface_t interface)
+{
+	return LINK_INBAND_DISABLE;
+}
+
 static void mvpp2_xlg_pcs_get_state(struct phylink_pcs *pcs,
 				    unsigned int neg_mode,
 				    struct phylink_link_state *state)
@@ -6249,6 +6255,7 @@ static int mvpp2_xlg_pcs_config(struct phylink_pcs *pcs, unsigned int neg_mode,
 }
 
 static const struct phylink_pcs_ops mvpp2_phylink_xlg_pcs_ops = {
+	.pcs_inband_caps = mvpp2_xjg_pcs_inband_caps,
 	.pcs_get_state = mvpp2_xlg_pcs_get_state,
 	.pcs_config = mvpp2_xlg_pcs_config,
 };
