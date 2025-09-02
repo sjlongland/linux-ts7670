@@ -32,8 +32,6 @@ int tidss_runtime_get(struct tidss_device *tidss)
 {
 	int r;
 
-	dev_dbg(tidss->dev, "%s\n", __func__);
-
 	r = pm_runtime_resume_and_get(tidss->dev);
 	WARN_ON(r < 0);
 	return r;
@@ -42,8 +40,6 @@ int tidss_runtime_get(struct tidss_device *tidss)
 void tidss_runtime_put(struct tidss_device *tidss)
 {
 	int r;
-
-	dev_dbg(tidss->dev, "%s\n", __func__);
 
 	pm_runtime_mark_last_busy(tidss->dev);
 
@@ -55,8 +51,6 @@ static int __maybe_unused tidss_pm_runtime_suspend(struct device *dev)
 {
 	struct tidss_device *tidss = dev_get_drvdata(dev);
 
-	dev_dbg(dev, "%s\n", __func__);
-
 	return dispc_runtime_suspend(tidss->dispc);
 }
 
@@ -64,8 +58,6 @@ static int __maybe_unused tidss_pm_runtime_resume(struct device *dev)
 {
 	struct tidss_device *tidss = dev_get_drvdata(dev);
 	int r;
-
-	dev_dbg(dev, "%s\n", __func__);
 
 	r = dispc_runtime_resume(tidss->dispc);
 	if (r)
@@ -78,16 +70,12 @@ static int __maybe_unused tidss_suspend(struct device *dev)
 {
 	struct tidss_device *tidss = dev_get_drvdata(dev);
 
-	dev_dbg(dev, "%s\n", __func__);
-
 	return drm_mode_config_helper_suspend(&tidss->ddev);
 }
 
 static int __maybe_unused tidss_resume(struct device *dev)
 {
 	struct tidss_device *tidss = dev_get_drvdata(dev);
-
-	dev_dbg(dev, "%s\n", __func__);
 
 	return drm_mode_config_helper_resume(&tidss->ddev);
 }
@@ -125,8 +113,6 @@ static int tidss_probe(struct platform_device *pdev)
 	struct drm_device *ddev;
 	int ret;
 	int irq;
-
-	dev_dbg(dev, "%s\n", __func__);
 
 	tidss = devm_drm_dev_alloc(&pdev->dev, &tidss_driver,
 				   struct tidss_device, ddev);
@@ -220,8 +206,6 @@ static void tidss_remove(struct platform_device *pdev)
 	struct device *dev = &pdev->dev;
 	struct tidss_device *tidss = platform_get_drvdata(pdev);
 	struct drm_device *ddev = &tidss->ddev;
-
-	dev_dbg(dev, "%s\n", __func__);
 
 	drm_dev_unregister(ddev);
 
