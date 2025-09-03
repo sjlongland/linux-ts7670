@@ -35,6 +35,9 @@
 #define PHY_ID_AQR115C	0x31c31c33
 #define PHY_ID_AQR813	0x31c31cb2
 
+#define MDIO_PHYXS_VEND_PROV2			0xc441
+#define MDIO_PHYXS_VEND_PROV2_USX_AN		BIT(3)
+
 #define MDIO_PHYXS_VEND_IF_STATUS		0xe812
 #define MDIO_PHYXS_VEND_IF_STATUS_TYPE_MASK	GENMASK(7, 3)
 #define MDIO_PHYXS_VEND_IF_STATUS_TYPE_KR	0
@@ -1147,6 +1150,52 @@ static int aqr_gen4_config_init(struct phy_device *phydev)
 	return aqr_gen1_wait_processor_intensive_op(phydev);
 }
 
+static unsigned int aqr_gen2_inband_caps(struct phy_device *phydev,
+					 phy_interface_t interface)
+{
+	if (interface == PHY_INTERFACE_MODE_SGMII ||
+	    interface == PHY_INTERFACE_MODE_USXGMII)
+		return LINK_INBAND_ENABLE | LINK_INBAND_DISABLE;
+
+	return 0;
+}
+
+static int aqr_gen2_config_inband(struct phy_device *phydev, unsigned int modes)
+{
+	struct aqr107_priv *priv = phydev->priv;
+
+	if (phydev->interface == PHY_INTERFACE_MODE_USXGMII) {
+		u16 set = 0;
+
+		if (modes == LINK_INBAND_ENABLE)
+			set = MDIO_PHYXS_VEND_PROV2_USX_AN;
+
+		return phy_modify_mmd(phydev, MDIO_MMD_PHYXS,
+				      MDIO_PHYXS_VEND_PROV2,
+				      MDIO_PHYXS_VEND_PROV2_USX_AN, set);
+	}
+
+	for (int i = 0; i < AQR_NUM_GLOBAL_CFG; i++) {
+		struct aqr_global_syscfg *syscfg = &priv->global_cfg[i];
+		u16 set = 0;
+		int err;
+
+		if (syscfg->interface != phydev->interface)
+			continue;
+
+		if (modes == LINK_INBAND_ENABLE)
+			set = VEND1_GLOBAL_CFG_AUTONEG_ENA;
+
+		err = phy_modify_mmd(phydev, MDIO_MMD_VEND1,
+				     aqr_global_cfg_regs[i].reg,
+				     VEND1_GLOBAL_CFG_AUTONEG_ENA, set);
+		if (err)
+			return err;
+	}
+
+	return 0;
+}
+
 static int aqr107_probe(struct phy_device *phydev)
 {
 	int ret;
@@ -1225,6 +1274,8 @@ static struct phy_driver aqr_driver[] = {
 	.led_hw_control_set = aqr_phy_led_hw_control_set,
 	.led_hw_control_get = aqr_phy_led_hw_control_get,
 	.led_polarity_set = aqr_phy_led_polarity_set,
+	.inband_caps	= aqr_gen2_inband_caps,
+	.config_inband	= aqr_gen2_config_inband,
 },
 {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQCS109),
@@ -1250,6 +1301,8 @@ static struct phy_driver aqr_driver[] = {
 	.led_hw_control_set = aqr_phy_led_hw_control_set,
 	.led_hw_control_get = aqr_phy_led_hw_control_get,
 	.led_polarity_set = aqr_phy_led_polarity_set,
+	.inband_caps	= aqr_gen2_inband_caps,
+	.config_inband	= aqr_gen2_config_inband,
 },
 {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR111),
@@ -1275,6 +1328,8 @@ static struct phy_driver aqr_driver[] = {
 	.led_hw_control_set = aqr_phy_led_hw_control_set,
 	.led_hw_control_get = aqr_phy_led_hw_control_get,
 	.led_polarity_set = aqr_phy_led_polarity_set,
+	.inband_caps	= aqr_gen2_inband_caps,
+	.config_inband	= aqr_gen2_config_inband,
 },
 {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR111B0),
@@ -1300,6 +1355,8 @@ static struct phy_driver aqr_driver[] = {
 	.led_hw_control_set = aqr_phy_led_hw_control_set,
 	.led_hw_control_get = aqr_phy_led_hw_control_get,
 	.led_polarity_set = aqr_phy_led_polarity_set,
+	.inband_caps	= aqr_gen2_inband_caps,
+	.config_inband	= aqr_gen2_config_inband,
 },
 {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR405),
@@ -1308,6 +1365,8 @@ static struct phy_driver aqr_driver[] = {
 	.config_intr	= aqr_config_intr,
 	.handle_interrupt = aqr_handle_interrupt,
 	.read_status	= aqr_read_status,
+	.inband_caps	= aqr_gen2_inband_caps,
+	.config_inband	= aqr_gen2_config_inband,
 },
 {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR112),
@@ -1332,6 +1391,8 @@ static struct phy_driver aqr_driver[] = {
 	.led_hw_control_set = aqr_phy_led_hw_control_set,
 	.led_hw_control_get = aqr_phy_led_hw_control_get,
 	.led_polarity_set = aqr_phy_led_polarity_set,
+	.inband_caps	= aqr_gen2_inband_caps,
+	.config_inband	= aqr_gen2_config_inband,
 },
 {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR412),
@@ -1351,6 +1412,8 @@ static struct phy_driver aqr_driver[] = {
 	.get_strings	= aqr107_get_strings,
 	.get_stats	= aqr107_get_stats,
 	.link_change_notify = aqr107_link_change_notify,
+	.inband_caps	= aqr_gen2_inband_caps,
+	.config_inband	= aqr_gen2_config_inband,
 },
 {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR412C),
@@ -1370,6 +1433,8 @@ static struct phy_driver aqr_driver[] = {
 	.get_strings	= aqr107_get_strings,
 	.get_stats	= aqr107_get_stats,
 	.link_change_notify = aqr107_link_change_notify,
+	.inband_caps	= aqr_gen2_inband_caps,
+	.config_inband	= aqr_gen2_config_inband,
 },
 {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR113),
@@ -1394,6 +1459,8 @@ static struct phy_driver aqr_driver[] = {
 	.led_hw_control_set = aqr_phy_led_hw_control_set,
 	.led_hw_control_get = aqr_phy_led_hw_control_get,
 	.led_polarity_set = aqr_phy_led_polarity_set,
+	.inband_caps	= aqr_gen2_inband_caps,
+	.config_inband	= aqr_gen2_config_inband,
 },
 {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR113C),
@@ -1418,6 +1485,8 @@ static struct phy_driver aqr_driver[] = {
 	.led_hw_control_set = aqr_phy_led_hw_control_set,
 	.led_hw_control_get = aqr_phy_led_hw_control_get,
 	.led_polarity_set = aqr_phy_led_polarity_set,
+	.inband_caps    = aqr_gen2_inband_caps,
+	.config_inband  = aqr_gen2_config_inband,
 },
 {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR114C),
@@ -1443,6 +1512,8 @@ static struct phy_driver aqr_driver[] = {
 	.led_hw_control_set = aqr_phy_led_hw_control_set,
 	.led_hw_control_get = aqr_phy_led_hw_control_get,
 	.led_polarity_set = aqr_phy_led_polarity_set,
+	.inband_caps    = aqr_gen2_inband_caps,
+	.config_inband  = aqr_gen2_config_inband,
 },
 {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR115),
@@ -1468,6 +1539,8 @@ static struct phy_driver aqr_driver[] = {
 	.led_hw_control_set = aqr_phy_led_hw_control_set,
 	.led_hw_control_get = aqr_phy_led_hw_control_get,
 	.led_polarity_set = aqr_phy_led_polarity_set,
+	.inband_caps	= aqr_gen2_inband_caps,
+	.config_inband	= aqr_gen2_config_inband,
 },
 {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR115C),
@@ -1493,6 +1566,8 @@ static struct phy_driver aqr_driver[] = {
 	.led_hw_control_set = aqr_phy_led_hw_control_set,
 	.led_hw_control_get = aqr_phy_led_hw_control_get,
 	.led_polarity_set = aqr_phy_led_polarity_set,
+	.inband_caps	= aqr_gen2_inband_caps,
+	.config_inband	= aqr_gen2_config_inband,
 },
 {
 	PHY_ID_MATCH_MODEL(PHY_ID_AQR813),
@@ -1517,6 +1592,8 @@ static struct phy_driver aqr_driver[] = {
 	.led_hw_control_set = aqr_phy_led_hw_control_set,
 	.led_hw_control_get = aqr_phy_led_hw_control_get,
 	.led_polarity_set = aqr_phy_led_polarity_set,
+	.inband_caps	= aqr_gen2_inband_caps,
+	.config_inband	= aqr_gen2_config_inband,
 },
 };
 
