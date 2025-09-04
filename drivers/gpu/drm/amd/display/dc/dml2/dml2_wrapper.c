@@ -708,7 +708,7 @@ static bool dml2_validate_only(struct dc_state *context)
 	if (result)
 		result = does_configuration_meet_sw_policies(dml2, &dml2->v20.scratch.cur_display_config, &dml2->v20.scratch.mode_support_info);
 
-	return (result == 1) ? true : false;
+	return result == 1;
 }
 
 static void dml2_apply_debug_options(const struct dc *dc, struct dml2_context *dml2)
