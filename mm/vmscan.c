@@ -513,7 +513,7 @@ static bool skip_throttle_noprogress(pg_data_t *pgdat)
 	 * If kswapd is disabled, reschedule if necessary but do not
 	 * throttle as the system is likely near OOM.
 	 */
-	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES)
+	if (atomic_read(&pgdat->kswapd_failures) >= MAX_RECLAIM_RETRIES)
 		return true;
 
 	/*
@@ -5045,7 +5045,7 @@ static void lru_gen_shrink_node(struct pglist_data *pgdat, struct scan_control *
 	blk_finish_plug(&plug);
 done:
 	if (sc->nr_reclaimed > reclaimed)
-		pgdat->kswapd_failures = 0;
+		atomic_set(&pgdat->kswapd_failures, 0);
 }
 
 /******************************************************************************
@@ -6110,7 +6110,7 @@ again:
 	 * successful direct reclaim run will revive a dormant kswapd.
 	 */
 	if (reclaimable)
-		pgdat->kswapd_failures = 0;
+		atomic_set(&pgdat->kswapd_failures, 0);
 	else if (sc->cache_trim_mode)
 		sc->cache_trim_mode_failed = 1;
 }
@@ -6422,7 +6422,7 @@ static bool allow_direct_reclaim(pg_data_t *pgdat)
 	int i;
 	bool wmark_ok;
 
-	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES)
+	if (atomic_read(&pgdat->kswapd_failures) >= MAX_RECLAIM_RETRIES)
 		return true;
 
 	for_each_managed_zone_pgdat(zone, pgdat, i, ZONE_NORMAL) {
@@ -6800,7 +6800,7 @@ static bool prepare_kswapd_sleep(pg_data_t *pgdat, int order,
 		wake_up_all(&pgdat->pfmemalloc_wait);
 
 	/* Hopeless node, leave it to direct reclaim */
-	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES)
+	if (atomic_read(&pgdat->kswapd_failures) >= MAX_RECLAIM_RETRIES)
 		return true;
 
 	if (pgdat_balanced(pgdat, order, highest_zoneidx)) {
@@ -7068,7 +7068,7 @@ restart:
 	}
 
 	if (!sc.nr_reclaimed)
-		pgdat->kswapd_failures++;
+		atomic_inc(&pgdat->kswapd_failures);
 
 out:
 	clear_reclaim_active(pgdat, highest_zoneidx);
@@ -7327,7 +7327,7 @@ void wakeup_kswapd(struct zone *zone, gfp_t gfp_flags, int order,
 		return;
 
 	/* Hopeless node, leave it to direct reclaim if possible */
-	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES ||
+	if (atomic_read(&pgdat->kswapd_failures) >= MAX_RECLAIM_RETRIES ||
 	    (pgdat_balanced(pgdat, order, highest_zoneidx) &&
 	     !pgdat_watermark_boosted(pgdat, highest_zoneidx))) {
 		/*
