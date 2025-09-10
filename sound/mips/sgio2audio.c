@@ -102,9 +102,8 @@ static int read_ad1843_reg(void *priv, int reg)
 {
 	struct snd_sgio2audio *chip = priv;
 	int val;
-	unsigned long flags;
 
-	spin_lock_irqsave(&chip->ad1843_lock, flags);
+	guard(spinlock_irqsave)(&chip->ad1843_lock);
 
 	writeq((reg << CODEC_CONTROL_ADDRESS_SHIFT) |
 	       CODEC_CONTROL_READ, &mace->perif.audio.codec_control);
@@ -114,7 +113,6 @@ static int read_ad1843_reg(void *priv, int reg)
 
 	val = readq(&mace->perif.audio.codec_read);
 
-	spin_unlock_irqrestore(&chip->ad1843_lock, flags);
 	return val;
 }
 
@@ -125,9 +123,8 @@ static int write_ad1843_reg(void *priv, int reg, int word)
 {
 	struct snd_sgio2audio *chip = priv;
 	int val;
-	unsigned long flags;
 
-	spin_lock_irqsave(&chip->ad1843_lock, flags);
+	guard(spinlock_irqsave)(&chip->ad1843_lock);
 
 	writeq((reg << CODEC_CONTROL_ADDRESS_SHIFT) |
 	       (word << CODEC_CONTROL_WORD_SHIFT),
@@ -136,7 +133,6 @@ static int write_ad1843_reg(void *priv, int reg, int word)
 	val = readq(&mace->perif.audio.codec_control); /* flush bus */
 	udelay(200);
 
-	spin_unlock_irqrestore(&chip->ad1843_lock, flags);
 	return 0;
 }
 
@@ -350,10 +346,9 @@ static int snd_sgio2audio_dma_pull_frag(struct snd_sgio2audio *chip,
 	u64 *src;
 	s16 *dst;
 	u64 x;
-	unsigned long flags;
 	struct snd_pcm_runtime *runtime = chip->channel[ch].substream->runtime;
 
-	spin_lock_irqsave(&chip->channel[ch].lock, flags);
+	guard(spinlock_irqsave)(&chip->channel[ch].lock);
 
 	src_base = (unsigned long) chip->ring_base | (ch << CHANNEL_RING_SHIFT);
 	src_pos = readq(&mace->perif.audio.chan[ch].read_ptr);
@@ -382,7 +377,6 @@ static int snd_sgio2audio_dma_pull_frag(struct snd_sgio2audio *chip,
 	writeq(src_pos, &mace->perif.audio.chan[ch].read_ptr); /* in bytes */
 	chip->channel[ch].pos = dst_pos;
 
-	spin_unlock_irqrestore(&chip->channel[ch].lock, flags);
 	return ret;
 }
 
@@ -398,10 +392,9 @@ static int snd_sgio2audio_dma_push_frag(struct snd_sgio2audio *chip,
 	int src_pos;
 	u64 *dst;
 	s16 *src;
-	unsigned long flags;
 	struct snd_pcm_runtime *runtime = chip->channel[ch].substream->runtime;
 
-	spin_lock_irqsave(&chip->channel[ch].lock, flags);
+	guard(spinlock_irqsave)(&chip->channel[ch].lock);
 
 	dst_base = (unsigned long)chip->ring_base | (ch << CHANNEL_RING_SHIFT);
 	dst_pos = readq(&mace->perif.audio.chan[ch].write_ptr);
@@ -432,7 +425,6 @@ static int snd_sgio2audio_dma_push_frag(struct snd_sgio2audio *chip,
 	writeq(dst_pos, &mace->perif.audio.chan[ch].write_ptr); /* in bytes */
 	chip->channel[ch].pos = src_pos;
 
-	spin_unlock_irqrestore(&chip->channel[ch].lock, flags);
 	return ret;
 }
 
@@ -583,9 +575,8 @@ static int snd_sgio2audio_pcm_prepare(struct snd_pcm_substream *substream)
 	struct snd_pcm_runtime *runtime = substream->runtime;
 	struct snd_sgio2audio_chan *chan = substream->runtime->private_data;
 	int ch = chan->idx;
-	unsigned long flags;
 
-	spin_lock_irqsave(&chip->channel[ch].lock, flags);
+	guard(spinlock_irqsave)(&chip->channel[ch].lock);
 
 	/* Setup the pseudo-dma transfer pointers.  */
 	chip->channel[ch].pos = 0;
@@ -609,7 +600,6 @@ static int snd_sgio2audio_pcm_prepare(struct snd_pcm_substream *substream)
 				 runtime->channels);
 		break;
 	}
-	spin_unlock_irqrestore(&chip->channel[ch].lock, flags);
 	return 0;
 }
 
