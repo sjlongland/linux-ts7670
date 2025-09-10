@@ -57,16 +57,6 @@ fixed_phy_register_with_gpiod(unsigned int irq,
 static inline void fixed_phy_unregister(struct phy_device *phydev)
 {
 }
-static inline int fixed_phy_set_link_update(struct phy_device *phydev,
-			int (*link_update)(struct net_device *,
-					   struct fixed_phy_status *))
-{
-	return -ENODEV;
-}
-static inline int fixed_phy_change_carrier(struct net_device *dev, bool new_carrier)
-{
-	return -EINVAL;
-}
 #endif /* CONFIG_FIXED_PHY */
 
 #endif /* __PHY_FIXED_H */
