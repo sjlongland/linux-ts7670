@@ -385,6 +385,7 @@ void dcn35_update_clocks(struct clk_mgr *clk_mgr_base,
 	bool update_dispclk = false;
 	bool dpp_clock_lowered = false;
 	int all_active_disps = 0;
+	int actual_dppclk = 0;
 
 	if (dc->work_arounds.skip_clock_update)
 		return;
@@ -470,14 +471,13 @@ void dcn35_update_clocks(struct clk_mgr *clk_mgr_base,
 	if (should_set_clock(safe_to_lower, new_clocks->dppclk_khz, clk_mgr->base.clks.dppclk_khz)) {
 		if (clk_mgr->base.clks.dppclk_khz > new_clocks->dppclk_khz)
 			dpp_clock_lowered = true;
-		clk_mgr_base->clks.dppclk_khz = new_clocks->dppclk_khz;
 		update_dppclk = true;
 	}
 
 	if (should_set_clock(safe_to_lower, new_clocks->dispclk_khz, clk_mgr_base->clks.dispclk_khz) &&
 	    (new_clocks->dispclk_khz > 0 || (safe_to_lower && display_count == 0))) {
 		int requested_dispclk_khz = new_clocks->dispclk_khz;
-
+		int actual_dispclk;
 		dcn35_disable_otg_wa(clk_mgr_base, context, safe_to_lower, true);
 
 		/* Clamp the requested clock to PMFW based on their limit. */
@@ -485,7 +485,11 @@ void dcn35_update_clocks(struct clk_mgr *clk_mgr_base,
 			requested_dispclk_khz = dc->debug.min_disp_clk_khz;
 
 		dcn35_smu_set_dispclk(clk_mgr, requested_dispclk_khz);
-		clk_mgr_base->clks.dispclk_khz = new_clocks->dispclk_khz;
+		actual_dispclk = REG_READ(CLK1_CLK0_CURRENT_CNT);
+
+		/*pmfw might set bypass clock which is higher than hardmin*/
+		if (actual_dispclk >= new_clocks->dispclk_khz)
+			clk_mgr_base->clks.dispclk_khz = new_clocks->dispclk_khz;
 
 		dcn35_disable_otg_wa(clk_mgr_base, context, safe_to_lower, false);
 
@@ -503,12 +507,19 @@ void dcn35_update_clocks(struct clk_mgr *clk_mgr_base,
 	if (dpp_clock_lowered) {
 		// increase per DPP DTO before lowering global dppclk
 		dcn35_update_clocks_update_dpp_dto(clk_mgr, context, safe_to_lower);
-		dcn35_smu_set_dppclk(clk_mgr, clk_mgr_base->clks.dppclk_khz);
+		dcn35_smu_set_dppclk(clk_mgr, new_clocks->dppclk_khz);
 	} else {
 		// increase global DPPCLK before lowering per DPP DTO
 		if (update_dppclk || update_dispclk)
-			dcn35_smu_set_dppclk(clk_mgr, clk_mgr_base->clks.dppclk_khz);
+			dcn35_smu_set_dppclk(clk_mgr, new_clocks->dppclk_khz);
 		dcn35_update_clocks_update_dpp_dto(clk_mgr, context, safe_to_lower);
+	}
+	if (update_dppclk) {
+		actual_dppclk = REG_READ(CLK1_CLK1_CURRENT_CNT);
+
+		/*pmfw might set bypass clock which is higher than hardmin*/
+		if (actual_dppclk >= new_clocks->dppclk_khz)
+			clk_mgr_base->clks.dppclk_khz = new_clocks->dppclk_khz;
 	}
 
 	// notify PMFW of bandwidth per DPIA tunnel
@@ -549,7 +560,7 @@ static int get_vco_frequency_from_reg(struct clk_mgr_internal *clk_mgr)
 	 * since fractional part is only 16 bit in register definition but is 32 bit
 	 * in our fix point definiton, need to shift left by 16 to obtain correct value
 	 */
-	pll_req.value |= fbmult_frac_val << 16;
+	pll_req.value |= (long long) fbmult_frac_val << 16;
 
 	/* multiply by REFCLK period */
 	pll_req = dc_fixpt_mul_int(pll_req, clk_mgr->dfs_ref_freq_khz);
@@ -772,7 +783,8 @@ static void dcn35_build_watermark_ranges(struct clk_bw_params *bw_params, struct
 			table->WatermarkRow[WM_DCFCLK][num_valid_sets].MaxClock = 0xFFFF;
 
 			/* Modify previous watermark range to cover up to max */
-			table->WatermarkRow[WM_DCFCLK][num_valid_sets - 1].MaxClock = 0xFFFF;
+			if (num_valid_sets > 0)
+				table->WatermarkRow[WM_DCFCLK][num_valid_sets - 1].MaxClock = 0xFFFF;
 		}
 		num_valid_sets++;
 	}
@@ -933,8 +945,8 @@ static void dcn35_clk_mgr_helper_populate_bw_params(struct clk_mgr_internal *clk
 	       is_valid_clock_value(min_dram_speed_mts));
 
 	/* dispclk and dppclk can be max at any voltage, same number of levels for both */
-	if (clock_table->NumDispClkLevelsEnabled <= NUM_DISPCLK_DPM_LEVELS &&
-	    clock_table->NumDispClkLevelsEnabled <= NUM_DPPCLK_DPM_LEVELS) {
+	if (clock_table->NumDispClkLevelsEnabled <= NUM_DISPCLK_DPM_LEVELS) {
+		/*numDispclk is the same as numDPPclk*/
 		max_dispclk = find_max_clk_value(clock_table->DispClocks,
 			clock_table->NumDispClkLevelsEnabled);
 		max_dppclk = find_max_clk_value(clock_table->DppClocks,
