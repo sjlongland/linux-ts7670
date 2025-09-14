@@ -62,7 +62,7 @@ static size_t gud_xrgb8888_to_r124(u8 *dst, const struct drm_format_info *format
 	size_t len;
 	void *buf;
 
-	WARN_ON_ONCE(format->char_per_block[0] != 1);
+	drm_WARN_ON_ONCE(fb->dev, format->char_per_block[0] != 1);
 
 	/* Start on a byte boundary */
 	rect->x1 = ALIGN_DOWN(rect->x1, block_width);
@@ -139,7 +139,7 @@ static size_t gud_xrgb8888_to_color(u8 *dst, const struct drm_format_info *forma
 				pix = ((r >> 7) << 2) | ((g >> 7) << 1) | (b >> 7);
 				break;
 			default:
-				WARN_ON_ONCE(1);
+				drm_WARN_ON_ONCE(fb->dev, 1);
 				return len;
 			}
 
@@ -505,7 +505,7 @@ int gud_pipe_check(struct drm_simple_display_pipe *pipe,
 		drm_connector_list_iter_end(&conn_iter);
 	}
 
-	if (WARN_ON_ONCE(!connector_state))
+	if (drm_WARN_ON_ONCE(plane->dev, !connector_state))
 		return -ENOENT;
 
 	len = struct_size(req, properties,
@@ -517,7 +517,7 @@ int gud_pipe_check(struct drm_simple_display_pipe *pipe,
 	gud_from_display_mode(&req->mode, mode);
 
 	req->format = gud_from_fourcc(format->format);
-	if (WARN_ON_ONCE(!req->format)) {
+	if (drm_WARN_ON_ONCE(plane->dev, !req->format)) {
 		ret = -EINVAL;
 		goto out;
 	}
@@ -539,7 +539,7 @@ int gud_pipe_check(struct drm_simple_display_pipe *pipe,
 			val = new_plane_state->rotation;
 			break;
 		default:
-			WARN_ON_ONCE(1);
+			drm_WARN_ON_ONCE(plane->dev, 1);
 			ret = -EINVAL;
 			goto out;
 		}
