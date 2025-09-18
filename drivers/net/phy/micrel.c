@@ -4056,8 +4056,8 @@ static int lan8814_ptp_probe_once(struct phy_device *phydev)
 	shared->ptp_clock = ptp_clock_register(&shared->ptp_clock_info,
 					       &phydev->mdio.dev);
 	if (IS_ERR(shared->ptp_clock)) {
-		phydev_err(phydev, "ptp_clock_register failed %lu\n",
-			   PTR_ERR(shared->ptp_clock));
+		phydev_err(phydev, "ptp_clock_register failed %pe\n",
+			   shared->ptp_clock);
 		return -EINVAL;
 	}
 
@@ -5486,8 +5486,8 @@ static int lan8841_probe(struct phy_device *phydev)
 	ptp_priv->ptp_clock = ptp_clock_register(&ptp_priv->ptp_clock_info,
 						 &phydev->mdio.dev);
 	if (IS_ERR(ptp_priv->ptp_clock)) {
-		phydev_err(phydev, "ptp_clock_register failed: %lu\n",
-			   PTR_ERR(ptp_priv->ptp_clock));
+		phydev_err(phydev, "ptp_clock_register failed: %pe\n",
+			   ptp_priv->ptp_clock);
 		return -EINVAL;
 	}
 
