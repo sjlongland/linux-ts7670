@@ -528,7 +528,7 @@ int tms9914_read(struct gpib_board *board, struct tms9914_priv *priv, uint8_t *b
 		buffer += num_bytes;
 		length -= num_bytes;
 	}
-	// read last bytes if we havn't received an END yet
+	// read last bytes if we haven't received an END yet
 	if (*end == 0) {
 		// make sure we holdoff after last byte read
 		tms9914_set_holdoff_mode(priv, TMS9914_HOLDOFF_ALL);
