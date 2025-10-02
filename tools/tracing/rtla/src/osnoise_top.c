@@ -364,11 +364,8 @@ struct osnoise_params *osnoise_top_parse_args(int argc, char **argv)
 			{0, 0, 0, 0}
 		};
 
-		/* getopt_long stores the option index here. */
-		int option_index = 0;
-
 		c = getopt_long(argc, argv, "a:c:C::d:De:hH:p:P:qr:s:S:t::T:0:1:2:3:",
-				 long_options, &option_index);
+				 long_options, NULL);
 
 		/* Detect the end of the options. */
 		if (c == -1)
