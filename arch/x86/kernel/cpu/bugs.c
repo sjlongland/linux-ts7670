@@ -1180,7 +1180,9 @@ do_cmd_auto:
 			break;
 		default:
 			if (retbleed_mitigation != RETBLEED_MITIGATION_STUFF) {
-				pr_err(RETBLEED_INTEL_MSG);
+				if (retbleed_mitigation != RETBLEED_MITIGATION_NONE)
+					pr_err(RETBLEED_INTEL_MSG);
+
 				retbleed_mitigation = RETBLEED_MITIGATION_NONE;
 			}
 		}
