@@ -774,6 +774,7 @@ class PrinterHelpers(Printer):
             'struct task_struct',
             'struct cgroup',
             'struct path',
+            'const struct path',
             'struct btf_ptr',
             'struct inode',
             'struct socket',
