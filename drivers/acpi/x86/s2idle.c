@@ -539,7 +539,7 @@ static struct acpi_scan_handler lps0_handler = {
 	.attach = lps0_device_attach,
 };
 
-int acpi_s2idle_prepare_late(void)
+static int acpi_s2idle_prepare_late_lps0(void)
 {
 	struct acpi_s2idle_dev_ops *handler;
 
@@ -585,7 +585,7 @@ int acpi_s2idle_prepare_late(void)
 	return 0;
 }
 
-void acpi_s2idle_check(void)
+static void acpi_s2idle_check_lps0(void)
 {
 	struct acpi_s2idle_dev_ops *handler;
 
@@ -598,7 +598,7 @@ void acpi_s2idle_check(void)
 	}
 }
 
-void acpi_s2idle_restore_early(void)
+static void acpi_s2idle_restore_early_lps0(void)
 {
 	struct acpi_s2idle_dev_ops *handler;
 
@@ -638,10 +638,10 @@ void acpi_s2idle_restore_early(void)
 static const struct platform_s2idle_ops acpi_s2idle_ops_lps0 = {
 	.begin = acpi_s2idle_begin,
 	.prepare = acpi_s2idle_prepare,
-	.prepare_late = acpi_s2idle_prepare_late,
-	.check = acpi_s2idle_check,
+	.prepare_late = acpi_s2idle_prepare_late_lps0,
+	.check = acpi_s2idle_check_lps0,
 	.wake = acpi_s2idle_wake,
-	.restore_early = acpi_s2idle_restore_early,
+	.restore_early = acpi_s2idle_restore_early_lps0,
 	.restore = acpi_s2idle_restore,
 	.end = acpi_s2idle_end,
 };
