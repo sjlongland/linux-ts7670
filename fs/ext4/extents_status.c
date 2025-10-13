@@ -204,6 +204,13 @@ static inline ext4_lblk_t ext4_es_end(struct extent_status *es)
 	return es->es_lblk + es->es_len - 1;
 }
 
+static inline void ext4_es_inc_seq(struct inode *inode)
+{
+	struct ext4_inode_info *ei = EXT4_I(inode);
+
+	WRITE_ONCE(ei->i_es_seq, ei->i_es_seq + 1);
+}
+
 /*
  * search through the tree for an delayed extent with a given offset.  If
  * it can't be found, try to find next extent.
@@ -875,7 +882,6 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
 	newes.es_lblk = lblk;
 	newes.es_len = len;
 	ext4_es_store_pblock_status(&newes, pblk, status);
-	trace_ext4_es_insert_extent(inode, &newes);
 
 	ext4_es_insert_extent_check(inode, &newes);
 
@@ -924,6 +930,11 @@ retry:
 		}
 		pending = err3;
 	}
+	/*
+	 * TODO: For cache on-disk extents, there is no need to increment
+	 * the sequence counter, this requires future optimization.
+	 */
+	ext4_es_inc_seq(inode);
 error:
 	write_unlock(&EXT4_I(inode)->i_es_lock);
 	/*
@@ -950,6 +961,7 @@ error:
 	if (err1 || err2 || err3 < 0)
 		goto retry;
 
+	trace_ext4_es_insert_extent(inode, &newes);
 	ext4_es_print_tree(inode);
 	return;
 }
@@ -1519,7 +1531,6 @@ void ext4_es_remove_extent(struct inode *inode, ext4_lblk_t lblk,
 	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY)
 		return;
 
-	trace_ext4_es_remove_extent(inode, lblk, len);
 	es_debug("remove [%u/%u) from extent status tree of inode %lu\n",
 		 lblk, len, inode->i_ino);
 
@@ -1539,16 +1550,21 @@ retry:
 	 */
 	write_lock(&EXT4_I(inode)->i_es_lock);
 	err = __es_remove_extent(inode, lblk, end, &reserved, es);
+	if (err)
+		goto error;
 	/* Free preallocated extent if it didn't get used. */
 	if (es) {
 		if (!es->es_len)
 			__es_free_extent(es);
 		es = NULL;
 	}
+	ext4_es_inc_seq(inode);
+error:
 	write_unlock(&EXT4_I(inode)->i_es_lock);
 	if (err)
 		goto retry;
 
+	trace_ext4_es_remove_extent(inode, lblk, len);
 	ext4_es_print_tree(inode);
 	ext4_da_release_space(inode, reserved);
 }
@@ -2109,8 +2125,6 @@ void ext4_es_insert_delayed_extent(struct inode *inode, ext4_lblk_t lblk,
 	newes.es_lblk = lblk;
 	newes.es_len = len;
 	ext4_es_store_pblock_status(&newes, ~0, EXTENT_STATUS_DELAYED);
-	trace_ext4_es_insert_delayed_extent(inode, &newes, lclu_allocated,
-					    end_allocated);
 
 	ext4_es_insert_extent_check(inode, &newes);
 
@@ -2165,11 +2179,14 @@ retry:
 			pr2 = NULL;
 		}
 	}
+	ext4_es_inc_seq(inode);
 error:
 	write_unlock(&EXT4_I(inode)->i_es_lock);
 	if (err1 || err2 || err3 < 0)
 		goto retry;
 
+	trace_ext4_es_insert_delayed_extent(inode, &newes, lclu_allocated,
+					    end_allocated);
 	ext4_es_print_tree(inode);
 	ext4_print_pending_tree(inode);
 	return;
