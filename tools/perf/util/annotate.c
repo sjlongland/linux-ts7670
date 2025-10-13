@@ -2607,6 +2607,20 @@ static bool is_stack_canary(struct arch *arch, struct annotated_op_loc *loc)
 	return false;
 }
 
+/**
+ * Returns true if the instruction has a memory operand without
+ * performing a load/store
+ */
+static bool is_address_gen_insn(struct arch *arch, struct disasm_line *dl)
+{
+	if (arch__is(arch, "x86")) {
+		if (!strncmp(dl->ins.name, "lea", 3))
+			return true;
+	}
+
+	return false;
+}
+
 static struct disasm_line *
 annotation__prev_asm_line(struct annotation *notes, struct disasm_line *curr)
 {
@@ -2713,6 +2727,12 @@ __hist_entry__get_data_type(struct hist_entry *he, struct arch *arch,
 		istat->good++;
 		*type_offset = 0;
 		return &stackop_type;
+	}
+
+	if (is_address_gen_insn(arch, dl)) {
+		istat->bad++;
+		ann_data_stat.no_mem_ops++;
+		return NO_TYPE;
 	}
 
 	for_each_insn_op_loc(&loc, i, op_loc) {
