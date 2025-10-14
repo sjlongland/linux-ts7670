@@ -2062,7 +2062,7 @@ static int wsa_macro_get_ec_hq(struct snd_kcontrol *kcontrol,
 			       struct snd_ctl_elem_value *ucontrol)
 {
 
-	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
 	int ec_tx = ((struct soc_mixer_control *) kcontrol->private_value)->shift;
 	struct wsa_macro *wsa = snd_soc_component_get_drvdata(component);
 
@@ -2074,7 +2074,7 @@ static int wsa_macro_get_ec_hq(struct snd_kcontrol *kcontrol,
 static int wsa_macro_set_ec_hq(struct snd_kcontrol *kcontrol,
 			       struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
 	int ec_tx = ((struct soc_mixer_control *) kcontrol->private_value)->shift;
 	int value = ucontrol->value.integer.value[0];
 	struct wsa_macro *wsa = snd_soc_component_get_drvdata(component);
@@ -2088,7 +2088,7 @@ static int wsa_macro_get_compander(struct snd_kcontrol *kcontrol,
 				   struct snd_ctl_elem_value *ucontrol)
 {
 
-	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
 	int comp = ((struct soc_mixer_control *) kcontrol->private_value)->shift;
 	struct wsa_macro *wsa = snd_soc_component_get_drvdata(component);
 
@@ -2099,7 +2099,7 @@ static int wsa_macro_get_compander(struct snd_kcontrol *kcontrol,
 static int wsa_macro_set_compander(struct snd_kcontrol *kcontrol,
 				   struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
 	int comp = ((struct soc_mixer_control *) kcontrol->private_value)->shift;
 	int value = ucontrol->value.integer.value[0];
 	struct wsa_macro *wsa = snd_soc_component_get_drvdata(component);
@@ -2112,7 +2112,7 @@ static int wsa_macro_set_compander(struct snd_kcontrol *kcontrol,
 static int wsa_macro_ear_spkr_pa_gain_get(struct snd_kcontrol *kcontrol,
 					  struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
 	struct wsa_macro *wsa = snd_soc_component_get_drvdata(component);
 
 	ucontrol->value.integer.value[0] = wsa->ear_spkr_gain;
@@ -2123,7 +2123,7 @@ static int wsa_macro_ear_spkr_pa_gain_get(struct snd_kcontrol *kcontrol,
 static int wsa_macro_ear_spkr_pa_gain_put(struct snd_kcontrol *kcontrol,
 					  struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
 	struct wsa_macro *wsa = snd_soc_component_get_drvdata(component);
 
 	wsa->ear_spkr_gain =  ucontrol->value.integer.value[0];
@@ -2201,7 +2201,7 @@ static int wsa_macro_rx_mux_put(struct snd_kcontrol *kcontrol,
 static int wsa_macro_soft_clip_enable_get(struct snd_kcontrol *kcontrol,
 					  struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
 	struct wsa_macro *wsa = snd_soc_component_get_drvdata(component);
 	int path = ((struct soc_mixer_control *)kcontrol->private_value)->shift;
 
@@ -2213,7 +2213,7 @@ static int wsa_macro_soft_clip_enable_get(struct snd_kcontrol *kcontrol,
 static int wsa_macro_soft_clip_enable_put(struct snd_kcontrol *kcontrol,
 					  struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
+	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
 	struct wsa_macro *wsa = snd_soc_component_get_drvdata(component);
 	int path = ((struct soc_mixer_control *) kcontrol->private_value)->shift;
 
