@@ -1227,8 +1227,6 @@ void pmc_core_punit_pmt_init(struct pmc_dev *pmcdev, u32 guid)
 	}
 
 	pmcdev->punit_ep = ep;
-
-	pmcdev->has_die_c6 = true;
 	pmcdev->die_c6_offset = MTL_PMT_DMU_DIE_C6_OFFSET;
 }
 
@@ -1348,7 +1346,7 @@ static void pmc_core_dbgfs_register(struct pmc_dev *pmcdev)
 				    pmcdev->dbgfs_dir, primary_pmc, &pmc_core_pson_residency);
 	}
 
-	if (pmcdev->has_die_c6) {
+	if (pmcdev->punit_ep) {
 		debugfs_create_file("die_c6_us_show", 0444,
 				    pmcdev->dbgfs_dir, pmcdev,
 				    &pmc_core_die_c6_us_fops);
