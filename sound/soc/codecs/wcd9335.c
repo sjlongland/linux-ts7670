@@ -2175,7 +2175,7 @@ static int wcd9335_get_compander(struct snd_kcontrol *kc,
 			       struct snd_ctl_elem_value *ucontrol)
 {
 
-	struct snd_soc_component *component = snd_soc_kcontrol_component(kc);
+	struct snd_soc_component *component = snd_kcontrol_chip(kc);
 	int comp = ((struct soc_mixer_control *)kc->private_value)->shift;
 	struct wcd9335_codec *wcd = dev_get_drvdata(component->dev);
 
@@ -2186,7 +2186,7 @@ static int wcd9335_get_compander(struct snd_kcontrol *kc,
 static int wcd9335_set_compander(struct snd_kcontrol *kc,
 				 struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_component *component = snd_soc_kcontrol_component(kc);
+	struct snd_soc_component *component = snd_kcontrol_chip(kc);
 	struct wcd9335_codec *wcd = dev_get_drvdata(component->dev);
 	int comp = ((struct soc_mixer_control *) kc->private_value)->shift;
 	int value = ucontrol->value.integer.value[0];
@@ -2225,7 +2225,7 @@ static int wcd9335_set_compander(struct snd_kcontrol *kc,
 static int wcd9335_rx_hph_mode_get(struct snd_kcontrol *kc,
 				 struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_component *component = snd_soc_kcontrol_component(kc);
+	struct snd_soc_component *component = snd_kcontrol_chip(kc);
 	struct wcd9335_codec *wcd = dev_get_drvdata(component->dev);
 
 	ucontrol->value.enumerated.item[0] = wcd->hph_mode;
@@ -2236,7 +2236,7 @@ static int wcd9335_rx_hph_mode_get(struct snd_kcontrol *kc,
 static int wcd9335_rx_hph_mode_put(struct snd_kcontrol *kc,
 				 struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_component *component = snd_soc_kcontrol_component(kc);
+	struct snd_soc_component *component = snd_kcontrol_chip(kc);
 	struct wcd9335_codec *wcd = dev_get_drvdata(component->dev);
 	u32 mode_val;
 
