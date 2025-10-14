@@ -2024,7 +2024,7 @@ static unsigned int macb_tx_map(struct macb *bp,
 	unsigned int len, i, tx_head = queue->tx_head;
 	struct macb_tx_skb *tx_skb = NULL;
 	struct macb_dma_desc *desc;
-	unsigned int offset, size, count = 0;
+	unsigned int offset, size;
 	unsigned int f, nr_frags = skb_shinfo(skb)->nr_frags;
 	unsigned int eof = 1, mss_mfs = 0;
 	u32 ctrl, lso_ctrl = 0, seq_ctrl = 0;
@@ -2063,7 +2063,6 @@ static unsigned int macb_tx_map(struct macb *bp,
 
 		len -= size;
 		offset += size;
-		count++;
 		tx_head++;
 
 		size = umin(len, bp->max_tx_length);
@@ -2092,7 +2091,6 @@ static unsigned int macb_tx_map(struct macb *bp,
 
 			len -= size;
 			offset += size;
-			count++;
 			tx_head++;
 		}
 	}
@@ -2171,7 +2169,7 @@ static unsigned int macb_tx_map(struct macb *bp,
 
 	queue->tx_head = tx_head;
 
-	return count;
+	return 0;
 
 dma_error:
 	netdev_err(bp->dev, "TX DMA map failed\n");
@@ -2182,7 +2180,7 @@ dma_error:
 		macb_tx_unmap(bp, tx_skb, 0);
 	}
 
-	return 0;
+	return -ENOMEM;
 }
 
 static netdev_features_t macb_features_check(struct sk_buff *skb,
@@ -2370,7 +2368,7 @@ static netdev_tx_t macb_start_xmit(struct sk_buff *skb, struct net_device *dev)
 	}
 
 	/* Map socket buffer for DMA transfer */
-	if (!macb_tx_map(bp, queue, skb, hdrlen)) {
+	if (macb_tx_map(bp, queue, skb, hdrlen)) {
 		dev_kfree_skb_any(skb);
 		goto unlock;
 	}
