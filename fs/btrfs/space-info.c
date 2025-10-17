@@ -1203,7 +1203,10 @@ static void btrfs_preempt_reclaim_metadata_space(struct work_struct *work)
 		u64 delalloc_size = 0;
 		u64 to_reclaim, block_rsv_size;
 		const u64 global_rsv_size = btrfs_block_rsv_reserved(global_rsv);
+		const u64 bytes_may_use = space_info->bytes_may_use;
+		const u64 bytes_pinned = space_info->bytes_pinned;
 
+		spin_unlock(&space_info->lock);
 		/*
 		 * We don't have a precise counter for the metadata being
 		 * reserved for delalloc, so we'll approximate it by subtracting
@@ -1215,8 +1218,8 @@ static void btrfs_preempt_reclaim_metadata_space(struct work_struct *work)
 			btrfs_block_rsv_reserved(delayed_block_rsv) +
 			btrfs_block_rsv_reserved(delayed_refs_rsv) +
 			btrfs_block_rsv_reserved(trans_rsv);
-		if (block_rsv_size < space_info->bytes_may_use)
-			delalloc_size = space_info->bytes_may_use - block_rsv_size;
+		if (block_rsv_size < bytes_may_use)
+			delalloc_size = bytes_may_use - block_rsv_size;
 
 		/*
 		 * We don't want to include the global_rsv in our calculation,
@@ -1233,10 +1236,10 @@ static void btrfs_preempt_reclaim_metadata_space(struct work_struct *work)
 		if (delalloc_size > block_rsv_size) {
 			to_reclaim = delalloc_size;
 			flush = FLUSH_DELALLOC;
-		} else if (space_info->bytes_pinned >
+		} else if (bytes_pinned >
 			   (btrfs_block_rsv_reserved(delayed_block_rsv) +
 			    btrfs_block_rsv_reserved(delayed_refs_rsv))) {
-			to_reclaim = space_info->bytes_pinned;
+			to_reclaim = bytes_pinned;
 			flush = COMMIT_TRANS;
 		} else if (btrfs_block_rsv_reserved(delayed_block_rsv) >
 			   btrfs_block_rsv_reserved(delayed_refs_rsv)) {
@@ -1246,8 +1249,6 @@ static void btrfs_preempt_reclaim_metadata_space(struct work_struct *work)
 			to_reclaim = btrfs_block_rsv_reserved(delayed_refs_rsv);
 			flush = FLUSH_DELAYED_REFS_NR;
 		}
-
-		spin_unlock(&space_info->lock);
 
 		loops++;
 
