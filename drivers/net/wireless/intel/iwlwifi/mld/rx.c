@@ -1287,6 +1287,9 @@ static void iwl_mld_rx_fill_status(struct iwl_mld *mld, struct sk_buff *skb,
 		    iwl_mld_legacy_hw_idx_to_mac80211_idx(rate_n_flags,
 							  rx_status->band);
 
+		/* override BW - it could be DUP and indicate the wrong BW */
+		rx_status->bw = RATE_INFO_BW_20;
+
 		/* valid rate */
 		if (rate >= 0 && rate <= 0xFF) {
 			rx_status->rate_idx = rate;
