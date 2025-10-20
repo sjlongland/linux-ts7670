@@ -55,8 +55,7 @@ properties:
       - prstb
       - intb-only
 
-  timeout-sec:
-    maxItems: 2
+  timeout-sec: true
 
   regulators:
     $ref: /schemas/regulator/rohm,bd96801-regulator.yaml
@@ -70,7 +69,10 @@ required:
   - interrupt-names
   - regulators
 
-additionalProperties: false
+allOf:
+  - $ref: /schemas/watchdog/watchdog.yaml
+
+unevaluatedProperties: false
 
 examples:
   - |
