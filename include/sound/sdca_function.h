@@ -1171,6 +1171,8 @@ struct sdca_cluster {
  * @num_clusters: Number of Channel Clusters reported in this Function.
  * @busy_max_delay: Maximum Function busy delay in microseconds, before an
  * error should be reported.
+ * @reset_max_delay: Maximum Function reset delay in microseconds, before an
+ * error should be reported.
  */
 struct sdca_function_data {
 	struct sdca_function_desc *desc;
@@ -1183,6 +1185,7 @@ struct sdca_function_data {
 	int num_clusters;
 
 	unsigned int busy_max_delay;
+	unsigned int reset_max_delay;
 };
 
 static inline u32 sdca_range(struct sdca_control_range *range,
