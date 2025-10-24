@@ -286,9 +286,15 @@ static int ch_ipsec_xfrm_add_state(struct xfrm_state *x,
 		return -EINVAL;
 	}
 
+	if (unlikely(!try_module_get(THIS_MODULE))) {
+		NL_SET_ERR_MSG_MOD(extack, "Failed to acquire module reference");
+		return -ENODEV;
+	}
+
 	sa_entry = kzalloc(sizeof(*sa_entry), GFP_KERNEL);
 	if (!sa_entry) {
 		res = -ENOMEM;
+		module_put(THIS_MODULE);
 		goto out;
 	}
 
@@ -297,7 +303,6 @@ static int ch_ipsec_xfrm_add_state(struct xfrm_state *x,
 		sa_entry->esn = 1;
 	ch_ipsec_setkey(x, sa_entry);
 	x->xso.offload_handle = (unsigned long)sa_entry;
-	try_module_get(THIS_MODULE);
 out:
 	return res;
 }
