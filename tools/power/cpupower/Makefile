@@ -36,9 +36,7 @@ NLS ?=		true
 # cpufreq-bench benchmarking tool
 CPUFREQ_BENCH ?= true
 
-# Do not build libraries, but build the code in statically
-# Libraries are still built, otherwise the Makefile code would
-# be rather ugly.
+# Build the code, including libraries, statically.
 export STATIC ?= false
 
 # Prefix to the directories we're installing to
@@ -203,14 +201,25 @@ $(OUTPUT)lib/%.o: $(LIB_SRC) $(LIB_HEADERS)
 	$(ECHO) "  CC      " $@
 	$(QUIET) $(CC) $(CFLAGS) -fPIC -o $@ -c lib/$*.c
 
-$(OUTPUT)libcpupower.so.$(LIB_VER): $(LIB_OBJS)
+ifeq ($(strip $(STATIC)),true)
+LIBCPUPOWER := libcpupower.a
+else
+LIBCPUPOWER := libcpupower.so.$(LIB_VER)
+endif
+
+$(OUTPUT)$(LIBCPUPOWER): $(LIB_OBJS)
+ifeq ($(strip $(STATIC)),true)
+	$(ECHO) "  AR      " $@
+	$(QUIET) $(AR) rcs $@ $(LIB_OBJS)
+else
 	$(ECHO) "  LD      " $@
 	$(QUIET) $(CC) -shared $(CFLAGS) $(LDFLAGS) -o $@ \
 		-Wl,-soname,libcpupower.so.$(LIB_MAJ) $(LIB_OBJS)
 	@ln -sf $(@F) $(OUTPUT)libcpupower.so
 	@ln -sf $(@F) $(OUTPUT)libcpupower.so.$(LIB_MAJ)
+endif
 
-libcpupower: $(OUTPUT)libcpupower.so.$(LIB_VER)
+libcpupower: $(OUTPUT)$(LIBCPUPOWER)
 
 # Let all .o files depend on its .c file and all headers
 # Might be worth to put this into utils/Makefile at some point of time
@@ -220,7 +229,7 @@ $(OUTPUT)%.o: %.c
 	$(ECHO) "  CC      " $@
 	$(QUIET) $(CC) $(CFLAGS) -I./lib -I ./utils -o $@ -c $*.c
 
-$(OUTPUT)cpupower: $(UTIL_OBJS) $(OUTPUT)libcpupower.so.$(LIB_VER)
+$(OUTPUT)cpupower: $(UTIL_OBJS) $(OUTPUT)$(LIBCPUPOWER)
 	$(ECHO) "  CC      " $@
 ifeq ($(strip $(STATIC)),true)
 	$(QUIET) $(CC) $(CFLAGS) $(LDFLAGS) $(UTIL_OBJS) -lrt -lpci -L$(OUTPUT) -o $@
@@ -265,7 +274,7 @@ update-po: $(OUTPUT)po/$(PACKAGE).pot
 	done;
 endif
 
-compile-bench: $(OUTPUT)libcpupower.so.$(LIB_VER)
+compile-bench: $(OUTPUT)$(LIBCPUPOWER)
 	@V=$(V) confdir=$(confdir) $(MAKE) -C bench O=$(OUTPUT)
 
 # we compile into subdirectories. if the target directory is not the
@@ -283,6 +292,7 @@ clean:
 	-find $(OUTPUT) \( -not -type d \) -and \( -name '*~' -o -name '*.[oas]' \) -type f -print \
 	 | xargs rm -f
 	-rm -f $(OUTPUT)cpupower
+	-rm -f $(OUTPUT)libcpupower.a
 	-rm -f $(OUTPUT)libcpupower.so*
 	-rm -rf $(OUTPUT)po/*.gmo
 	-rm -rf $(OUTPUT)po/*.pot
@@ -291,7 +301,11 @@ clean:
 
 install-lib: libcpupower
 	$(INSTALL) -d $(DESTDIR)${libdir}
+ifeq ($(strip $(STATIC)),true)
+	$(CP) $(OUTPUT)libcpupower.a $(DESTDIR)${libdir}/
+else
 	$(CP) $(OUTPUT)libcpupower.so* $(DESTDIR)${libdir}/
+endif
 	$(INSTALL) -d $(DESTDIR)${includedir}
 	$(INSTALL_DATA) lib/cpufreq.h $(DESTDIR)${includedir}/cpufreq.h
 	$(INSTALL_DATA) lib/cpuidle.h $(DESTDIR)${includedir}/cpuidle.h
@@ -325,11 +339,7 @@ install-bench: compile-bench
 	@#DESTDIR must be set from outside to survive
 	@sbindir=$(sbindir) bindir=$(bindir) docdir=$(docdir) confdir=$(confdir) $(MAKE) -C bench O=$(OUTPUT) install
 
-ifeq ($(strip $(STATIC)),true)
-install: all install-tools install-man $(INSTALL_NLS) $(INSTALL_BENCH)
-else
 install: all install-lib install-tools install-man $(INSTALL_NLS) $(INSTALL_BENCH)
-endif
 
 uninstall:
 	- rm -f $(DESTDIR)${libdir}/libcpupower.*
