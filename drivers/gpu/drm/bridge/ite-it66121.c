@@ -1382,8 +1382,6 @@ static int it66121_audio_startup(struct device *dev, void *data)
 	int ret;
 	struct it66121_ctx *ctx = dev_get_drvdata(dev);
 
-	dev_dbg(dev, "%s\n", __func__);
-
 	mutex_lock(&ctx->lock);
 	ret = it661221_audio_output_enable(ctx, true);
 	if (ret)
@@ -1398,8 +1396,6 @@ static void it66121_audio_shutdown(struct device *dev, void *data)
 {
 	int ret;
 	struct it66121_ctx *ctx = dev_get_drvdata(dev);
-
-	dev_dbg(dev, "%s\n", __func__);
 
 	mutex_lock(&ctx->lock);
 	ret = it661221_audio_output_enable(ctx, false);
@@ -1476,8 +1472,6 @@ static int it66121_audio_codec_init(struct it66121_ctx *ctx, struct device *dev)
 		.max_i2s_channels = 8,
 		.no_capture_mute = 1,
 	};
-
-	dev_dbg(dev, "%s\n", __func__);
 
 	if (!of_property_present(dev->of_node, "#sound-dai-cells")) {
 		dev_info(dev, "No \"#sound-dai-cells\", no audio\n");
