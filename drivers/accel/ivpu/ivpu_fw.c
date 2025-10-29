@@ -142,6 +142,12 @@ static bool is_within_range(u64 addr, size_t size, u64 range_start, size_t range
 static u32
 ivpu_fw_sched_mode_select(struct ivpu_device *vdev, const struct vpu_firmware_header *fw_hdr)
 {
+	if (ivpu_hw_ip_gen(vdev) >= IVPU_HW_IP_60XX &&
+	    ivpu_sched_mode == VPU_SCHEDULING_MODE_OS) {
+		ivpu_warn(vdev, "OS sched mode is not supported, using HW mode\n");
+		return VPU_SCHEDULING_MODE_HW;
+	}
+
 	if (ivpu_sched_mode != IVPU_SCHED_MODE_AUTO)
 		return ivpu_sched_mode;
 
