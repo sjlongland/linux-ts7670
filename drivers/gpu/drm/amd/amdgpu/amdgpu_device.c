@@ -2421,6 +2421,7 @@ static const char *ip_block_names[] = {
 	[AMD_IP_BLOCK_TYPE_VPE] = "vpe",
 	[AMD_IP_BLOCK_TYPE_UMSCH_MM] = "umsch_mm",
 	[AMD_IP_BLOCK_TYPE_ISP] = "isp",
+	[AMD_IP_BLOCK_TYPE_RAS] = "ras",
 };
 
 static const char *ip_block_name(struct amdgpu_device *adev, enum amd_ip_block_type type)
