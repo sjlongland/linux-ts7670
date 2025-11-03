@@ -359,7 +359,7 @@ static int __init setup_vm_debug(char *str)
 
 	while (*str) {
 		switch (tolower(*str)) {
-		case'p':
+		case 'p':
 			__page_init_poisoning = true;
 			break;
 		default:
