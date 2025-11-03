@@ -644,6 +644,8 @@ struct phy_device {
 	/* The most recently read link state */
 	unsigned link:1;
 	unsigned autoneg_complete:1;
+	bool pause:1;
+	bool asym_pause:1;
 
 	/* Interrupts are enabled */
 	unsigned interrupts:1;
@@ -668,8 +670,6 @@ struct phy_device {
 	int speed;
 	int duplex;
 	int port;
-	int pause;
-	int asym_pause;
 	u8 master_slave_get;
 	u8 master_slave_set;
 	u8 master_slave_state;
