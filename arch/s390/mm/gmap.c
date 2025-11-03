@@ -137,10 +137,7 @@ EXPORT_SYMBOL_GPL(gmap_create);
 
 static void gmap_flush_tlb(struct gmap *gmap)
 {
-	if (cpu_has_idte())
-		__tlb_flush_idte(gmap->asce);
-	else
-		__tlb_flush_global();
+	__tlb_flush_idte(gmap->asce);
 }
 
 static void gmap_radix_tree_free(struct radix_tree_root *root)
@@ -2030,10 +2027,8 @@ static void gmap_pmdp_xchg(struct gmap *gmap, pmd_t *pmdp, pmd_t new,
 	if (machine_has_tlb_guest())
 		__pmdp_idte(gaddr, (pmd_t *)pmdp, IDTE_GUEST_ASCE, gmap->asce,
 			    IDTE_GLOBAL);
-	else if (cpu_has_idte())
-		__pmdp_idte(gaddr, (pmd_t *)pmdp, 0, 0, IDTE_GLOBAL);
 	else
-		__pmdp_csp(pmdp);
+		__pmdp_idte(gaddr, (pmd_t *)pmdp, 0, 0, IDTE_GLOBAL);
 	set_pmd(pmdp, new);
 }
 
@@ -2108,7 +2103,7 @@ void gmap_pmdp_idte_local(struct mm_struct *mm, unsigned long vmaddr)
 			if (machine_has_tlb_guest())
 				__pmdp_idte(gaddr, pmdp, IDTE_GUEST_ASCE,
 					    gmap->asce, IDTE_LOCAL);
-			else if (cpu_has_idte())
+			else
 				__pmdp_idte(gaddr, pmdp, 0, 0, IDTE_LOCAL);
 			*pmdp = __pmd(_SEGMENT_ENTRY_EMPTY);
 		}
@@ -2141,10 +2136,8 @@ void gmap_pmdp_idte_global(struct mm_struct *mm, unsigned long vmaddr)
 			if (machine_has_tlb_guest())
 				__pmdp_idte(gaddr, pmdp, IDTE_GUEST_ASCE,
 					    gmap->asce, IDTE_GLOBAL);
-			else if (cpu_has_idte())
-				__pmdp_idte(gaddr, pmdp, 0, 0, IDTE_GLOBAL);
 			else
-				__pmdp_csp(pmdp);
+				__pmdp_idte(gaddr, pmdp, 0, 0, IDTE_GLOBAL);
 			*pmdp = __pmd(_SEGMENT_ENTRY_EMPTY);
 		}
 		spin_unlock(&gmap->guest_table_lock);
