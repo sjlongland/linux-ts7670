@@ -1235,8 +1235,10 @@ xfs_mount_zones(
 
 		while ((rtg = xfs_rtgroup_next(mp, rtg))) {
 			error = xfs_init_zone(&iz, rtg, NULL);
-			if (error)
+			if (error) {
+				xfs_rtgroup_rele(rtg);
 				goto out_free_zone_info;
+			}
 		}
 	}
 
