@@ -1212,6 +1212,17 @@ int xe_gt_sriov_pf_config_bulk_set_dbs(struct xe_gt *gt, unsigned int vfid,
 					   "GuC doorbell IDs", no_unit, n, err);
 }
 
+static u32 pf_profile_fair_dbs(struct xe_gt *gt, unsigned int num_vfs)
+{
+	bool admin_only_pf = xe_sriov_pf_admin_only(gt_to_xe(gt));
+
+	/* XXX: preliminary */
+	if (admin_only_pf && num_vfs == 1)
+		return GUC_NUM_DOORBELLS - SZ_16;
+
+	return rounddown_pow_of_two(GUC_NUM_DOORBELLS / (num_vfs + 1));
+}
+
 static u32 pf_estimate_fair_dbs(struct xe_gt *gt, unsigned int num_vfs)
 {
 	struct xe_guc_db_mgr *dbm = &gt->uc.guc.dbm;
@@ -1244,6 +1255,7 @@ static u32 pf_estimate_fair_dbs(struct xe_gt *gt, unsigned int num_vfs)
 int xe_gt_sriov_pf_config_set_fair_dbs(struct xe_gt *gt, unsigned int vfid,
 				       unsigned int num_vfs)
 {
+	u32 profile = pf_profile_fair_dbs(gt, num_vfs);
 	u32 fair;
 
 	xe_gt_assert(gt, vfid);
@@ -1255,6 +1267,11 @@ int xe_gt_sriov_pf_config_set_fair_dbs(struct xe_gt *gt, unsigned int vfid,
 
 	if (!fair)
 		return -ENOSPC;
+
+	fair = min(fair, profile);
+	if (fair < profile)
+		xe_gt_sriov_info(gt, "Using non-profile provisioning (%s %u vs %u)\n",
+				 "GuC doorbell IDs", fair, profile);
 
 	return xe_gt_sriov_pf_config_bulk_set_dbs(gt, vfid, num_vfs, fair);
 }
