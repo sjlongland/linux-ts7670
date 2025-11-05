@@ -50,7 +50,7 @@ static struct pai_root {		/* Anchor to per CPU data */
 } pai_root;
 
 /* Free per CPU data when the last event is removed. */
-static void paicrypt_root_free(void)
+static void pai_root_free(void)
 {
 	if (refcount_dec_and_test(&pai_root.refcnt)) {
 		free_percpu(pai_root.mapptr);
@@ -66,7 +66,7 @@ static void paicrypt_root_free(void)
  * CPUs possible, which might be larger than the number of CPUs currently
  * online.
  */
-static int paicrypt_root_alloc(void)
+static int pai_root_alloc(void)
 {
 	if (!refcount_inc_not_zero(&pai_root.refcnt)) {
 		/* The memory is already zeroed. */
@@ -105,7 +105,7 @@ static void paicrypt_event_destroy_cpu(struct perf_event *event, int cpu)
 			    refcount_read(&cpump->refcnt));
 	if (refcount_dec_and_test(&cpump->refcnt))
 		paicrypt_free(mp);
-	paicrypt_root_free();
+	pai_root_free();
 	mutex_unlock(&pai_reserve_mutex);
 }
 
@@ -186,7 +186,7 @@ static int paicrypt_alloc_cpu(struct perf_event *event, int cpu)
 
 	mutex_lock(&pai_reserve_mutex);
 	/* Allocate root node */
-	rc = paicrypt_root_alloc();
+	rc = pai_root_alloc();
 	if (rc)
 		goto unlock;
 
@@ -223,7 +223,7 @@ undo:
 		 * the event in not created, its destroy() function is never
 		 * invoked. Adjust the reference counter for the anchor.
 		 */
-		paicrypt_root_free();
+		pai_root_free();
 	}
 unlock:
 	mutex_unlock(&pai_reserve_mutex);
