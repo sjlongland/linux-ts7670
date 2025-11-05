@@ -40,13 +40,13 @@ struct paicrypt_map {
 	struct list_head syswide_list;	/* List system-wide sampling events */
 };
 
-struct paicrypt_mapptr {
+struct pai_mapptr {
 	struct paicrypt_map *mapptr;
 };
 
 static struct paicrypt_root {		/* Anchor to per CPU data */
 	refcount_t refcnt;		/* Overall active events */
-	struct paicrypt_mapptr __percpu *mapptr;
+	struct pai_mapptr __percpu *mapptr;
 } paicrypt_root;
 
 /* Free per CPU data when the last event is removed. */
@@ -70,7 +70,7 @@ static int paicrypt_root_alloc(void)
 {
 	if (!refcount_inc_not_zero(&paicrypt_root.refcnt)) {
 		/* The memory is already zeroed. */
-		paicrypt_root.mapptr = alloc_percpu(struct paicrypt_mapptr);
+		paicrypt_root.mapptr = alloc_percpu(struct pai_mapptr);
 		if (!paicrypt_root.mapptr)
 			return -ENOMEM;
 		refcount_set(&paicrypt_root.refcnt, 1);
@@ -82,7 +82,7 @@ static int paicrypt_root_alloc(void)
 static DEFINE_MUTEX(pai_reserve_mutex);
 
 /* Free all memory allocated for event counting/sampling setup */
-static void paicrypt_free(struct paicrypt_mapptr *mp)
+static void paicrypt_free(struct pai_mapptr *mp)
 {
 	free_page((unsigned long)mp->mapptr->area);
 	kvfree(mp->mapptr->save);
@@ -95,7 +95,7 @@ static void paicrypt_free(struct paicrypt_mapptr *mp)
  */
 static void paicrypt_event_destroy_cpu(struct perf_event *event, int cpu)
 {
-	struct paicrypt_mapptr *mp = per_cpu_ptr(paicrypt_root.mapptr, cpu);
+	struct pai_mapptr *mp = per_cpu_ptr(paicrypt_root.mapptr, cpu);
 	struct paicrypt_map *cpump = mp->mapptr;
 
 	mutex_lock(&pai_reserve_mutex);
@@ -138,7 +138,7 @@ static u64 paicrypt_getctr(unsigned long *page, int nr, bool kernel)
  */
 static u64 paicrypt_getdata(struct perf_event *event, bool kernel)
 {
-	struct paicrypt_mapptr *mp = this_cpu_ptr(paicrypt_root.mapptr);
+	struct pai_mapptr *mp = this_cpu_ptr(paicrypt_root.mapptr);
 	struct paicrypt_map *cpump = mp->mapptr;
 	u64 sum = 0;
 	int i;
@@ -181,7 +181,7 @@ static u64 paicrypt_getall(struct perf_event *event)
 static int paicrypt_alloc_cpu(struct perf_event *event, int cpu)
 {
 	struct paicrypt_map *cpump = NULL;
-	struct paicrypt_mapptr *mp;
+	struct pai_mapptr *mp;
 	int rc;
 
 	mutex_lock(&pai_reserve_mutex);
@@ -327,7 +327,7 @@ static void paicrypt_read(struct perf_event *event)
 
 static void paicrypt_start(struct perf_event *event, int flags)
 {
-	struct paicrypt_mapptr *mp = this_cpu_ptr(paicrypt_root.mapptr);
+	struct pai_mapptr *mp = this_cpu_ptr(paicrypt_root.mapptr);
 	struct paicrypt_map *cpump = mp->mapptr;
 	u64 sum;
 
@@ -348,7 +348,7 @@ static void paicrypt_start(struct perf_event *event, int flags)
 
 static int paicrypt_add(struct perf_event *event, int flags)
 {
-	struct paicrypt_mapptr *mp = this_cpu_ptr(paicrypt_root.mapptr);
+	struct pai_mapptr *mp = this_cpu_ptr(paicrypt_root.mapptr);
 	struct paicrypt_map *cpump = mp->mapptr;
 	unsigned long ccd;
 
@@ -366,7 +366,7 @@ static int paicrypt_add(struct perf_event *event, int flags)
 static void paicrypt_have_sample(struct perf_event *, struct paicrypt_map *);
 static void paicrypt_stop(struct perf_event *event, int flags)
 {
-	struct paicrypt_mapptr *mp = this_cpu_ptr(paicrypt_root.mapptr);
+	struct pai_mapptr *mp = this_cpu_ptr(paicrypt_root.mapptr);
 	struct paicrypt_map *cpump = mp->mapptr;
 
 	if (!event->attr.sample_period) {	/* Counting */
@@ -385,7 +385,7 @@ static void paicrypt_stop(struct perf_event *event, int flags)
 
 static void paicrypt_del(struct perf_event *event, int flags)
 {
-	struct paicrypt_mapptr *mp = this_cpu_ptr(paicrypt_root.mapptr);
+	struct pai_mapptr *mp = this_cpu_ptr(paicrypt_root.mapptr);
 	struct paicrypt_map *cpump = mp->mapptr;
 
 	paicrypt_stop(event, PERF_EF_UPDATE);
@@ -489,7 +489,7 @@ static void paicrypt_have_sample(struct perf_event *event,
 /* Check if there is data to be saved on schedule out of a task. */
 static void paicrypt_have_samples(void)
 {
-	struct paicrypt_mapptr *mp = this_cpu_ptr(paicrypt_root.mapptr);
+	struct pai_mapptr *mp = this_cpu_ptr(paicrypt_root.mapptr);
 	struct paicrypt_map *cpump = mp->mapptr;
 	struct perf_event *event;
 
