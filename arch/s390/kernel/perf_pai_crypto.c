@@ -139,7 +139,6 @@ static void pai_event_destroy(struct perf_event *event)
 {
 	int cpu;
 
-	static_branch_dec(&pai_key);
 	free_page(PAI_SAVE_AREA(event));
 	if (event->cpu == -1) {
 		struct cpumask *mask = PAI_CPU_MASK(event);
@@ -150,6 +149,12 @@ static void pai_event_destroy(struct perf_event *event)
 	} else {
 		pai_event_destroy_cpu(event, event->cpu);
 	}
+}
+
+static void paicrypt_event_destroy(struct perf_event *event)
+{
+	static_branch_dec(&pai_key);
+	pai_event_destroy(event);
 }
 
 static u64 pai_getctr(unsigned long *page, int nr, unsigned long offset)
@@ -361,7 +366,7 @@ static int paicrypt_event_init(struct perf_event *event)
 	int rc = pai_event_init(event, PAI_PMU_CRYPTO);
 
 	if (!rc) {
-		event->destroy = pai_event_destroy;
+		event->destroy = paicrypt_event_destroy;
 		static_branch_inc(&pai_key);
 	}
 	return rc;
