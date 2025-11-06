@@ -1179,8 +1179,7 @@ drop:
 	reqsk_put(oreq);
 }
 
-static bool reqsk_queue_hash_req(struct request_sock *req,
-				 unsigned long timeout)
+static bool reqsk_queue_hash_req(struct request_sock *req)
 {
 	bool found_dup_sk = false;
 
@@ -1188,8 +1187,9 @@ static bool reqsk_queue_hash_req(struct request_sock *req,
 		return false;
 
 	/* The timer needs to be setup after a successful insertion. */
+	req->timeout = tcp_timeout_init((struct sock *)req);
 	timer_setup(&req->rsk_timer, reqsk_timer_handler, TIMER_PINNED);
-	mod_timer(&req->rsk_timer, jiffies + timeout);
+	mod_timer(&req->rsk_timer, jiffies + req->timeout);
 
 	/* before letting lookups find us, make sure all req fields
 	 * are committed to memory and refcnt initialized.
@@ -1199,10 +1199,9 @@ static bool reqsk_queue_hash_req(struct request_sock *req,
 	return true;
 }
 
-bool inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock *req,
-				   unsigned long timeout)
+bool inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock *req)
 {
-	if (!reqsk_queue_hash_req(req, timeout))
+	if (!reqsk_queue_hash_req(req))
 		return false;
 
 	inet_csk_reqsk_queue_added(sk);
