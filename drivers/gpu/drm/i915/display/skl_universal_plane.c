@@ -3057,7 +3057,6 @@ skl_get_initial_plane_config(struct intel_crtc *crtc,
 
 	fourcc = skl_format_to_fourcc(pixel_format,
 				      val & PLANE_CTL_ORDER_RGBX, alpha);
-	fb->format = drm_format_info(fourcc);
 
 	tiling = val & PLANE_CTL_TILED_MASK;
 	switch (tiling) {
@@ -3109,6 +3108,8 @@ skl_get_initial_plane_config(struct intel_crtc *crtc,
 		MISSING_CASE(tiling);
 		goto error;
 	}
+
+	fb->format = drm_get_format_info(display->drm, fourcc, fb->modifier);
 
 	if (!display->params.enable_dpt &&
 	    intel_fb_modifier_uses_dpt(display, fb->modifier)) {
