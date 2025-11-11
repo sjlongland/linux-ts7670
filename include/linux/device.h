@@ -336,7 +336,6 @@ static inline int __devm_add_action_or_reset(struct device *dev, void (*action)(
 
 void __percpu *__devm_alloc_percpu(struct device *dev, size_t size,
 				   size_t align);
-void devm_free_percpu(struct device *dev, void __percpu *pdata);
 
 struct device_dma_parameters {
 	/*
