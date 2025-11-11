@@ -514,7 +514,7 @@ static void cs42l43_start_load_detect(struct cs42l43_codec *priv)
 
 	dev_dbg(priv->dev, "Start load detect\n");
 
-	snd_soc_dapm_mutex_lock(snd_soc_component_get_dapm(priv->component));
+	snd_soc_dapm_mutex_lock(snd_soc_component_to_dapm(priv->component));
 
 	priv->load_detect_running = true;
 
@@ -551,7 +551,7 @@ static void cs42l43_start_load_detect(struct cs42l43_codec *priv)
 			   CS42L43_HPLOAD_DET_EN_MASK,
 			   CS42L43_HPLOAD_DET_EN_MASK);
 
-	snd_soc_dapm_mutex_unlock(snd_soc_component_get_dapm(priv->component));
+	snd_soc_dapm_mutex_unlock(snd_soc_component_to_dapm(priv->component));
 }
 
 static void cs42l43_stop_load_detect(struct cs42l43_codec *priv)
@@ -560,7 +560,7 @@ static void cs42l43_stop_load_detect(struct cs42l43_codec *priv)
 
 	dev_dbg(priv->dev, "Stop load detect\n");
 
-	snd_soc_dapm_mutex_lock(snd_soc_component_get_dapm(priv->component));
+	snd_soc_dapm_mutex_lock(snd_soc_component_to_dapm(priv->component));
 
 	regmap_update_bits(cs42l43->regmap, CS42L43_LOADDETENA,
 			   CS42L43_HPLOAD_DET_EN_MASK, 0);
@@ -599,7 +599,7 @@ static void cs42l43_stop_load_detect(struct cs42l43_codec *priv)
 
 	priv->load_detect_running = false;
 
-	snd_soc_dapm_mutex_unlock(snd_soc_component_get_dapm(priv->component));
+	snd_soc_dapm_mutex_unlock(snd_soc_component_to_dapm(priv->component));
 }
 
 static int cs42l43_run_load_detect(struct cs42l43_codec *priv, bool mic)
