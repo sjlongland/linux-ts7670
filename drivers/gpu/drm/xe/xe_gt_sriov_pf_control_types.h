@@ -71,8 +71,10 @@ enum xe_gt_sriov_control_bits {
 	XE_GT_SRIOV_STATE_STOP_FAILED,
 	XE_GT_SRIOV_STATE_STOPPED,
 
-	XE_GT_SRIOV_STATE_MISMATCH = BITS_PER_LONG - 1,
+	XE_GT_SRIOV_STATE_MISMATCH, /* always keep as last */
 };
+
+#define XE_GT_SRIOV_NUM_STATES (XE_GT_SRIOV_STATE_MISMATCH + 1)
 
 /**
  * struct xe_gt_sriov_control_state - GT-level per-VF control state.
@@ -81,7 +83,7 @@ enum xe_gt_sriov_control_bits {
  */
 struct xe_gt_sriov_control_state {
 	/** @state: VF state bits */
-	unsigned long state;
+	DECLARE_BITMAP(state, XE_GT_SRIOV_NUM_STATES);
 
 	/** @done: completion of async operations */
 	struct completion done;
