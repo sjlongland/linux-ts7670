@@ -1314,6 +1314,8 @@ static int mlx5_function_close(struct mlx5_core_dev *dev)
 		return err;
 	}
 
+	BLOCKING_INIT_NOTIFIER_HEAD(&dev->priv.esw_n_head);
+
 	return 0;
 }
 
