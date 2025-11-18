@@ -349,6 +349,9 @@ int ptr_to_hashval(const void *ptr, unsigned long *hashval_out);
  * strstarts - does @str start with @prefix?
  * @str: string to examine
  * @prefix: prefix to look for.
+ *
+ * Returns:
+ * True if @str begins with @prefix. False in all other cases.
  */
 static inline bool strstarts(const char *str, const char *prefix)
 {
@@ -381,6 +384,10 @@ static inline void memzero_explicit(void *s, size_t count)
  * kbasename - return the last part of a pathname.
  *
  * @path: path to extract the filename from.
+ *
+ * Returns:
+ * Pointer to the filename portion inside @path. If no '/' exists,
+ * returns @path unchanged.
  */
 static inline const char *kbasename(const char *path)
 {
