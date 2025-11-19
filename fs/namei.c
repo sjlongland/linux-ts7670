@@ -1854,7 +1854,7 @@ again:
 	return dentry;
 }
 
-static struct dentry *lookup_slow(const struct qstr *name,
+static noinline struct dentry *lookup_slow(const struct qstr *name,
 				  struct dentry *dir,
 				  unsigned int flags)
 {
