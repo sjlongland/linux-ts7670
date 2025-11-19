@@ -5013,6 +5013,7 @@ struct find_xattr_ctx {
 	int found_idx;
 	char *found_data;
 	int found_data_len;
+	bool copy_data;
 };
 
 static int __find_xattr(int num, struct btrfs_key *di_key, const char *name,
@@ -5024,9 +5025,11 @@ static int __find_xattr(int num, struct btrfs_key *di_key, const char *name,
 	    strncmp(name, ctx->name, name_len) == 0) {
 		ctx->found_idx = num;
 		ctx->found_data_len = data_len;
-		ctx->found_data = kmemdup(data, data_len, GFP_KERNEL);
-		if (!ctx->found_data)
-			return -ENOMEM;
+		if (ctx->copy_data) {
+			ctx->found_data = kmemdup(data, data_len, GFP_KERNEL);
+			if (!ctx->found_data)
+				return -ENOMEM;
+		}
 		return 1;
 	}
 	return 0;
@@ -5046,6 +5049,7 @@ static int find_xattr(struct btrfs_root *root,
 	ctx.found_idx = -1;
 	ctx.found_data = NULL;
 	ctx.found_data_len = 0;
+	ctx.copy_data = (data != NULL);
 
 	ret = iterate_dir_item(root, path, __find_xattr, &ctx);
 	if (ret < 0)
@@ -5057,7 +5061,7 @@ static int find_xattr(struct btrfs_root *root,
 		*data = ctx.found_data;
 		*data_len = ctx.found_data_len;
 	} else {
-		kfree(ctx.found_data);
+		ASSERT(ctx.found_data == NULL);
 	}
 	return ctx.found_idx;
 }
