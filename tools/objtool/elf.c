@@ -171,11 +171,11 @@ static struct symbol *find_symbol_by_index(struct elf *elf, unsigned int idx)
 struct symbol *find_symbol_by_offset(struct section *sec, unsigned long offset)
 {
 	struct rb_root_cached *tree = (struct rb_root_cached *)&sec->symbol_tree;
-	struct symbol *iter;
+	struct symbol *sym;
 
-	__sym_for_each(iter, tree, offset, offset) {
-		if (iter->offset == offset && !is_sec_sym(iter))
-			return iter;
+	__sym_for_each(sym, tree, offset, offset) {
+		if (sym->offset == offset && !is_sec_sym(sym))
+			return sym->alias;
 	}
 
 	return NULL;
@@ -184,11 +184,11 @@ struct symbol *find_symbol_by_offset(struct section *sec, unsigned long offset)
 struct symbol *find_func_by_offset(struct section *sec, unsigned long offset)
 {
 	struct rb_root_cached *tree = (struct rb_root_cached *)&sec->symbol_tree;
-	struct symbol *iter;
+	struct symbol *func;
 
-	__sym_for_each(iter, tree, offset, offset) {
-		if (iter->offset == offset && is_func_sym(iter))
-			return iter;
+	__sym_for_each(func, tree, offset, offset) {
+		if (func->offset == offset && is_func_sym(func))
+			return func->alias;
 	}
 
 	return NULL;
@@ -219,7 +219,7 @@ struct symbol *find_symbol_containing(const struct section *sec, unsigned long o
 		}
 	}
 
-	return sym;
+	return sym ? sym->alias : NULL;
 }
 
 /*
@@ -265,11 +265,11 @@ int find_symbol_hole_containing(const struct section *sec, unsigned long offset)
 struct symbol *find_func_containing(struct section *sec, unsigned long offset)
 {
 	struct rb_root_cached *tree = (struct rb_root_cached *)&sec->symbol_tree;
-	struct symbol *iter;
+	struct symbol *func;
 
-	__sym_for_each(iter, tree, offset, offset) {
-		if (is_func_sym(iter))
-			return iter;
+	__sym_for_each(func, tree, offset, offset) {
+		if (is_func_sym(func))
+			return func->alias;
 	}
 
 	return NULL;
