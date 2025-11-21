@@ -1240,4 +1240,11 @@ static inline int mapping_map_writable(struct address_space *mapping)
 	return 0;
 }
 
+static inline void vm_flags_reset(struct vm_area_struct *vma, vm_flags_t flags)
+{
+	vm_flags_t *dst = (vm_flags_t *)(&vma->vm_flags);
+
+	*dst = flags;
+}
+
 #endif	/* __MM_VMA_INTERNAL_H */
