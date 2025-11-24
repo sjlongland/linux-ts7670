@@ -1494,7 +1494,7 @@ int fbnic_alloc_napi_vectors(struct fbnic_net *fbn)
 free_vectors:
 	fbnic_free_napi_vectors(fbn);
 
-	return -ENOMEM;
+	return err;
 }
 
 static void fbnic_free_ring_resources(struct device *dev,
