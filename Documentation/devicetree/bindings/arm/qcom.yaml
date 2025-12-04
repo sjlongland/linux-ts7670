@@ -1149,6 +1149,12 @@ properties:
 
       - items:
           - enum:
+              - tuxedo,elite14gen1
+          - const: qcom,x1e78100
+          - const: qcom,x1e80100
+
+      - items:
+          - enum:
               - asus,vivobook-s15
               - dell,xps13-9345
               - hp,omnibook-x14
