@@ -1082,7 +1082,6 @@ bool kvm_apic_match_dest(struct kvm_vcpu *vcpu, struct kvm_lapic *source,
 	struct kvm_lapic *target = vcpu->arch.apic;
 	u32 mda = kvm_apic_mda(vcpu, dest, source, target);
 
-	ASSERT(target);
 	switch (shorthand) {
 	case APIC_DEST_NOSHORT:
 		if (dest_mode == APIC_DEST_PHYSICAL)
@@ -1541,8 +1540,6 @@ static u32 apic_get_tmcct(struct kvm_lapic *apic)
 {
 	ktime_t remaining, now;
 	s64 ns;
-
-	ASSERT(apic != NULL);
 
 	/* if initial count is 0, current count should also be 0 */
 	if (kvm_lapic_get_reg(apic, APIC_TMICT) == 0 ||
@@ -2924,8 +2921,6 @@ static enum hrtimer_restart apic_timer_fn(struct hrtimer *data)
 int kvm_create_lapic(struct kvm_vcpu *vcpu)
 {
 	struct kvm_lapic *apic;
-
-	ASSERT(vcpu != NULL);
 
 	if (!irqchip_in_kernel(vcpu->kvm)) {
 		static_branch_inc(&kvm_has_noapic_vcpu);
