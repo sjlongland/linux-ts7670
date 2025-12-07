@@ -87,7 +87,7 @@ static bool bpf_iter_support_resched(struct seq_file *seq)
 
 /* bpf_seq_read, a customized and simpler version for bpf iterator.
  * The following are differences from seq_read():
- *  . fixed buffer size (PAGE_SIZE)
+ *  . fixed buffer size (PAGE_SIZE << 3)
  *  . assuming NULL ->llseek()
  *  . stop() may call bpf program, handling potential overflow there
  */
