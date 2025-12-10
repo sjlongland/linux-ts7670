@@ -1830,8 +1830,6 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
 	chip_bus_sync_unlock(desc);
 	mutex_unlock(&desc->request_mutex);
 
-	irq_setup_timings(desc, new);
-
 	wake_up_and_wait_for_irq_thread_ready(desc, new);
 	wake_up_and_wait_for_irq_thread_ready(desc, new->secondary);
 
@@ -2003,7 +2001,6 @@ static struct irqaction *__free_irq(struct irq_desc *desc, void *dev_id)
 
 		irq_release_resources(desc);
 		chip_bus_sync_unlock(desc);
-		irq_remove_timings(desc);
 	}
 
 	mutex_unlock(&desc->request_mutex);
