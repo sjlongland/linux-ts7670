@@ -271,6 +271,7 @@
 				       <&hpdma 52 0x20 0x3021>;
 				dma-names = "rx", "tx";
 				access-controllers = <&rifsc 23>;
+				power-domains = <&CLUSTER_PD>;
 				status = "disabled";
 			};
 
@@ -301,6 +302,7 @@
 				       <&hpdma 54 0x20 0x3021>;
 				dma-names = "rx", "tx";
 				access-controllers = <&rifsc 24>;
+				power-domains = <&CLUSTER_PD>;
 				status = "disabled";
 			};
 
@@ -517,6 +519,7 @@
 				       <&hpdma 50 0x20 0x3021>;
 				dma-names = "rx", "tx";
 				access-controllers = <&rifsc 22>;
+				power-domains = <&CLUSTER_PD>;
 				status = "disabled";
 			};
 
@@ -532,6 +535,7 @@
 				       <&hpdma 56 0x20 0x3021>;
 				dma-names = "rx", "tx";
 				access-controllers = <&rifsc 25>;
+				power-domains = <&CLUSTER_PD>;
 				status = "disabled";
 			};
 
@@ -547,6 +551,7 @@
 				       <&hpdma 58 0x20 0x3021>;
 				dma-names = "rx", "tx";
 				access-controllers = <&rifsc 26>;
+				power-domains = <&CLUSTER_PD>;
 				status = "disabled";
 			};
 
@@ -722,6 +727,7 @@
 				       <&hpdma 60 0x20 0x3021>;
 				dma-names = "rx", "tx";
 				access-controllers = <&rifsc 27>;
+				power-domains = <&CLUSTER_PD>;
 				status = "disabled";
 			};
 
@@ -737,6 +743,7 @@
 				       <&hpdma 62 0x20 0x3021>;
 				dma-names = "rx", "tx";
 				access-controllers = <&rifsc 28>;
+				power-domains = <&CLUSTER_PD>;
 				status = "disabled";
 			};
 
@@ -786,6 +793,7 @@
 				       <&hpdma 172 0x20 0x3021>;
 				dma-names = "rx", "tx";
 				access-controllers = <&rifsc 29>;
+				power-domains = <&CLUSTER_PD>;
 				status = "disabled";
 			};
 
