@@ -59,6 +59,8 @@ enum scd4x_channel_idx {
 	SCD4X_CO2,
 	SCD4X_TEMP,
 	SCD4X_HR,
+	/* kernel timestamp, at the end of buffer */
+	SCD4X_TS,
 };
 
 struct scd4x_state {
@@ -616,6 +618,7 @@ static const struct iio_chan_spec scd4x_channels[] = {
 			.endianness = IIO_BE,
 		},
 	},
+	IIO_CHAN_SOFT_TIMESTAMP(SCD4X_TS),
 };
 
 static int scd4x_suspend(struct device *dev)
