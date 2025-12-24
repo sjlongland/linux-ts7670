@@ -1119,7 +1119,7 @@ rel_fw:
 	release_firmware(f);
 }
 
-static int vpdma_load_firmware(struct vpdma_data *vpdma)
+int vpdma_load_firmware(struct vpdma_data *vpdma)
 {
 	int r;
 	struct device *dev = &vpdma->pdev->dev;
@@ -1136,6 +1136,7 @@ static int vpdma_load_firmware(struct vpdma_data *vpdma)
 
 	return 0;
 }
+EXPORT_SYMBOL_GPL(vpdma_load_firmware);
 
 int vpdma_create(struct platform_device *pdev, struct vpdma_data *vpdma,
 		void (*cb)(struct platform_device *pdev))
