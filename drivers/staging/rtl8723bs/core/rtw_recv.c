@@ -1904,9 +1904,6 @@ static int recv_indicatepkt_reorder(struct adapter *padapter, union recv_frame *
 
 			preorder_ctrl->indicate_seq = (preorder_ctrl->indicate_seq + 1)%4096;
 
-			if (retval != _SUCCESS) {
-			}
-
 			return retval;
 		}
 	}
