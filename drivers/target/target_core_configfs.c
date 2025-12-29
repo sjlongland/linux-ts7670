@@ -288,7 +288,7 @@ static void target_core_deregister_fabric(
 	config_item_put(item);
 }
 
-static struct configfs_group_operations target_core_fabric_group_ops = {
+static const struct configfs_group_operations target_core_fabric_group_ops = {
 	.make_group	= &target_core_register_fabric,
 	.drop_item	= &target_core_deregister_fabric,
 };
@@ -2812,7 +2812,7 @@ static void target_core_alua_lu_gp_release(struct config_item *item)
 	core_alua_free_lu_gp(lu_gp);
 }
 
-static struct configfs_item_operations target_core_alua_lu_gp_ops = {
+static const struct configfs_item_operations target_core_alua_lu_gp_ops = {
 	.release		= target_core_alua_lu_gp_release,
 };
 
@@ -2869,7 +2869,7 @@ static void target_core_alua_drop_lu_gp(
 	config_item_put(item);
 }
 
-static struct configfs_group_operations target_core_alua_lu_gps_group_ops = {
+static const struct configfs_group_operations target_core_alua_lu_gps_group_ops = {
 	.make_group		= &target_core_alua_create_lu_gp,
 	.drop_item		= &target_core_alua_drop_lu_gp,
 };
@@ -3242,7 +3242,7 @@ static void target_core_alua_tg_pt_gp_release(struct config_item *item)
 	core_alua_free_tg_pt_gp(tg_pt_gp);
 }
 
-static struct configfs_item_operations target_core_alua_tg_pt_gp_ops = {
+static const struct configfs_item_operations target_core_alua_tg_pt_gp_ops = {
 	.release		= target_core_alua_tg_pt_gp_release,
 };
 
@@ -3300,7 +3300,7 @@ static void target_core_alua_drop_tg_pt_gp(
 	config_item_put(item);
 }
 
-static struct configfs_group_operations target_core_alua_tg_pt_gps_group_ops = {
+static const struct configfs_group_operations target_core_alua_tg_pt_gps_group_ops = {
 	.make_group		= &target_core_alua_create_tg_pt_gp,
 	.drop_item		= &target_core_alua_drop_tg_pt_gp,
 };
@@ -3341,7 +3341,7 @@ static void target_core_stat_rmdir(
 	return;
 }
 
-static struct configfs_group_operations target_core_stat_group_ops = {
+static const struct configfs_group_operations target_core_stat_group_ops = {
 	.make_group		= &target_core_stat_mkdir,
 	.drop_item		= &target_core_stat_rmdir,
 };
@@ -3468,7 +3468,7 @@ static void target_core_drop_subdev(
 	mutex_unlock(&hba->hba_access_mutex);
 }
 
-static struct configfs_group_operations target_core_hba_group_ops = {
+static const struct configfs_group_operations target_core_hba_group_ops = {
 	.make_group		= target_core_make_subdev,
 	.drop_item		= target_core_drop_subdev,
 };
@@ -3547,7 +3547,7 @@ static struct configfs_attribute *target_core_hba_attrs[] = {
 	NULL,
 };
 
-static struct configfs_item_operations target_core_hba_item_ops = {
+static const struct configfs_item_operations target_core_hba_item_ops = {
 	.release		= target_core_hba_release,
 };
 
@@ -3628,7 +3628,7 @@ static void target_core_call_delhbafromtarget(
 	config_item_put(item);
 }
 
-static struct configfs_group_operations target_core_group_ops = {
+static const struct configfs_group_operations target_core_group_ops = {
 	.make_group	= target_core_call_addhbatotarget,
 	.drop_item	= target_core_call_delhbafromtarget,
 };
