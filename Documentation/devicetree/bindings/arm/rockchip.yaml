@@ -891,7 +891,7 @@ properties:
           - const: radxa,cm5
           - const: rockchip,rk3588s
 
-      - description: Radxa CM3 Industrial
+      - description: Radxa CM3I
         items:
           - enum:
               - radxa,e25
