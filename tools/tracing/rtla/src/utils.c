@@ -297,6 +297,7 @@ static int procfs_is_workload_pid(const char *comm_prefix, struct dirent *proc_e
 	if (retval <= 0)
 		return 0;
 
+	buffer[MAX_PATH-1] = '\0';
 	retval = strncmp(comm_prefix, buffer, strlen(comm_prefix));
 	if (retval)
 		return 0;
@@ -725,6 +726,7 @@ static int get_self_cgroup(char *self_cg, int sizeof_self_cg)
 	if (fd < 0)
 		return 0;
 
+	memset(path, 0, sizeof(path));
 	retval = read(fd, path, MAX_PATH);
 
 	close(fd);
@@ -732,6 +734,7 @@ static int get_self_cgroup(char *self_cg, int sizeof_self_cg)
 	if (retval <= 0)
 		return 0;
 
+	path[MAX_PATH-1] = '\0';
 	start = path;
 
 	start = strstr(start, ":");
