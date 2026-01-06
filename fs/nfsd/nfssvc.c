@@ -905,7 +905,7 @@ nfsd(void *vrqstp)
 	 * The main request loop
 	 */
 	while (!svc_thread_should_stop(rqstp)) {
-		svc_recv(rqstp);
+		svc_recv(rqstp, 0);
 		nfsd_file_net_dispose(nn);
 	}
 
