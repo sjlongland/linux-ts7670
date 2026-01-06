@@ -89,12 +89,12 @@ struct blk_zone_wplug {
 #define BLK_ZONE_WPLUG_UNHASHED		(1U << 2)
 
 /**
- * blk_zone_cond_str - Return string XXX in BLK_ZONE_COND_XXX.
- * @zone_cond: BLK_ZONE_COND_XXX.
+ * blk_zone_cond_str - Return a zone condition name string
+ * @zone_cond: a zone condition BLK_ZONE_COND_name
  *
- * Description: Centralize block layer function to convert BLK_ZONE_COND_XXX
- * into string format. Useful in the debugging and tracing zone conditions. For
- * invalid BLK_ZONE_COND_XXX it returns string "UNKNOWN".
+ * Convert a BLK_ZONE_COND_name zone condition into the string "name". Useful
+ * for the debugging and tracing zone conditions. For an invalid zone
+ * conditions, the string "UNKNOWN" is returned.
  */
 const char *blk_zone_cond_str(enum blk_zone_cond zone_cond)
 {
