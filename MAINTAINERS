@@ -7228,6 +7228,7 @@ F:	include/linux/dmi.h
 
 DOCUMENTATION
 M:	Jonathan Corbet <corbet@lwn.net>
+R:	Shuah Khan <skhan@linuxfoundation.org>
 L:	linux-doc@vger.kernel.org
 S:	Maintained
 P:	Documentation/doc-guide/maintainer-profile.rst
@@ -7250,6 +7251,7 @@ X:	Documentation/userspace-api/media/
 
 DOCUMENTATION PROCESS
 M:	Jonathan Corbet <corbet@lwn.net>
+R:	Shuah Khan <skhan@linuxfoundation.org>
 L:	workflows@vger.kernel.org
 S:	Maintained
 F:	Documentation/dev-tools/
