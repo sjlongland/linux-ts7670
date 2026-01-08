@@ -4543,8 +4543,8 @@ static struct gpio_desc *gpio_desc_table_match(struct device *dev, const char *c
 static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
 				    unsigned int idx, unsigned long *flags)
 {
-	struct gpio_desc *desc = ERR_PTR(-ENOENT);
 	struct gpiod_lookup_table *table;
+	struct gpio_desc *desc;
 
 	guard(mutex)(&gpio_lookup_lock);
 
@@ -4560,7 +4560,7 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
 		return desc;
 	}
 
-	return desc;
+	return ERR_PTR(-ENOENT);
 }
 
 static int platform_gpio_count(struct device *dev, const char *con_id)
