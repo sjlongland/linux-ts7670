@@ -1159,7 +1159,6 @@ void pmc_core_get_low_power_modes(struct pmc_dev *pmcdev)
 	/* Read 32 bit LPM_PRI register */
 	lpm_pri = pmc_core_reg_read(pmc, pmc->map->lpm_priority_offset);
 
-
 	/*
 	 * If lpm_pri value passes verification, then override the default
 	 * modes here. Otherwise stick with the default.
