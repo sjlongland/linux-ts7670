@@ -5887,7 +5887,6 @@ regulator_register(struct device *dev,
 	bool dangling_cfg_gpiod = false;
 	bool dangling_of_gpiod = false;
 	int ret, i;
-	bool resolved_early = false;
 
 	if (cfg == NULL)
 		return ERR_PTR(-EINVAL);
@@ -6025,17 +6024,6 @@ regulator_register(struct device *dev,
 			goto wash;
 	}
 
-	if ((rdev->supply_name && !rdev->supply) &&
-		(rdev->constraints->always_on ||
-		 rdev->constraints->boot_on)) {
-		ret = regulator_resolve_supply(rdev);
-		if (ret)
-			rdev_dbg(rdev, "unable to resolve supply early: %pe\n",
-					 ERR_PTR(ret));
-
-		resolved_early = true;
-	}
-
 	if (config->ena_gpiod) {
 		ret = regulator_ena_gpio_request(rdev, config);
 		if (ret != 0) {
@@ -6049,9 +6037,10 @@ regulator_register(struct device *dev,
 	}
 
 	ret = set_machine_constraints(rdev);
-	if (ret == -EPROBE_DEFER && !resolved_early) {
-		/* Regulator might be in bypass mode and so needs its supply
-		 * to set the constraints
+	if (ret == -EPROBE_DEFER) {
+		/* Regulator might be in bypass mode or an always-on or boot-on
+		 * regulator and so needs its supply to set the constraints or
+		 * for enable.
 		 */
 		/* FIXME: this currently triggers a chicken-and-egg problem
 		 * when creating -SUPPLY symlink in sysfs to a regulator
