@@ -447,11 +447,6 @@ il3945_rs_tx_status(void *il_rate, struct ieee80211_supported_band *sband,
 		return;
 	}
 
-	if (!il_sta) {
-		D_RATE("leave: No STA il data to update!\n");
-		return;
-	}
-
 	/* Treat uninitialized rate scaling data same as non-existing. */
 	if (!rs_sta->il) {
 		D_RATE("leave: STA il data uninitialized!\n");
@@ -626,7 +621,7 @@ il3945_rs_get_rate(void *il_r, struct ieee80211_sta *sta, void *il_sta,
 	D_RATE("enter\n");
 
 	/* Treat uninitialized rate scaling data same as non-existing. */
-	if (rs_sta && !rs_sta->il) {
+	if (!rs_sta->il) {
 		D_RATE("Rate scaling information not initialized yet.\n");
 		il_sta = NULL;
 	}
