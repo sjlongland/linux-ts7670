@@ -32,6 +32,7 @@
 #include <linux/memcontrol.h>
 #include <linux/mm_inline.h>
 #include <linux/slab.h>
+#include <linux/string.h>
 #include <linux/random.h>
 #include <linux/reboot.h>
 #include <linux/notifier.h>
@@ -742,9 +743,9 @@ int drbd_send_sync_param(struct drbd_peer_device *peer_device)
 	}
 
 	if (apv >= 88)
-		strcpy(p->verify_alg, nc->verify_alg);
+		strscpy(p->verify_alg, nc->verify_alg);
 	if (apv >= 89)
-		strcpy(p->csums_alg, nc->csums_alg);
+		strscpy(p->csums_alg, nc->csums_alg);
 	rcu_read_unlock();
 
 	return drbd_send_command(peer_device, sock, cmd, size, NULL, 0);
@@ -755,6 +756,7 @@ int __drbd_send_protocol(struct drbd_connection *connection, enum drbd_packet cm
 	struct drbd_socket *sock;
 	struct p_protocol *p;
 	struct net_conf *nc;
+	size_t integrity_alg_len;
 	int size, cf;
 
 	sock = &connection->data;
@@ -772,8 +774,10 @@ int __drbd_send_protocol(struct drbd_connection *connection, enum drbd_packet cm
 	}
 
 	size = sizeof(*p);
-	if (connection->agreed_pro_version >= 87)
-		size += strlen(nc->integrity_alg) + 1;
+	if (connection->agreed_pro_version >= 87) {
+		integrity_alg_len = strlen(nc->integrity_alg) + 1;
+		size += integrity_alg_len;
+	}
 
 	p->protocol      = cpu_to_be32(nc->wire_protocol);
 	p->after_sb_0p   = cpu_to_be32(nc->after_sb_0p);
@@ -788,7 +792,7 @@ int __drbd_send_protocol(struct drbd_connection *connection, enum drbd_packet cm
 	p->conn_flags    = cpu_to_be32(cf);
 
 	if (connection->agreed_pro_version >= 87)
-		strcpy(p->integrity_alg, nc->integrity_alg);
+		strscpy(p->integrity_alg, nc->integrity_alg, integrity_alg_len);
 	rcu_read_unlock();
 
 	return __conn_send_command(connection, sock, cmd, size, NULL, 0);
