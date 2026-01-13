@@ -258,6 +258,54 @@
 			#clock-cells = <1>;
 		};
 
+		rstgen: reset-controller@7030013000 {
+			compatible = "sophgo,sg2042-reset";
+			reg = <0x00000070 0x30013000 0x00000000 0x0000000c>;
+			#reset-cells = <1>;
+		};
+
+		uart0: serial@7040000000 {
+			compatible = "snps,dw-apb-uart";
+			reg = <0x00000070 0x40000000 0x00000000 0x00001000>;
+			interrupts = <112 IRQ_TYPE_LEVEL_HIGH>;
+			clock-frequency = <500000000>;
+			clocks = <&clkgen GATE_CLK_UART_500M>,
+				 <&clkgen GATE_CLK_APB_UART>;
+			clock-names = "baudclk", "apb_pclk";
+			reg-shift = <2>;
+			reg-io-width = <4>;
+			resets = <&rstgen RST_UART0>;
+			status = "disabled";
+		};
+
+		emmc: mmc@704002a000 {
+			compatible = "sophgo,sg2042-dwcmshc";
+			reg = <0x70 0x4002a000 0x0 0x1000>;
+			interrupt-parent = <&intc>;
+			interrupts = <134 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clkgen GATE_CLK_EMMC_100M>,
+				 <&clkgen GATE_CLK_AXI_EMMC>,
+				 <&clkgen GATE_CLK_100K_EMMC>;
+			clock-names = "core",
+				      "bus",
+				      "timer";
+			status = "disabled";
+		};
+
+		sd: mmc@704002b000 {
+			compatible = "sophgo,sg2042-dwcmshc";
+			reg = <0x70 0x4002b000 0x0 0x1000>;
+			interrupt-parent = <&intc>;
+			interrupts = <136 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clkgen GATE_CLK_SD_100M>,
+				 <&clkgen GATE_CLK_AXI_SD>,
+				 <&clkgen GATE_CLK_100K_SD>;
+			clock-names = "core",
+				      "bus",
+				      "timer";
+			status = "disabled";
+		};
+
 		pcie_rc0: pcie@7060000000 {
 			compatible = "sophgo,sg2042-pcie-host";
 			device_type = "pci";
@@ -343,54 +391,6 @@
 			device-id = <0x2042>;
 			cdns,no-bar-match-nbits = <48>;
 			msi-parent = <&msi>;
-			status = "disabled";
-		};
-
-		rstgen: reset-controller@7030013000 {
-			compatible = "sophgo,sg2042-reset";
-			reg = <0x00000070 0x30013000 0x00000000 0x0000000c>;
-			#reset-cells = <1>;
-		};
-
-		uart0: serial@7040000000 {
-			compatible = "snps,dw-apb-uart";
-			reg = <0x00000070 0x40000000 0x00000000 0x00001000>;
-			interrupts = <112 IRQ_TYPE_LEVEL_HIGH>;
-			clock-frequency = <500000000>;
-			clocks = <&clkgen GATE_CLK_UART_500M>,
-				 <&clkgen GATE_CLK_APB_UART>;
-			clock-names = "baudclk", "apb_pclk";
-			reg-shift = <2>;
-			reg-io-width = <4>;
-			resets = <&rstgen RST_UART0>;
-			status = "disabled";
-		};
-
-		emmc: mmc@704002a000 {
-			compatible = "sophgo,sg2042-dwcmshc";
-			reg = <0x70 0x4002a000 0x0 0x1000>;
-			interrupt-parent = <&intc>;
-			interrupts = <134 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&clkgen GATE_CLK_EMMC_100M>,
-				 <&clkgen GATE_CLK_AXI_EMMC>,
-				 <&clkgen GATE_CLK_100K_EMMC>;
-			clock-names = "core",
-				      "bus",
-				      "timer";
-			status = "disabled";
-		};
-
-		sd: mmc@704002b000 {
-			compatible = "sophgo,sg2042-dwcmshc";
-			reg = <0x70 0x4002b000 0x0 0x1000>;
-			interrupt-parent = <&intc>;
-			interrupts = <136 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&clkgen GATE_CLK_SD_100M>,
-				 <&clkgen GATE_CLK_AXI_SD>,
-				 <&clkgen GATE_CLK_100K_SD>;
-			clock-names = "core",
-				      "bus",
-				      "timer";
 			status = "disabled";
 		};
 	};
