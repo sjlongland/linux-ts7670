@@ -187,7 +187,7 @@ static int ftpm_tee_match(struct tee_ioctl_version_data *ver, const void *data)
 }
 
 /**
- * ftpm_tee_probe() - initialize the fTPM
+ * ftpm_tee_probe_generic() - initialize the fTPM
  * @dev: the device description.
  *
  * Return:
@@ -290,7 +290,7 @@ static int ftpm_plat_tee_probe(struct platform_device *pdev)
 }
 
 /**
- * ftpm_tee_remove() - remove the TPM device
+ * ftpm_tee_remove_generic() - remove the TPM device
  * @dev: the device description.
  *
  * Return:
