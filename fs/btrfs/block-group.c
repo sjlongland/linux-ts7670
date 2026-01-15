@@ -1358,8 +1358,7 @@ static int inc_block_group_ro(struct btrfs_block_group *cache, int force)
 		goto out;
 	}
 
-	num_bytes = cache->length - cache->reserved - cache->pinned -
-		    cache->bytes_super - cache->zone_unusable - cache->used;
+	num_bytes = btrfs_block_group_available_space(cache);
 
 	/*
 	 * Data never overcommits, even in mixed mode, so do just the straight
@@ -3083,7 +3082,6 @@ unlock_out:
 void btrfs_dec_block_group_ro(struct btrfs_block_group *cache)
 {
 	struct btrfs_space_info *sinfo = cache->space_info;
-	u64 num_bytes;
 
 	BUG_ON(!cache->ro);
 
@@ -3099,10 +3097,7 @@ void btrfs_dec_block_group_ro(struct btrfs_block_group *cache)
 			btrfs_space_info_update_bytes_zone_unusable(sinfo, cache->zone_unusable);
 			sinfo->bytes_readonly -= cache->zone_unusable;
 		}
-		num_bytes = cache->length - cache->reserved -
-			    cache->pinned - cache->bytes_super -
-			    cache->zone_unusable - cache->used;
-		sinfo->bytes_readonly -= num_bytes;
+		sinfo->bytes_readonly -= btrfs_block_group_available_space(cache);
 		list_del_init(&cache->ro_list);
 	}
 	spin_unlock(&cache->lock);
