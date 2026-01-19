@@ -276,11 +276,11 @@ void hv_hyp_synic_enable_regs(unsigned int cpu)
 	simp.simp_enabled = 1;
 
 	if (ms_hyperv.paravisor_present || hv_root_partition()) {
-		/* Mask out vTOM bit. ioremap_cache() maps decrypted */
+		/* Mask out vTOM bit and map as decrypted */
 		u64 base = (simp.base_simp_gpa << HV_HYP_PAGE_SHIFT) &
 				~ms_hyperv.shared_gpa_boundary;
 		hv_cpu->hyp_synic_message_page =
-			(void *)ioremap_cache(base, HV_HYP_PAGE_SIZE);
+			memremap(base, HV_HYP_PAGE_SIZE, MEMREMAP_WB | MEMREMAP_DEC);
 		if (!hv_cpu->hyp_synic_message_page)
 			pr_err("Fail to map synic message page.\n");
 	} else {
@@ -295,11 +295,11 @@ void hv_hyp_synic_enable_regs(unsigned int cpu)
 	siefp.siefp_enabled = 1;
 
 	if (ms_hyperv.paravisor_present || hv_root_partition()) {
-		/* Mask out vTOM bit. ioremap_cache() maps decrypted */
+		/* Mask out vTOM bit and map as decrypted */
 		u64 base = (siefp.base_siefp_gpa << HV_HYP_PAGE_SHIFT) &
 				~ms_hyperv.shared_gpa_boundary;
 		hv_cpu->hyp_synic_event_page =
-			(void *)ioremap_cache(base, HV_HYP_PAGE_SIZE);
+			memremap(base, HV_HYP_PAGE_SIZE, MEMREMAP_WB | MEMREMAP_DEC);
 		if (!hv_cpu->hyp_synic_event_page)
 			pr_err("Fail to map synic event page.\n");
 	} else {
@@ -416,7 +416,7 @@ void hv_hyp_synic_disable_regs(unsigned int cpu)
 	simp.simp_enabled = 0;
 	if (ms_hyperv.paravisor_present || hv_root_partition()) {
 		if (hv_cpu->hyp_synic_message_page) {
-			iounmap(hv_cpu->hyp_synic_message_page);
+			memunmap(hv_cpu->hyp_synic_message_page);
 			hv_cpu->hyp_synic_message_page = NULL;
 		}
 	} else {
@@ -430,7 +430,7 @@ void hv_hyp_synic_disable_regs(unsigned int cpu)
 
 	if (ms_hyperv.paravisor_present || hv_root_partition()) {
 		if (hv_cpu->hyp_synic_event_page) {
-			iounmap(hv_cpu->hyp_synic_event_page);
+			memunmap(hv_cpu->hyp_synic_event_page);
 			hv_cpu->hyp_synic_event_page = NULL;
 		}
 	} else {
