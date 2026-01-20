@@ -188,6 +188,7 @@ struct kvm_vcpu_config {
 	u64 henvcfg;
 	u64 hstateen0;
 	unsigned long hedeleg;
+	unsigned long hideleg;
 };
 
 struct kvm_vcpu_smstateen_csr {
