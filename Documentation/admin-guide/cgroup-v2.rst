@@ -728,9 +728,6 @@ combinations are invalid and should be rejected.  Also, if the
 resource is mandatory for execution of processes, process migrations
 may be rejected.
 
-"cpu.rt.max" hard-allocates realtime slices and is an example of this
-type.
-
 
 Interface Files
 ===============
