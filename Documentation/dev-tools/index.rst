@@ -39,6 +39,7 @@ Documentation/process/debugging/index.rst
    gpio-sloppy-logic-analyzer
    autofdo
    propeller
+   container
 
 
 .. only::  subproject and html
