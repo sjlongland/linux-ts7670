@@ -6044,8 +6044,7 @@ u8 run_in_thread_hdl(struct adapter *padapter, u8 *pbuf)
 {
 	struct RunInThread_param *p;
 
-
-	if (pbuf == NULL)
+	if (!pbuf)
 		return H2C_PARAMETERS_ERROR;
 	p = (struct RunInThread_param *)pbuf;
 
