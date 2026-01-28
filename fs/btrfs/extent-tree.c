@@ -6467,7 +6467,7 @@ static int btrfs_trim_free_extents(struct btrfs_device *device, u64 *trimmed)
  * 2) trimming the unallocated space on each device
  *
  * This will also continue trimming even if a block group or device encounters
- * an error.  The return value will be the last error, or 0 if nothing bad
+ * an error.  The return value will be the first error, or 0 if nothing bad
  * happens.
  */
 int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
@@ -6512,7 +6512,8 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
 				ret = btrfs_cache_block_group(cache, true);
 				if (ret) {
 					bg_failed++;
-					bg_ret = ret;
+					if (!bg_ret)
+						bg_ret = ret;
 					continue;
 				}
 			}
@@ -6525,7 +6526,8 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
 			trimmed += group_trimmed;
 			if (ret) {
 				bg_failed++;
-				bg_ret = ret;
+				if (!bg_ret)
+					bg_ret = ret;
 				continue;
 			}
 		}
@@ -6533,7 +6535,7 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
 
 	if (bg_failed)
 		btrfs_warn(fs_info,
-			"failed to trim %llu block group(s), last error %d",
+			"failed to trim %llu block group(s), first error %d",
 			bg_failed, bg_ret);
 
 	mutex_lock(&fs_devices->device_list_mutex);
@@ -6546,7 +6548,8 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
 		trimmed += group_trimmed;
 		if (ret) {
 			dev_failed++;
-			dev_ret = ret;
+			if (!dev_ret)
+				dev_ret = ret;
 			continue;
 		}
 	}
@@ -6554,7 +6557,7 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
 
 	if (dev_failed)
 		btrfs_warn(fs_info,
-			"failed to trim %llu device(s), last error %d",
+			"failed to trim %llu device(s), first error %d",
 			dev_failed, dev_ret);
 	range->len = trimmed;
 	if (bg_ret)
