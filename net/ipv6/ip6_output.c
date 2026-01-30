@@ -311,7 +311,7 @@ int ip6_xmit(const struct sock *sk, struct sk_buff *skb, struct flowi6 *fl6,
 	}
 
 	if (unlikely(seg_len > IPV6_MAXPLEN)) {
-		hop_jumbo = skb_push(skb, hoplen);
+		hop_jumbo = __skb_push(skb, hoplen);
 
 		hop_jumbo->nexthdr = proto;
 		hop_jumbo->hdrlen = 0;
@@ -324,7 +324,7 @@ int ip6_xmit(const struct sock *sk, struct sk_buff *skb, struct flowi6 *fl6,
 		IP6CB(skb)->flags |= IP6SKB_FAKEJUMBO;
 	}
 
-	skb_push(skb, sizeof(struct ipv6hdr));
+	__skb_push(skb, sizeof(struct ipv6hdr));
 	skb_reset_network_header(skb);
 	hdr = ipv6_hdr(skb);
 
