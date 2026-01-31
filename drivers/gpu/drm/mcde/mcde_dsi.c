@@ -1115,6 +1115,11 @@ static int mcde_dsi_bind(struct device *dev, struct device *master,
 				return -EINVAL;
 			}
 		}
+
+		if (panel || bridge) {
+			of_node_put(child);
+			break;
+		}
 	}
 	if (panel) {
 		bridge = drm_panel_bridge_add_typed(panel,
