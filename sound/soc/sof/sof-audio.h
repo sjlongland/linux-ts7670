@@ -510,6 +510,9 @@ struct snd_sof_widget {
  * @complete: flag used to indicate that pipeline set up is complete.
  * @core_mask: Mask containing target cores for all modules in the pipeline
  * @list: List item in sdev pipeline_list
+ * @direction_valid: flag indicating if the direction is set in topology
+ * @direction: pipeline direction set in topology, valid is direction_valid is true
+ *
  */
 struct snd_sof_pipeline {
 	struct snd_sof_widget *pipe_widget;
@@ -518,6 +521,8 @@ struct snd_sof_pipeline {
 	int complete;
 	unsigned long core_mask;
 	struct list_head list;
+	bool direction_valid;
+	u32 direction;
 };
 
 /* ASoC SOF DAPM route */
