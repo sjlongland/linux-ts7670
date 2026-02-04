@@ -506,15 +506,11 @@ skip:
 
 /*
  * Called with hugetlb fault mutex held.
- * Returns true if page was actually removed, false otherwise.
  */
-static bool remove_inode_single_folio(struct hstate *h, struct inode *inode,
-					struct address_space *mapping,
-					struct folio *folio, pgoff_t index,
-					bool truncate_op)
+static void remove_inode_single_folio(struct hstate *h, struct inode *inode,
+		struct address_space *mapping, struct folio *folio,
+		pgoff_t index, bool truncate_op)
 {
-	bool ret = false;
-
 	/*
 	 * If folio is mapped, it was faulted in after being
 	 * unmapped in caller or hugetlb_vmdelete_list() skips
@@ -536,7 +532,6 @@ static bool remove_inode_single_folio(struct hstate *h, struct inode *inode,
 	 */
 	VM_BUG_ON_FOLIO(folio_test_hugetlb_restore_reserve(folio), folio);
 	hugetlb_delete_from_page_cache(folio);
-	ret = true;
 	if (!truncate_op) {
 		if (unlikely(hugetlb_unreserve_pages(inode, index,
 							index + 1, 1)))
@@ -544,7 +539,6 @@ static bool remove_inode_single_folio(struct hstate *h, struct inode *inode,
 	}
 
 	folio_unlock(folio);
-	return ret;
 }
 
 /*
@@ -592,9 +586,9 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
 			/*
 			 * Remove folio that was part of folio_batch.
 			 */
-			if (remove_inode_single_folio(h, inode, mapping, folio,
-							index, truncate_op))
-				freed++;
+			remove_inode_single_folio(h, inode, mapping, folio,
+						  index, truncate_op);
+			freed++;
 
 			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
 		}
