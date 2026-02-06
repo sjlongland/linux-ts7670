@@ -32,6 +32,17 @@
 
 #define DRV_NAME	"ftgmac100"
 
+enum ftgmac100_mac_id {
+	FTGMAC100_FARADAY = 1,
+	FTGMAC100_AST2400,
+	FTGMAC100_AST2500,
+	FTGMAC100_AST2600
+};
+
+struct ftgmac100_match_data {
+	enum ftgmac100_mac_id mac_id;
+};
+
 /* Arbitrary values, I am not sure the HW has limits */
 #define MAX_RX_QUEUE_ENTRIES	1024
 #define MAX_TX_QUEUE_ENTRIES	1024
@@ -64,6 +75,8 @@ struct ftgmac100 {
 	/* Registers */
 	struct resource *res;
 	void __iomem *base;
+
+	enum ftgmac100_mac_id mac_id;
 
 	/* Rx ring */
 	unsigned int rx_q_entries;
@@ -1814,6 +1827,8 @@ static bool ftgmac100_has_child_node(struct device_node *np, const char *name)
 
 static int ftgmac100_probe(struct platform_device *pdev)
 {
+	const struct ftgmac100_match_data *match_data;
+	enum ftgmac100_mac_id mac_id;
 	struct resource *res;
 	int irq;
 	struct net_device *netdev;
@@ -1821,6 +1836,16 @@ static int ftgmac100_probe(struct platform_device *pdev)
 	struct ftgmac100 *priv;
 	struct device_node *np;
 	int err = 0;
+
+	np = pdev->dev.of_node;
+	if (np) {
+		match_data = of_device_get_match_data(&pdev->dev);
+		if (!match_data)
+			return -EINVAL;
+		mac_id = match_data->mac_id;
+	} else {
+		mac_id = FTGMAC100_FARADAY;
+	}
 
 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	if (!res)
@@ -1849,6 +1874,7 @@ static int ftgmac100_probe(struct platform_device *pdev)
 	priv = netdev_priv(netdev);
 	priv->netdev = netdev;
 	priv->dev = &pdev->dev;
+	priv->mac_id = mac_id;
 	INIT_WORK(&priv->reset_task, ftgmac100_reset_task);
 
 	/* map io memory */
@@ -1879,7 +1905,6 @@ static int ftgmac100_probe(struct platform_device *pdev)
 	if (err)
 		goto err_phy_connect;
 
-	np = pdev->dev.of_node;
 	if (np && (of_device_is_compatible(np, "aspeed,ast2400-mac") ||
 		   of_device_is_compatible(np, "aspeed,ast2500-mac") ||
 		   of_device_is_compatible(np, "aspeed,ast2600-mac"))) {
@@ -2063,11 +2088,31 @@ static void ftgmac100_remove(struct platform_device *pdev)
 	free_netdev(netdev);
 }
 
+static const struct ftgmac100_match_data ftgmac100_match_data_ast2400 = {
+	.mac_id = FTGMAC100_AST2400
+};
+
+static const struct ftgmac100_match_data ftgmac100_match_data_ast2500 = {
+	.mac_id = FTGMAC100_AST2500
+};
+
+static const struct ftgmac100_match_data ftgmac100_match_data_ast2600 = {
+	.mac_id = FTGMAC100_AST2600
+};
+
+static const struct ftgmac100_match_data ftgmac100_match_data_faraday = {
+	.mac_id = FTGMAC100_FARADAY
+};
+
 static const struct of_device_id ftgmac100_of_match[] = {
-	{ .compatible = "aspeed,ast2400-mac" },
-	{ .compatible = "aspeed,ast2500-mac" },
-	{ .compatible = "aspeed,ast2600-mac" },
-	{ .compatible = "faraday,ftgmac100" },
+	{ .compatible = "aspeed,ast2400-mac",
+	  .data = &ftgmac100_match_data_ast2400},
+	{ .compatible = "aspeed,ast2500-mac",
+	  .data = &ftgmac100_match_data_ast2500 },
+	{ .compatible = "aspeed,ast2600-mac",
+	  .data = &ftgmac100_match_data_ast2600 },
+	{ .compatible = "faraday,ftgmac100",
+	  .data = &ftgmac100_match_data_faraday },
 	{ }
 };
 MODULE_DEVICE_TABLE(of, ftgmac100_of_match);
