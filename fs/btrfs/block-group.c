@@ -3244,7 +3244,6 @@ again:
 		btrfs_abort_transaction(trans, ret);
 		goto out_put;
 	}
-	WARN_ON(ret);
 
 	/* We've already setup this transaction, go ahead and exit */
 	if (block_group->cache_generation == trans->transid &&
