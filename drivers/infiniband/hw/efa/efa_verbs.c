@@ -1144,9 +1144,9 @@ int efa_create_cq(struct ib_cq *ibcq, const struct ib_cq_init_attr *attr,
 	if (attr->flags)
 		return -EOPNOTSUPP;
 
-	if (entries < 1 || entries > dev->dev_attr.max_cq_depth) {
+	if (entries > dev->dev_attr.max_cq_depth) {
 		ibdev_dbg(ibdev,
-			  "cq: requested entries[%u] non-positive or greater than max[%u]\n",
+			  "cq: requested entries[%u] greater than max[%u]\n",
 			  entries, dev->dev_attr.max_cq_depth);
 		err = -EINVAL;
 		goto err_out;
