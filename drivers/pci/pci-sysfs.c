@@ -546,7 +546,6 @@ static ssize_t reset_subordinate_store(struct device *dev,
 				const char *buf, size_t count)
 {
 	struct pci_dev *pdev = to_pci_dev(dev);
-	struct pci_bus *bus = pdev->subordinate;
 	unsigned long val;
 
 	if (!capable(CAP_SYS_ADMIN))
@@ -556,7 +555,7 @@ static ssize_t reset_subordinate_store(struct device *dev,
 		return -EINVAL;
 
 	if (val) {
-		int ret = pci_try_reset_bus(bus);
+		int ret = pci_try_reset_bridge(pdev);
 
 		if (ret)
 			return ret;
