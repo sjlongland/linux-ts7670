@@ -157,6 +157,11 @@ properties:
 
       - items:
           - enum:
+              - qcom,glymur-crd
+          - const: qcom,glymur
+
+      - items:
+          - enum:
               - fairphone,fp6
           - const: qcom,milos
 
