@@ -213,7 +213,6 @@ Hardware Monitoring Kernel Drivers
    q54sj108a2
    qnap-mcu-hwmon
    raspberrypi-hwmon
-   sa67
    sbrmi
    sbtsi_temp
    sch5627
