@@ -169,7 +169,6 @@ struct cti_config {
  * @spinlock:	Control data access to one at a time.
  * @config:	Configuration data for this CTI device.
  * @node:	List entry of this device in the list of CTI devices.
- * @csdev_release: release function for underlying coresight_device.
  */
 struct cti_drvdata {
 	void __iomem *base;
@@ -178,7 +177,6 @@ struct cti_drvdata {
 	raw_spinlock_t spinlock;
 	struct cti_config config;
 	struct list_head node;
-	void (*csdev_release)(struct device *dev);
 };
 
 /*
