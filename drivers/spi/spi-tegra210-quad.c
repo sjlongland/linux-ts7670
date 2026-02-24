@@ -975,7 +975,8 @@ static int tegra_qspi_setup(struct spi_device *spi)
 
 	spin_unlock_irqrestore(&tqspi->lock, flags);
 
-	pm_runtime_put(tqspi->dev);
+	pm_runtime_mark_last_busy(tqspi->dev);
+	pm_runtime_put_autosuspend(tqspi->dev);
 
 	return 0;
 }
@@ -1602,6 +1603,14 @@ static int tegra_qspi_probe(struct platform_device *pdev)
 	init_completion(&tqspi->rx_dma_complete);
 	init_completion(&tqspi->xfer_completion);
 
+	/*
+	 * Set autosuspend delay to 500ms. Testing shows this value eliminates
+	 * suspend/resume overhead during burst operations while allowing quick
+	 * suspension during idle. For longer operations, the overhead is negligible.
+	 */
+	pm_runtime_set_autosuspend_delay(&pdev->dev, 500);
+	pm_runtime_use_autosuspend(&pdev->dev);
+
 	pm_runtime_enable(&pdev->dev);
 	ret = pm_runtime_resume_and_get(&pdev->dev);
 	if (ret < 0) {
@@ -1618,7 +1627,8 @@ static int tegra_qspi_probe(struct platform_device *pdev)
 	tqspi->spi_cs_timing2 = tegra_qspi_readl(tqspi, QSPI_CS_TIMING2);
 	tqspi->def_command2_reg = tegra_qspi_readl(tqspi, QSPI_COMMAND2);
 
-	pm_runtime_put(&pdev->dev);
+	pm_runtime_mark_last_busy(&pdev->dev);
+	pm_runtime_put_autosuspend(&pdev->dev);
 
 	ret = request_threaded_irq(tqspi->irq, NULL,
 				   tegra_qspi_isr_thread, IRQF_ONESHOT,
@@ -1640,6 +1650,7 @@ static int tegra_qspi_probe(struct platform_device *pdev)
 exit_free_irq:
 	free_irq(qspi_irq, tqspi);
 exit_pm_disable:
+	pm_runtime_dont_use_autosuspend(&pdev->dev);
 	pm_runtime_force_suspend(&pdev->dev);
 	tegra_qspi_deinit_dma(tqspi);
 	return ret;
@@ -1652,6 +1663,7 @@ static void tegra_qspi_remove(struct platform_device *pdev)
 
 	spi_unregister_controller(host);
 	free_irq(tqspi->irq, tqspi);
+	pm_runtime_dont_use_autosuspend(&pdev->dev);
 	pm_runtime_force_suspend(&pdev->dev);
 	tegra_qspi_deinit_dma(tqspi);
 }
@@ -1677,7 +1689,8 @@ static int __maybe_unused tegra_qspi_resume(struct device *dev)
 
 	tegra_qspi_writel(tqspi, tqspi->command1_reg, QSPI_COMMAND1);
 	tegra_qspi_writel(tqspi, tqspi->def_command2_reg, QSPI_COMMAND2);
-	pm_runtime_put(dev);
+	pm_runtime_mark_last_busy(dev);
+	pm_runtime_put_autosuspend(dev);
 
 	return spi_controller_resume(host);
 }
