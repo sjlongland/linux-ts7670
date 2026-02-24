@@ -48,6 +48,10 @@ config GENERIC_CLOCKEVENTS_MIN_ADJUST
 config GENERIC_CMOS_UPDATE
 	bool
 
+# Deferred rearming of the hrtimer interrupt
+config HRTIMER_REARM_DEFERRED
+       def_bool n
+
 # Select to handle posix CPU timers from task_work
 # and not from the timer interrupt context
 config HAVE_POSIX_CPU_TIMERS_TASK_WORK
