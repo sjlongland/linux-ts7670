@@ -1715,6 +1715,9 @@ static int stm32fx_spi_set_mode(struct stm32_spi *spi, unsigned int comm_type)
 		return -EINVAL;
 	}
 
+	*rx_mdma_desc = _mdma_desc;
+	*rx_dma_desc = _dma_desc;
+
 	return 0;
 }
 
