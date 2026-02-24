@@ -83,11 +83,11 @@ struct rdma_restrack_entry {
 	 * query stage.
 	 */
 	u8			no_track : 1;
-	/*
+	/**
 	 * @kref: Protect destroy of the resource
 	 */
 	struct kref		kref;
-	/*
+	/**
 	 * @comp: Signal that all consumers of resource are completed their work
 	 */
 	struct completion	comp;
