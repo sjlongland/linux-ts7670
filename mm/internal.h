@@ -1338,6 +1338,8 @@ int __must_check vmap_pages_range_noflush(unsigned long addr, unsigned long end,
 }
 #endif
 
+void clear_vm_uninitialized_flag(struct vm_struct *vm);
+
 int __must_check __vmap_pages_range_noflush(unsigned long addr,
 			       unsigned long end, pgprot_t prot,
 			       struct page **pages, unsigned int page_shift);
