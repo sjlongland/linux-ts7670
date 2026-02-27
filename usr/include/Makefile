@@ -52,10 +52,6 @@ ifeq ($(SRCARCH),arc)
 no-header-test += linux/bpf_perf_event.h
 endif
 
-ifeq ($(SRCARCH),powerpc)
-no-header-test += linux/bpf_perf_event.h
-endif
-
 ifeq ($(SRCARCH),sparc)
 no-header-test += asm/uctx.h
 no-header-test += asm/fbio.h
