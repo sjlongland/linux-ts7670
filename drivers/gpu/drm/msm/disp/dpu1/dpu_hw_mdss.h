@@ -272,7 +272,6 @@ enum dpu_wd_timer {
 
 enum dpu_vbif {
 	VBIF_RT,
-	VBIF_NRT,
 	VBIF_MAX,
 };
 
