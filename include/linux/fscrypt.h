@@ -834,10 +834,6 @@ void fscrypt_set_bio_crypt_ctx(struct bio *bio,
 			       const struct inode *inode, u64 first_lblk,
 			       gfp_t gfp_mask);
 
-void fscrypt_set_bio_crypt_ctx_bh(struct bio *bio,
-				  const struct buffer_head *first_bh,
-				  gfp_t gfp_mask);
-
 bool fscrypt_mergeable_bio(struct bio *bio, const struct inode *inode,
 			   u64 next_lblk);
 
@@ -855,11 +851,6 @@ static inline bool __fscrypt_inode_uses_inline_crypto(const struct inode *inode)
 static inline void fscrypt_set_bio_crypt_ctx(struct bio *bio,
 					     const struct inode *inode,
 					     u64 first_lblk, gfp_t gfp_mask) { }
-
-static inline void fscrypt_set_bio_crypt_ctx_bh(
-					 struct bio *bio,
-					 const struct buffer_head *first_bh,
-					 gfp_t gfp_mask) { }
 
 static inline bool fscrypt_mergeable_bio(struct bio *bio,
 					 const struct inode *inode,
