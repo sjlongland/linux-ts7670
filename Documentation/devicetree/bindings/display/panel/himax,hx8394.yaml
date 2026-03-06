@@ -49,8 +49,6 @@ required:
   - vcc-supply
   - iovcc-supply
 
-additionalProperties: false
-
 allOf:
   - $ref: panel-common.yaml#
   - if:
@@ -62,6 +60,8 @@ allOf:
     then:
       required:
         - reset-gpios
+
+additionalProperties: false
 
 examples:
   - |
