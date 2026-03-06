@@ -30,6 +30,7 @@ void dcn401_prepare_mcache_programming(struct dc *dc, struct dc_state *context);
 
 unsigned int dcn401_get_vstartup_for_pipe(struct pipe_ctx *pipe_ctx);
 
+int dcn401_get_power_profile(const struct dc_state *context);
 /* Following are definitions for run time init of reg offsets */
 
 /* HUBP */
