@@ -544,7 +544,7 @@ fib4_nexthop()
 fib6_nexthop()
 {
 	local lldummy=$(get_linklocal dummy0)
-	local llv1=$(get_linklocal dummy0)
+	local llv1=$(get_linklocal veth1)
 
 	if [ -z "$lldummy" ]; then
 		echo "Failed to get linklocal address for dummy0"
