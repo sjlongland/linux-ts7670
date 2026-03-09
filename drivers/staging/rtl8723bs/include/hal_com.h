@@ -145,8 +145,6 @@ u8 SetHalDefVar(struct adapter *adapter, enum hal_def_variable variable,
 u8 GetHalDefVar(struct adapter *adapter, enum hal_def_variable variable,
 		void *value);
 
-bool eqNByte(u8 *str1, u8 *str2, u32 num);
-
 bool GetU1ByteIntegerFromStringInDecimal(char *str, u8 *in);
 
 #define		HWSET_MAX_SIZE			512
