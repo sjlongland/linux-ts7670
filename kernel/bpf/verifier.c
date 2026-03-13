@@ -2333,7 +2333,7 @@ static void __update_reg_bounds(struct bpf_reg_state *reg)
 }
 
 /* Uses signed min/max values to inform unsigned, and vice-versa */
-static void __reg32_deduce_bounds(struct bpf_reg_state *reg)
+static void deduce_bounds_32_from_64(struct bpf_reg_state *reg)
 {
 	/* If upper 32 bits of u64/s64 range don't change, we can use lower 32
 	 * bits to improve our u32/s32 boundaries.
@@ -2403,6 +2403,10 @@ static void __reg32_deduce_bounds(struct bpf_reg_state *reg)
 		reg->s32_min_value = max_t(s32, reg->s32_min_value, (s32)reg->smin_value);
 		reg->s32_max_value = min_t(s32, reg->s32_max_value, (s32)reg->smax_value);
 	}
+}
+
+static void deduce_bounds_32_from_32(struct bpf_reg_state *reg)
+{
 	/* if u32 range forms a valid s32 range (due to matching sign bit),
 	 * try to learn from that
 	 */
@@ -2420,7 +2424,7 @@ static void __reg32_deduce_bounds(struct bpf_reg_state *reg)
 	}
 }
 
-static void __reg64_deduce_bounds(struct bpf_reg_state *reg)
+static void deduce_bounds_64_from_64(struct bpf_reg_state *reg)
 {
 	/* If u64 range forms a valid s64 range (due to matching sign bit),
 	 * try to learn from that. Let's do a bit of ASCII art to see when
@@ -2503,7 +2507,7 @@ static void __reg64_deduce_bounds(struct bpf_reg_state *reg)
 	}
 }
 
-static void __reg_deduce_mixed_bounds(struct bpf_reg_state *reg)
+static void deduce_bounds_64_from_32(struct bpf_reg_state *reg)
 {
 	/* Try to tighten 64-bit bounds from 32-bit knowledge, using 32-bit
 	 * values on both sides of 64-bit range in hope to have tighter range.
@@ -2586,9 +2590,10 @@ static void __reg_deduce_mixed_bounds(struct bpf_reg_state *reg)
 
 static void __reg_deduce_bounds(struct bpf_reg_state *reg)
 {
-	__reg32_deduce_bounds(reg);
-	__reg64_deduce_bounds(reg);
-	__reg_deduce_mixed_bounds(reg);
+	deduce_bounds_32_from_64(reg);
+	deduce_bounds_32_from_32(reg);
+	deduce_bounds_64_from_64(reg);
+	deduce_bounds_64_from_32(reg);
 }
 
 /* Attempts to improve var_off based on unsigned min/max information */
