@@ -494,8 +494,9 @@ static int fujitsu_backlight_register(struct acpi_device *device)
 
 /* Brightness notify */
 
-static void acpi_fujitsu_bl_notify(struct acpi_device *device, u32 event)
+static void acpi_fujitsu_bl_notify(acpi_handle handle, u32 event, void *data)
 {
+	struct acpi_device *device = data;
 	struct fujitsu_bl *priv = acpi_driver_data(device);
 	int oldb, newb;
 
@@ -550,7 +551,18 @@ static int acpi_fujitsu_bl_add(struct acpi_device *device)
 	if (ret)
 		return ret;
 
-	return fujitsu_backlight_register(device);
+	ret = fujitsu_backlight_register(device);
+	if (ret)
+		return ret;
+
+	return acpi_dev_install_notify_handler(device, ACPI_DEVICE_NOTIFY,
+					       acpi_fujitsu_bl_notify, device);
+}
+
+static void acpi_fujitsu_bl_remove(struct acpi_device *device)
+{
+	acpi_dev_remove_notify_handler(device, ACPI_DEVICE_NOTIFY,
+				       acpi_fujitsu_bl_notify);
 }
 
 /* ACPI device for hotkey handling */
@@ -912,8 +924,9 @@ static void acpi_fujitsu_laptop_release(struct acpi_device *device)
 	}
 }
 
-static void acpi_fujitsu_laptop_notify(struct acpi_device *device, u32 event)
+static void acpi_fujitsu_laptop_notify(acpi_handle handle, u32 event, void *data)
 {
+	struct acpi_device *device = data;
 	struct fujitsu_laptop *priv = acpi_driver_data(device);
 	unsigned long flags;
 	int scancode, i = 0;
@@ -1027,12 +1040,19 @@ static int acpi_fujitsu_laptop_add(struct acpi_device *device)
 	if (ret)
 		goto err_free_fifo;
 
+	ret = acpi_dev_install_notify_handler(device, ACPI_DEVICE_NOTIFY,
+					      acpi_fujitsu_laptop_notify, device);
+	if (ret)
+		goto err_platform_remove;
+
 	ret = fujitsu_battery_charge_control_add(device);
 	if (ret < 0)
 		pr_warn("Unable to register battery charge control: %d\n", ret);
 
 	return 0;
 
+err_platform_remove:
+	fujitsu_laptop_platform_remove(device);
 err_free_fifo:
 	kfifo_free(&priv->fifo);
 
@@ -1044,6 +1064,9 @@ static void acpi_fujitsu_laptop_remove(struct acpi_device *device)
 	struct fujitsu_laptop *priv = acpi_driver_data(device);
 
 	fujitsu_battery_charge_control_remove(device);
+
+	acpi_dev_remove_notify_handler(device, ACPI_DEVICE_NOTIFY,
+				       acpi_fujitsu_laptop_notify);
 
 	fujitsu_laptop_platform_remove(device);
 
@@ -1063,7 +1086,7 @@ static struct acpi_driver acpi_fujitsu_bl_driver = {
 	.ids = fujitsu_bl_device_ids,
 	.ops = {
 		.add = acpi_fujitsu_bl_add,
-		.notify = acpi_fujitsu_bl_notify,
+		.remove = acpi_fujitsu_bl_remove,
 		},
 };
 
@@ -1079,7 +1102,6 @@ static struct acpi_driver acpi_fujitsu_laptop_driver = {
 	.ops = {
 		.add = acpi_fujitsu_laptop_add,
 		.remove = acpi_fujitsu_laptop_remove,
-		.notify = acpi_fujitsu_laptop_notify,
 		},
 };
 
