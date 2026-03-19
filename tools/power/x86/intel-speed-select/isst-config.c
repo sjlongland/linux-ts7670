@@ -81,6 +81,11 @@ struct cpu_topology {
 
 static int read_only;
 
+static void print_version(void)
+{
+	fprintf(outf, "Version %s\n", version_str);
+}
+
 static void check_privilege(void)
 {
 	if (!read_only)
@@ -1127,6 +1132,7 @@ static int isst_fill_platform_info(void)
 	close(fd);
 
 	if (isst_platform_info.api_version > supported_api_ver) {
+		print_version();
 		printf("Incompatible API versions; Upgrade of tool is required\n");
 		exit(1);
 	}
@@ -3186,12 +3192,6 @@ static void usage(void)
 	exit(0);
 }
 
-static void print_version(void)
-{
-	fprintf(outf, "Version %s\n", version_str);
-	exit(0);
-}
-
 static void cmdline(int argc, char **argv)
 {
 	const char *pathname = "/dev/isst_interface";
@@ -3303,6 +3303,7 @@ static void cmdline(int argc, char **argv)
 			break;
 		case 'v':
 			print_version();
+			exit(0);
 			break;
 		case 'b':
 			oob_mode = 1;
