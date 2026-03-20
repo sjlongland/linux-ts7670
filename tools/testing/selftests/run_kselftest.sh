@@ -14,7 +14,6 @@ else
 fi
 
 . ./kselftest/runner.sh
-ROOT=$PWD
 
 usage()
 {
