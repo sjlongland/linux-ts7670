@@ -2,6 +2,7 @@
 #include <linux/fsnotify_backend.h>
 #include <linux/path.h>
 #include <linux/slab.h>
+#include <linux/string.h>
 #include <linux/exportfs.h>
 #include <linux/hashtable.h>
 
@@ -219,7 +220,7 @@ static inline void fanotify_info_copy_name(struct fanotify_info *info,
 		return;
 
 	info->name_len = name->len;
-	strcpy(fanotify_info_name(info), name->name);
+	strscpy(fanotify_info_name(info), name->name, name->len + 1);
 }
 
 static inline void fanotify_info_copy_name2(struct fanotify_info *info,
@@ -229,7 +230,7 @@ static inline void fanotify_info_copy_name2(struct fanotify_info *info,
 		return;
 
 	info->name2_len = name->len;
-	strcpy(fanotify_info_name2(info), name->name);
+	strscpy(fanotify_info_name2(info), name->name, name->len + 1);
 }
 
 /*
