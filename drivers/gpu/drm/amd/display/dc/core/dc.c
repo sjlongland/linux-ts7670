@@ -3352,6 +3352,7 @@ static void update_seamless_boot_flags(struct dc *dc,
  * @surface_count: surface update count
  * @stream: Corresponding stream to be updated
  * @stream_update: stream update
+ * @update_descriptor: describes what plane and stream changes to apply
  * @new_update_type: [out] determined update type by the function
  * @new_context: [out] new context allocated and validated if update type is
  * FULL, reference to current context if update type is less than FULL.
