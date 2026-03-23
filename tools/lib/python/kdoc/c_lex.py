@@ -161,7 +161,7 @@ class CTokenizer():
     # This class is inspired and follows the basic concepts of:
     #   https://docs.python.org/3/library/re.html#writing-a-tokenizer
 
-    def __init__(self, source=None, log=None):
+    def __init__(self, source=None):
         """
         Create a regular expression to handle RE_SCANNER_LIST.
 
@@ -171,6 +171,12 @@ class CTokenizer():
         in this particular case, it makes sense, as we can pick the name
         when matching a code via RE_SCANNER.
         """
+
+        #
+        # Store logger to allow parser classes to re-use it
+        #
+        global log
+        self.log = log
 
         self.tokens = []
 
