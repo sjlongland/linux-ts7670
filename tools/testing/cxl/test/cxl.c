@@ -15,6 +15,7 @@
 
 static int interleave_arithmetic;
 static bool extended_linear_cache;
+static bool fail_autoassemble;
 
 #define FAKE_QTG_ID	42
 
@@ -806,6 +807,12 @@ static void mock_init_hdm_decoder(struct cxl_decoder *cxld)
 		return;
 	}
 
+	/* Simulate missing cxl_mem.4 configuration */
+	if (hb0 && pdev->id == 4 && cxld->id == 0 && fail_autoassemble) {
+		default_mock_decoder(cxld);
+		return;
+	}
+
 	base = window->base_hpa;
 	if (extended_linear_cache)
 		base += mock_auto_region_size;
@@ -1555,6 +1562,8 @@ module_param(interleave_arithmetic, int, 0444);
 MODULE_PARM_DESC(interleave_arithmetic, "Modulo:0, XOR:1");
 module_param(extended_linear_cache, bool, 0444);
 MODULE_PARM_DESC(extended_linear_cache, "Enable extended linear cache support");
+module_param(fail_autoassemble, bool, 0444);
+MODULE_PARM_DESC(fail_autoassemble, "Simulate missing member of an auto-region");
 module_init(cxl_test_init);
 module_exit(cxl_test_exit);
 MODULE_LICENSE("GPL v2");
