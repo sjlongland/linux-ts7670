@@ -7120,26 +7120,6 @@ TEST_F(audit_layout1, execute_make)
  * only the blocked ones are logged.
  */
 
-/* clang-format off */
-static const __u64 access_fs_16 =
-	LANDLOCK_ACCESS_FS_EXECUTE |
-	LANDLOCK_ACCESS_FS_WRITE_FILE |
-	LANDLOCK_ACCESS_FS_READ_FILE |
-	LANDLOCK_ACCESS_FS_READ_DIR |
-	LANDLOCK_ACCESS_FS_REMOVE_DIR |
-	LANDLOCK_ACCESS_FS_REMOVE_FILE |
-	LANDLOCK_ACCESS_FS_MAKE_CHAR |
-	LANDLOCK_ACCESS_FS_MAKE_DIR |
-	LANDLOCK_ACCESS_FS_MAKE_REG |
-	LANDLOCK_ACCESS_FS_MAKE_SOCK |
-	LANDLOCK_ACCESS_FS_MAKE_FIFO |
-	LANDLOCK_ACCESS_FS_MAKE_BLOCK |
-	LANDLOCK_ACCESS_FS_MAKE_SYM |
-	LANDLOCK_ACCESS_FS_REFER |
-	LANDLOCK_ACCESS_FS_TRUNCATE |
-	LANDLOCK_ACCESS_FS_IOCTL_DEV;
-/* clang-format on */
-
 TEST_F(audit_layout1, execute_read)
 {
 	struct audit_records records;
@@ -7149,7 +7129,7 @@ TEST_F(audit_layout1, execute_read)
 	test_check_exec(_metadata, 0, file1_s1d1);
 
 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
-					      .handled_access_fs = access_fs_16,
+					      .handled_access_fs = ACCESS_ALL,
 				      });
 
 	/*
@@ -7173,7 +7153,7 @@ TEST_F(audit_layout1, write_file)
 	struct audit_records records;
 
 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
-					      .handled_access_fs = access_fs_16,
+					      .handled_access_fs = ACCESS_ALL,
 				      });
 
 	EXPECT_EQ(EACCES, test_open(file1_s1d1, O_WRONLY));
@@ -7190,7 +7170,7 @@ TEST_F(audit_layout1, read_file)
 	struct audit_records records;
 
 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
-					      .handled_access_fs = access_fs_16,
+					      .handled_access_fs = ACCESS_ALL,
 				      });
 
 	EXPECT_EQ(EACCES, test_open(file1_s1d1, O_RDONLY));
@@ -7207,7 +7187,7 @@ TEST_F(audit_layout1, read_dir)
 	struct audit_records records;
 
 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
-					      .handled_access_fs = access_fs_16,
+					      .handled_access_fs = ACCESS_ALL,
 				      });
 
 	EXPECT_EQ(EACCES, test_open(dir_s1d1, O_DIRECTORY));
@@ -7227,7 +7207,7 @@ TEST_F(audit_layout1, remove_dir)
 	EXPECT_EQ(0, unlink(file2_s1d3));
 
 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
-					      .handled_access_fs = access_fs_16,
+					      .handled_access_fs = ACCESS_ALL,
 				      });
 
 	EXPECT_EQ(-1, rmdir(dir_s1d3));
@@ -7250,7 +7230,7 @@ TEST_F(audit_layout1, remove_file)
 	struct audit_records records;
 
 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
-					      .handled_access_fs = access_fs_16,
+					      .handled_access_fs = ACCESS_ALL,
 				      });
 
 	EXPECT_EQ(-1, unlink(file1_s1d3));
@@ -7270,7 +7250,7 @@ TEST_F(audit_layout1, make_char)
 	EXPECT_EQ(0, unlink(file1_s1d3));
 
 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
-					      .handled_access_fs = access_fs_16,
+					      .handled_access_fs = ACCESS_ALL,
 				      });
 
 	EXPECT_EQ(-1, mknod(file1_s1d3, S_IFCHR | 0644, 0));
@@ -7290,7 +7270,7 @@ TEST_F(audit_layout1, make_dir)
 	EXPECT_EQ(0, unlink(file1_s1d3));
 
 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
-					      .handled_access_fs = access_fs_16,
+					      .handled_access_fs = ACCESS_ALL,
 				      });
 
 	EXPECT_EQ(-1, mkdir(file1_s1d3, 0755));
@@ -7310,7 +7290,7 @@ TEST_F(audit_layout1, make_reg)
 	EXPECT_EQ(0, unlink(file1_s1d3));
 
 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
-					      .handled_access_fs = access_fs_16,
+					      .handled_access_fs = ACCESS_ALL,
 				      });
 
 	EXPECT_EQ(-1, mknod(file1_s1d3, S_IFREG | 0644, 0));
@@ -7330,7 +7310,7 @@ TEST_F(audit_layout1, make_sock)
 	EXPECT_EQ(0, unlink(file1_s1d3));
 
 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
-					      .handled_access_fs = access_fs_16,
+					      .handled_access_fs = ACCESS_ALL,
 				      });
 
 	EXPECT_EQ(-1, mknod(file1_s1d3, S_IFSOCK | 0644, 0));
@@ -7350,7 +7330,7 @@ TEST_F(audit_layout1, make_fifo)
 	EXPECT_EQ(0, unlink(file1_s1d3));
 
 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
-					      .handled_access_fs = access_fs_16,
+					      .handled_access_fs = ACCESS_ALL,
 				      });
 
 	EXPECT_EQ(-1, mknod(file1_s1d3, S_IFIFO | 0644, 0));
@@ -7370,7 +7350,7 @@ TEST_F(audit_layout1, make_block)
 	EXPECT_EQ(0, unlink(file1_s1d3));
 
 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
-					      .handled_access_fs = access_fs_16,
+					      .handled_access_fs = ACCESS_ALL,
 				      });
 
 	EXPECT_EQ(-1, mknod(file1_s1d3, S_IFBLK | 0644, 0));
@@ -7390,7 +7370,7 @@ TEST_F(audit_layout1, make_sym)
 	EXPECT_EQ(0, unlink(file1_s1d3));
 
 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
-					      .handled_access_fs = access_fs_16,
+					      .handled_access_fs = ACCESS_ALL,
 				      });
 
 	EXPECT_EQ(-1, symlink("target", file1_s1d3));
@@ -7459,7 +7439,7 @@ TEST_F(audit_layout1, refer_rename)
 	EXPECT_EQ(0, unlink(file1_s1d3));
 
 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
-					      .handled_access_fs = access_fs_16,
+					      .handled_access_fs = ACCESS_ALL,
 				      });
 
 	EXPECT_EQ(EACCES, test_rename(file1_s1d2, file1_s2d3));
@@ -7481,7 +7461,7 @@ TEST_F(audit_layout1, refer_exchange)
 	EXPECT_EQ(0, unlink(file1_s1d3));
 
 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
-					      .handled_access_fs = access_fs_16,
+					      .handled_access_fs = ACCESS_ALL,
 				      });
 
 	/*
@@ -7544,7 +7524,7 @@ TEST_F(audit_layout1, truncate)
 	struct audit_records records;
 
 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
-					      .handled_access_fs = access_fs_16,
+					      .handled_access_fs = ACCESS_ALL,
 				      });
 
 	EXPECT_EQ(-1, truncate(file1_s1d3, 0));
@@ -7565,7 +7545,7 @@ TEST_F(audit_layout1, ioctl_dev)
 	drop_access_rights(_metadata,
 			   &(struct landlock_ruleset_attr){
 				   .handled_access_fs =
-					   access_fs_16 &
+					   ACCESS_ALL &
 					   ~LANDLOCK_ACCESS_FS_READ_FILE,
 			   });
 
