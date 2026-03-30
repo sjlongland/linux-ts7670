@@ -263,34 +263,32 @@ static struct time_namespace *to_time_ns(struct ns_common *ns)
 
 static struct ns_common *timens_get(struct task_struct *task)
 {
-	struct time_namespace *ns = NULL;
+	struct time_namespace *ns;
 	struct nsproxy *nsproxy;
 
-	task_lock(task);
+	guard(task_lock)(task);
 	nsproxy = task->nsproxy;
-	if (nsproxy) {
-		ns = nsproxy->time_ns;
-		get_time_ns(ns);
-	}
-	task_unlock(task);
+	if (!nsproxy)
+		return NULL;
 
-	return ns ? &ns->ns : NULL;
+	ns = nsproxy->time_ns;
+	get_time_ns(ns);
+	return &ns->ns;
 }
 
 static struct ns_common *timens_for_children_get(struct task_struct *task)
 {
-	struct time_namespace *ns = NULL;
+	struct time_namespace *ns;
 	struct nsproxy *nsproxy;
 
-	task_lock(task);
+	guard(task_lock)(task);
 	nsproxy = task->nsproxy;
-	if (nsproxy) {
-		ns = nsproxy->time_ns_for_children;
-		get_time_ns(ns);
-	}
-	task_unlock(task);
+	if (!nsproxy)
+		return NULL;
 
-	return ns ? &ns->ns : NULL;
+	ns = nsproxy->time_ns_for_children;
+	get_time_ns(ns);
+	return &ns->ns;
 }
 
 static void timens_put(struct ns_common *ns)
