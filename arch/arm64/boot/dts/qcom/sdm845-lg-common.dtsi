@@ -584,3 +584,7 @@
 
 	status = "okay";
 };
+
+&venus {
+	status = "okay";
+};
