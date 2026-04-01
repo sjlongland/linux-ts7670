@@ -3518,7 +3518,7 @@ int btrfs_relocate_chunk(struct btrfs_fs_info *fs_info, u64 chunk_offset)
 		 * If we had a transaction abort, stop all running scrubs.
 		 * See transaction.c:cleanup_transaction() why we do it here.
 		 */
-		if (BTRFS_FS_ERROR(fs_info))
+		if (unlikely(BTRFS_FS_ERROR(fs_info)))
 			btrfs_scrub_cancel(fs_info);
 		return ret;
 	}
