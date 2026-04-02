@@ -1061,7 +1061,7 @@ __thermal_cooling_device_register(struct device_node *np,
 {
 	struct thermal_cooling_device *cdev;
 	unsigned long current_state;
-	int id, ret;
+	int ret;
 
 	if (!ops || !ops->get_max_state || !ops->get_cur_state ||
 	    !ops->set_cur_state)
@@ -1078,7 +1078,6 @@ __thermal_cooling_device_register(struct device_node *np,
 	if (ret < 0)
 		goto out_kfree_cdev;
 	cdev->id = ret;
-	id = ret;
 
 	cdev->type = kstrdup_const(type ? type : "", GFP_KERNEL);
 	if (!cdev->type) {
@@ -1135,7 +1134,7 @@ out_cooling_dev:
 out_cdev_type:
 	kfree_const(cdev->type);
 out_ida_remove:
-	ida_free(&thermal_cdev_ida, id);
+	ida_free(&thermal_cdev_ida, cdev->id);
 out_kfree_cdev:
 	kfree(cdev);
 	return ERR_PTR(ret);
