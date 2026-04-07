@@ -1457,8 +1457,12 @@ struct hci_rp_read_data_block_size {
 } __packed;
 
 #define HCI_OP_READ_LOCAL_CODECS	0x100b
-struct hci_std_codecs {
+struct hci_std_codecs_hdr {
 	__u8	num;
+} __packed;
+
+struct hci_std_codecs {
+	struct hci_std_codecs_hdr;
 	__u8	codec[];
 } __packed;
 
@@ -1476,7 +1480,7 @@ struct hci_vnd_codecs {
 
 struct hci_rp_read_local_supported_codecs {
 	__u8	status;
-	struct hci_std_codecs std_codecs;
+	struct hci_std_codecs_hdr std_codecs;
 	struct hci_vnd_codecs vnd_codecs;
 } __packed;
 
@@ -1493,8 +1497,12 @@ struct hci_std_codec_v2 {
 	__u8	transport;
 } __packed;
 
-struct hci_std_codecs_v2 {
+struct hci_std_codecs_v2_hdr {
 	__u8	num;
+} __packed;
+
+struct hci_std_codecs_v2 {
+	struct hci_std_codecs_v2_hdr;
 	struct hci_std_codec_v2 codec[];
 } __packed;
 
@@ -1511,7 +1519,7 @@ struct hci_vnd_codecs_v2 {
 
 struct hci_rp_read_local_supported_codecs_v2 {
 	__u8	status;
-	struct hci_std_codecs_v2 std_codecs;
+	struct hci_std_codecs_v2_hdr std_codecs;
 	struct hci_vnd_codecs_v2 vendor_codecs;
 } __packed;
 
