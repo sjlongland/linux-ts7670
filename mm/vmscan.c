@@ -4708,7 +4708,7 @@ static int scan_folios(struct lruvec *lruvec, struct scan_control *sc,
 static int get_tier_idx(struct lruvec *lruvec, int type)
 {
 	int tier;
-	struct ctrl_pos sp, pv;
+	struct ctrl_pos sp, pv = {};
 
 	/*
 	 * To leave a margin for fluctuations, use a larger gain factor (2:3).
@@ -4727,7 +4727,7 @@ static int get_tier_idx(struct lruvec *lruvec, int type)
 
 static int get_type_to_scan(struct lruvec *lruvec, int swappiness)
 {
-	struct ctrl_pos sp, pv;
+	struct ctrl_pos sp, pv = {};
 
 	if (swappiness <= MIN_SWAPPINESS + 1)
 		return LRU_GEN_FILE;
