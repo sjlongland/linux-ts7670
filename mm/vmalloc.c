@@ -4221,7 +4221,7 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
 		return NULL;
 
 	if (p) {
-		memcpy(n, p, old_size);
+		memcpy(n, p, min(size, old_size));
 		vfree(p);
 	}
 
