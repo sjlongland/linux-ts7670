@@ -1711,7 +1711,7 @@ struct dc_link {
 	struct dc_link_training_overrides preferred_training_settings;
 	struct dp_audio_test_data audio_test_data;
 
-	uint8_t ddc_hw_inst;
+	enum gpio_ddc_line ddc_hw_inst;
 
 	uint8_t hpd_src;
 
