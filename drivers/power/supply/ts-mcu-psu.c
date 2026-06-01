@@ -103,12 +103,11 @@ err:
 	return err;
 }
 
-static int ts_psu_remove(struct platform_device *pdev)
+static void ts_psu_remove(struct platform_device *pdev)
 {
 	struct ts_psu_dev *psu = dev_get_drvdata(&pdev->dev);
 	power_supply_unregister(psu->psy);
 	devm_kfree(&pdev->dev, psu);
-	return 0;
 }
 
 static struct platform_driver ts_psu_driver = {
