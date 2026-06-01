@@ -78,8 +78,7 @@ static void ts_mcu_exit(struct ts_mcu_dev *mcu)
 	mfd_remove_devices(mcu->dev);
 }
 
-static int ts_mcu_probe(struct i2c_client *i2c,
-			  const struct i2c_device_id *id)
+static int ts_mcu_probe(struct i2c_client *i2c)
 {
 	/* Original credit: Mark Featherston, Kris Bahnsen */
 	struct ts_mcu_dev *mcu;
@@ -95,11 +94,10 @@ static int ts_mcu_probe(struct i2c_client *i2c,
 	return ts_mcu_init(mcu);
 }
 
-static int ts_mcu_remove(struct i2c_client *i2c)
+static void ts_mcu_remove(struct i2c_client *i2c)
 {
 	struct ts_mcu_dev *mcu = i2c_get_clientdata(i2c);
 	ts_mcu_exit(mcu);
-	return 0;
 }
 
 static const struct i2c_device_id ts_mcu_id[] = {
