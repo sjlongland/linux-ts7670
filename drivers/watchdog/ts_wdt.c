@@ -10,7 +10,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-#include <linux/reboot.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/platform_device.h>
@@ -104,30 +103,6 @@ static int ts_wdt_stop(struct watchdog_device *wdt)
 	return ts_wdt_write(3);
 }
 
-static void do_ts_reboot(enum reboot_mode reboot_mode, const char *cmd)
-{
-	unsigned long flags;
-	static DEFINE_SPINLOCK(wdt_lock);
-
-	dev_dbg(wdev->mcu->dev, "%s\n", __func__);
-
-	spin_lock_irqsave(&wdt_lock, flags);
-	ts_wdt_write(0);
-	while (1);
-}
-
-static void do_ts_halt(void)
-{
-	unsigned long flags;
-	static DEFINE_SPINLOCK(wdt_lock);
-
-	dev_dbg(wdev->mcu->dev, "%s\n", __func__);
-
-	spin_lock_irqsave(&wdt_lock, flags);
-	ts_wdt_write(3);
-	while (1);
-}
-
 static int ts_set_timeout(struct watchdog_device *wdt,
 				   unsigned int timeout)
 {
@@ -178,8 +153,6 @@ static int ts_wdt_probe(struct platform_device *pdev)
 		return -ENOMEM;
 
 	wdev->mcu = mcu;
-	arm_pm_restart = do_ts_reboot;
-	pm_power_off = do_ts_halt;
 	dev_dbg(&pdev->dev, "%s\n", __func__);
 
 	watchdog_set_drvdata(&ts_wdt_wdd, wdev);
