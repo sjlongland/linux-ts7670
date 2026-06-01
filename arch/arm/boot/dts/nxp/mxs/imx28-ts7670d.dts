@@ -23,7 +23,7 @@
 
 	apb@80000000 {
 		apbh@80000000 {
-			ssp0: spi@80010000 {
+			spi@80010000 {
 				compatible = "fsl,imx28-mmc";
 				pinctrl-names = "default";
 				pinctrl-0 = <&mmc0_4bit_pins_a
@@ -35,11 +35,11 @@
 				non-removable;
 			};
 
-			ssp2: spi@80014000 {
+			spi@80012000 {
 				compatible = "fsl,imx28-mmc";
 				pinctrl-names = "default";
-				pinctrl-0 = <&mmc2_pins_ts7400
-					&mmc2_sck_cfg_a>;
+				pinctrl-0 = <&mmc1_4bit_pins_a
+					&mmc1_sck_cfg>;
 				bus-width = <4>;
 				vmmc-supply = <&reg_vddio_sd0>;
 				status = "okay";
@@ -47,11 +47,11 @@
 				non-removable;
 			};
 
-			ssp1: spi@80012000 {
+			spi@80014000 {
 				compatible = "fsl,imx28-mmc";
 				pinctrl-names = "default";
-				pinctrl-0 = <&mmc1_4bit_pins_a
-					&mmc1_sck_cfg>;
+				pinctrl-0 = <&mmc2_pins_ts7400
+					&mmc2_sck_cfg_a>;
 				bus-width = <4>;
 				vmmc-supply = <&reg_vddio_sd0>;
 				status = "okay";
@@ -176,14 +176,14 @@
 #endif
 			};
 
-			can0: can@80032000 {
+			can@80032000 {
 				pinctrl-names = "default";
 				pinctrl-0 = <&can0_pins_a>;
 				xceiver-supply = <&reg_can_3v3>;
 				status = "okay";
 			};
 
-			can1: can@80034000 {
+			can@80034000 {
 				pinctrl-names = "default";
 				pinctrl-0 = <&can1_pins_a>;
 				xceiver-supply = <&reg_can_3v3>;
@@ -192,7 +192,7 @@
 		};
 
 		apbx@80040000 {
-			i2c0: i2c@80058000 {
+			i2c@80058000 {
 				pinctrl-names = "default";
 				pinctrl-0 = <&i2c0_pins_a>;
 				clock-frequency = <400000>;
@@ -209,55 +209,55 @@
 				};
 			};
 
-			pwm: pwm@80064000 {
+			pwm@80064000 {
 				pinctrl-names = "default";
 				pinctrl-0 = <&pwm2_pins_a>;
 				status = "okay";
 			};
 
-			duart: serial@80074000 {
+			serial@80074000 {
 				pinctrl-names = "default";
 				pinctrl-0 = <&duart_pins_a>;
 				status = "okay";
 			};
 
-			auart0: serial@8006a000 {
+			serial@8006a000 {
 				pinctrl-names = "default";
 				pinctrl-0 = <&auart0_pins_a>;
 				fsl,uart-has-rtscts;
 				status = "okay";
 			};
 
-			auart1: serial@8006c000 {
+			serial@8006c000 {
 				pinctrl-names = "default";
 				pinctrl-0 = <&auart1_2pins_a>;
 				status = "okay";
 			};
 
-			auart2: serial@8006e000 {
+			serial@8006e000 {
 				pinctrl-names = "default";
 				pinctrl-0 = <&auart2_2pins_a>;
 				pwms = <&pwm 2 9600 0>;
 				status = "okay";
 			};
 
-			auart3: serial@80070000 {
+			serial@80070000 {
 				pinctrl-names = "default";
 				pinctrl-0 = <&auart3_2pins_a>;
 				status = "okay";
 			};
 
-			auart4: serial@80072000 {
+			serial@80072000 {
 				pinctrl-names = "default";
 				pinctrl-0 = <&auart4_pins>;
 				status = "okay";
 			};
 
-			usbphy0: usbphy@8007c000 {
+			usbphy@8007c000 {
 				status = "okay";
 			};
 
-			usbphy1: usbphy@8007e000 {
+			usbphy@8007e000 {
 				status = "okay";
 			};
 		};
