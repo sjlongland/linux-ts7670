@@ -21,6 +21,12 @@
 		reg = <0x40000000 0x10000000>;
 	};
 
+	aliases {
+		/* Swap around rtc0 and rtc1 */
+		rtc0 = &rtc;
+		rtc1 = &mxs_rtc;
+	};
+
 	regulators {
 		compatible = "simple-bus";
 		#address-cells = <1>;
@@ -247,7 +253,7 @@
 	clock-frequency = <100000>;
 	status = "okay";
 
-	isl12022@6f {
+	rtc: isl12022@6f {
 		compatible = "isl,isl12022";
 		reg = <0x6f>;
 	};
