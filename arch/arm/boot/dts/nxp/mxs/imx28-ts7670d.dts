@@ -199,7 +199,7 @@
 		fsl,pull-up = <MXS_PULL_DISABLE>;
 	};
 
-	auart4_pins: auart4@2 {
+	auart4_pins: auart4@0 {
 		reg = <0>;
 		fsl,pinmux-ids = <
 			MX28_PAD_SAIF0_SDATA0__AUART4_TX
