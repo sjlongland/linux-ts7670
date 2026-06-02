@@ -130,7 +130,7 @@
 };
 
 &pinctrl {
-	mmc2_pins_ts7400: mmc2-4bit@2 {
+	mmc2_pins_ts7400: mmc2-4bit-nocd@0 {
 		reg = <0>;
 		fsl,pinmux-ids = <
 			MX28_PAD_SSP0_DATA4__SSP2_D0
