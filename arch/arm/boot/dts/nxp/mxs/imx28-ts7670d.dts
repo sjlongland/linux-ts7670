@@ -1,4 +1,6 @@
 /*
+ * Copyright 2026 Stuart Longland <me@vk4msl.com>
+ * Copyright 2019-2023 Technologic Systems, Inc. dba embeddedTS
  * Copyright 2014 VRT Systems
  * Copyright 2012 Freescale Semiconductor, Inc.
  *
@@ -14,10 +16,11 @@
 #include "imx28.dtsi"
 
 / {
-	model = "Technologic Systems TS-7670 rev D";
-	compatible = "technologic,ts-7670d", "fsl,imx28";
+	model = "embeddedTS i.MX28 TS-7670 (Default Device Tree)";
+	compatible = "fsl,imx28-ts7670", "fsl,imx28";
 
-	memory {
+	memory@40000000 {
+		device_type = "memory";
 		reg = <0x40000000 0x10000000>;
 	};
 
@@ -52,13 +55,13 @@
 		};
 
 		reg_fec_3v3: regulator@2 {
+			pinctrl-names = "default";
+			pinctrl-0 = <&mac0_pwr_ctrl>;
 			compatible = "regulator-fixed";
-			reg = <2>;
-			regulator-name = "fec-3v3";
+			regulator-name = "ENET_3V3";
 			regulator-min-microvolt = <3300000>;
 			regulator-max-microvolt = <3300000>;
-			gpio = <&gpio0 21 0>;
-			regulator-always-on;
+			gpio = <&gpio1 10 GPIO_ACTIVE_LOW>;
 		};
 
 		reg_usb_vbus: regulator@3 {
@@ -147,6 +150,17 @@
 		fsl,drive-strength = <MXS_DRIVE_8mA>;
 		fsl,voltage = <MXS_VOLTAGE_HIGH>;
 		fsl,pull-up = <MXS_PULL_ENABLE>;
+	};
+
+	mac0_pwr_ctrl: mac0-pwr-ctrl@0 {
+		reg = <0>;
+		fsl,pinmux-ids = <
+			MX28_PAD_LCD_D10__GPIO_1_10
+		>;
+		fsl,drive-strength = <MXS_DRIVE_8mA>;
+		fsl,voltage = <MXS_VOLTAGE_HIGH>;
+		/* This pin uses PULL_DISABLE == 0 == Enable Keeper */
+		fsl,pull-up = <MXS_PULL_DISABLE>;
 	};
 
 	red_led_pin_gpio0_17: red_led_gpio0_17@0 {
@@ -331,7 +345,22 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&mac0_pins_a>;
 	phy-supply = <&reg_fec_3v3>;
-	phy-reset-gpios = <&gpio4 13 0>;
+	phy-handle = <&ethphy0>;
+	phy-reset-gpios = <&gpio2 9 GPIO_ACTIVE_LOW>;
 	phy-reset-duration = <100>;
+	phy-reset-post-delay = <1>;
 	status = "okay";
+
+	mdio {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		ethphy0: ethernet-phy@0 {
+			compatible = "ethernet-phy-ieee802.3-c22";
+			/* magic number "64" is enet out from CPU */
+			clocks = <&clks 64>;
+			clock-names = "rmii-ref";
+			reg = <0>;
+		};
+	};
 };
