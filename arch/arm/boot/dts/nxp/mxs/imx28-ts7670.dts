@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0 OR X11
 /*
+ * Copyright 2026 Stuart Longland <me@vk4msl.com>
  * Copyright (C) 2019-2023 Technologic Systems, Inc. dba embeddedTS
  */
 
@@ -15,45 +16,13 @@
 
 	memory@40000000 {
 		device_type = "memory";
-		reg = <0x40000000 0x08000000>;   /* 128MB */
+		reg = <0x40000000 0x10000000>;
 	};
 
 	aliases {
-		i2c0 = &i2c0_gpio;
-	};
-
-	i2c0_gpio: i2c {
-		compatible = "i2c-gpio";
-		pinctrl-names = "default";
-		pinctrl-0 = <&i2c0_pins_gpio>;
-		#address-cells = <1>;
-		#size-cells = <0>;
-		scl-gpios = <&gpio3 24 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-		sda-gpios = <&gpio3 25 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-		clock-frequency = <100000>;
-
-		isl12022: rtc@6f {
-			compatible = "isil,isl12022";
-			btse-minutes = <1>;
-			isil,battery-trip-levels-microvolt = <2550000>, <2250000>;
-			reg = <0x6f>;
-		};
-
-		isl12022_sram: eeprom@57 {
-			compatible = "atmel,24c01";
-			reg = <0x57>;
-			label = "isl12022-SRAM";
-			pagesize = <128>;
-			size = <128>;
-			address-width = <8>;
-		};
-
-		silabs: watchdog@78 {
-			compatible = "technologic,ts-wdt";
-			timeout-sec = <500>;
-			enable-early;
-			reg = <0x78>;
-		};
+		/* Swap around rtc0 and rtc1 */
+		rtc0 = &rtc;
+		rtc1 = &mxs_rtc;
 	};
 
 	led-controller {
@@ -61,32 +30,32 @@
 		pinctrl-0 = <&pinctrl_gpio_leds>;
 		compatible = "gpio-leds";
 
-		led-0 {
+		power {
 			color = <LED_COLOR_ID_GREEN>;
-			function = LED_FUNCTION_POWER;
+			function = LED_FUNCTION_INDICATOR;
 			gpios = <&gpio0 28 GPIO_ACTIVE_LOW>;
-			default-state = "on";
+			default-state = "heartbeat";
 		};
 
-		led-1 {
+		status2 {
 			color = <LED_COLOR_ID_RED>;
 			function = LED_FUNCTION_INDICATOR;
 			gpios = <&gpio0 17 GPIO_ACTIVE_LOW>;
-			default-state = "off";
+			default-state = "mmc1";
 		};
 
-		led-2 {
+		activity {
 			color = <LED_COLOR_ID_YELLOW>;
 			function = LED_FUNCTION_INDICATOR;
 			gpios = <&gpio1 26 GPIO_ACTIVE_LOW>;
-			default-state = "off";
+			default-state = "mmc0";
 		};
 
-		led-3 {
+		status1 {
 			color = <LED_COLOR_ID_BLUE>;
 			function = LED_FUNCTION_INDICATOR;
 			gpios = <&gpio1 24 GPIO_ACTIVE_HIGH>;
-			default-state = "off";
+			default-state = "mmc2";
 		};
 	};
 
@@ -309,18 +278,6 @@
 		fsl,pull-up = <MXS_PULL_DISABLE>;
 	};
 
-	i2c0_pins_gpio: i2c-gpio-pins@0 {
-		reg = <0>;
-		fsl,pinmux-ids = <
-			MX28_PAD_I2C0_SCL__GPIO_3_24
-			MX28_PAD_I2C0_SDA__GPIO_3_25
-		>;
-		fsl,drive-strength = <MXS_DRIVE_8mA>;
-		fsl,voltage = <MXS_VOLTAGE_HIGH>;
-		/* This pin uses PULL_DISABLE == 0 == Enable Keeper */
-		fsl,pull-up = <MXS_PULL_DISABLE>;
-	};
-
 	mmc0_4bit_pins: mmc0-4bit-pins@0 {
 		reg = <0>;
 		fsl,pinmux-ids = <
@@ -486,6 +443,22 @@
 
 };
 
+&i2c0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c0_pins_a>;
+	clock-frequency = <100000>;
+	status = "okay";
+
+	rtc: isl12022@6f {
+		compatible = "isl,isl12022";
+		reg = <0x6f>;
+	};
+
+	tsmcu: tsmcu@78 {
+		compatible = "ts-mcu";
+		reg = <0x78>;
+	};
+};
 
 &pwm {
 	pinctrl-names = "default";
